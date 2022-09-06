@@ -19,7 +19,7 @@ const RowInd = function(propss){
     const newDate= new Date(createDate); 
     const cratedString = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(newDate);
     // console.log(cratedString)
-       
+           
     return (
       <Card className="mb-2">
       <Row className="g-0 h-auto sh-sm-19 sh-lg-9">
