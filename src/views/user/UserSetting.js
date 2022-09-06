@@ -15,6 +15,10 @@ import { DEFAULT_PATHS } from '../../config';
 
 const RowInd = function(propss){
     const {name, firstname, role, area, subarea, createDate, onClick} = propss;
+
+    const newDate= new Date(createDate); 
+    const cratedString = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(newDate);
+    // console.log(cratedString)
      
     return (
       <Card className="mb-2">
@@ -42,7 +46,7 @@ const RowInd = function(propss){
                 <div className="text-muted text-small" style={{textAlign:"center"}}>Sub Area</div>
               </Col>
               <Col xs="10" sm="11" lg="3" className="d-flex flex-column pe-1 mb-2 mb-lg-0 align-items-lg-end">
-                <div className="lh-1 text-alternate pe-2" style={{textAlign:"left"}}>{createDate}</div>
+                <div className="lh-1 text-alternate pe-2" style={{textAlign:"left"}}>{cratedString}</div>
                 <div className="text-muted text-small pe-2" style={{textAlign:"left", alignItems:"left"}}>Created</div>
               </Col>
               <Col xs="2" sm="1" lg="1" className="d-flex flex-column pe-1 mb-2 mb-lg-0 align-items-lg-end">
@@ -130,7 +134,7 @@ const UserSettingPage = () => {
   }, []);
 
   const clickRows = (val) => {
-      // console.log(val);
+      // console.log(val);;
       const path = `${appRoot}/setting/usersetting/upduser`; 
         // console.log(path);
       history.push(path,{
@@ -157,7 +161,7 @@ const UserSettingPage = () => {
   const { handleSubmit, handleChange, values, touched, errors } = formik;
 
   useCustomLayout({ placement: MENU_PLACEMENT.Vertical, layout: LAYOUT.Boxed });
-
+  
   return (
     <>
       <HtmlHead title={title} description={description} />
