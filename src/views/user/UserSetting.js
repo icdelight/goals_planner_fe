@@ -15,7 +15,7 @@ import { DEFAULT_PATHS } from '../../config';
 
 const RowInd = function(propss){
     const {name, firstname, role, area, subarea, createDate, onClick} = propss;
-    
+     
     return (
       <Card className="mb-2">
       <Row className="g-0 h-auto sh-sm-19 sh-lg-9">
