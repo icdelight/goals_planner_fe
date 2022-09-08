@@ -26,7 +26,7 @@ const TreeViewDabeng = () => {
     const history = useHistory();
     const ref = useRef(null);
     const { currentUser, isLogin } = useSelector((state) => state.auth);
-    const [ds, getGoals] = useState('');
+    const [ds, getGoals] = useState({});
     const [isLoading, setLoading] = useState(true);
     const [nodeData, setNode] = useState(true);
     const [indData, setInd] = useState(true);
@@ -69,6 +69,8 @@ const TreeViewDabeng = () => {
               draggable: true,
               progress: undefined,
             });
+            // getGoals([]);
+            setLoading(false);
 
             // if(response.responseCode === 401) {
             //   // dispatch(setCurrentUser(''));
@@ -101,29 +103,35 @@ const TreeViewDabeng = () => {
     NodeClicked = (nodes) => {
       CompShow();
       const ind = [];
-      nodes.indikator.forEach((el) => {
-        ind.push(
-          <Row className="g-0 py-1" key={el.key}>
-          <Col xs="auto">
-            <div className="sw-3 d-inline-block d-flex justify-content-start align-items-center h-100">
-              <div className="sh-3">
-                <CsLineIcons icon="dashboard-1" className="text-primary align-top" />
+      if(nodes !== undefined && nodes && nodes.length > 0) {
+        nodes.indikator.forEach((el) => {
+          ind.push(
+            <Row className="g-0 py-1" key={el.key}>
+            <Col xs="auto">
+              <div className="sw-3 d-inline-block d-flex justify-content-start align-items-center h-100">
+                <div className="sh-3">
+                  <CsLineIcons icon="dashboard-1" className="text-primary align-top" />
+                </div>
               </div>
-            </div>
-          </Col>
-          <Col>
-            <div className="d-flex flex-column pt-0 pb-0 ps-3 pe-4 h-100 justify-content-center">
-              <div className="d-flex flex-column">
-                <div className="text-alternate mt-n1 lh-1-25" style={{fontSize: '12px'}}>{el.indikator}</div>
+            </Col>
+            <Col>
+              <div className="d-flex flex-column pt-0 pb-0 ps-3 pe-4 h-100 justify-content-center">
+                <div className="d-flex flex-column">
+                  <div className="text-alternate mt-n1 lh-1-25" style={{fontSize: '12px'}}>{el.indikator}</div>
+                </div>
               </div>
-            </div>
-          </Col>
-        </Row>
-        );
-      });
+            </Col>
+          </Row>
+          );
+        });
+      }
       // console.log(nodes.type_goals);
-      const styBack = nodes.type_goals.background !== null && nodes.type_goals.background !== "" ? nodes.type_goals.background : "";
-      const styCol = nodes.type_goals.color !== null && nodes.type_goals.color !== "" ? nodes.type_goals.color : "";
+      const styBack = null;
+      const styCol = null;
+      if(nodeData.type_goals !== undefined) {
+        styBack = nodes.type_goals.background !== null && nodes.type_goals.background !== "" ? nodes.type_goals.background : "";
+        styCol = nodes.type_goals.color !== null && nodes.type_goals.color !== "" ? nodes.type_goals.color : "";
+      }
       setStyleBack(styBack);
       setStyleCol(styCol);
       setInd(ind);

@@ -144,7 +144,7 @@ const UserSettingPage = () => {
           updatedAt: val.updatedAt,
           role: val.role,
           role_name: val.role_name,
-          firstname: val.lastName != null ? val.firstName: '',
+          firstname: val.firstName != null ? val.firstName: '',
           lastname: val.lastName != null ? val.lastName: '',
           id_area: val.id_area,
           desc_area: val.desc_area,
@@ -174,11 +174,11 @@ const UserSettingPage = () => {
               <BreadcrumbList items={breadcrumbs} />
             </div>
             <Row>
-                <Col>
-                <Card className="mb-5" body>
-                    <div className="g-0 row">
+                {/* <Col>
+                <Card className="mb-5" body> */}
+                    <div className="g-0 row mb-3">
                         <div className="d-flex align-items-start justify-content-end justify-content-lg-start col-md col-12">
-                            <form id="searchForm" className="tooltip-end-bottom me-lg-auto w-md-auto search-input-container border border-separator " onSubmit={handleSubmit}>
+                            <form id="searchForm" className="tooltip-end-bottom me-lg-auto w-md-auto search-input-container border border-separator col-12" onSubmit={handleSubmit}>
                             <div className="input-group">
                             <Form.Control id="searchField" className="" placeholder="Search" value={values.searchField} onChange={handleChange} />
                             <button id="button-addon" type="submit" className="btn btn-outline-secondary">
@@ -193,8 +193,8 @@ const UserSettingPage = () => {
                             </form> 
                         </div>
                     </div> 
-                </Card>
-                </Col>
+                {/* </Card>
+                </Col> */}
             </Row>
             {/* <section className="scroll-section" id="responsiveVertical"> */}
             <h2 className="small-title">List Users</h2>

@@ -108,34 +108,42 @@ const MyNode = ({ nodeData }) => {
 
 
  const ind = [];
- nodeData.indikator.forEach((el) => {
-  // console.log(el);
-  ind.push(
-    <Row className="g-0 py-1" key={el.key}>
-    <Col xs="auto">
-      <div className="sw-3 d-inline-block d-flex justify-content-start align-items-center h-100">
-        <div className="sh-3">
-          <CsLineIcons icon="dashboard-1" className="text-primary align-top" />
-        </div>
-      </div>
-    </Col>
-    <Col>
-      <div className="d-flex flex-column pt-0 pb-0 ps-3 pe-4 h-100 justify-content-center">
-        <div className="d-flex flex-column">
-          <div className="text-alternate mt-n1 lh-1-25" style={{fontSize: '12px'}}>{el.indikator}</div>
-        </div>
-      </div>
-    </Col>
-  </Row>
-  );
- });
- const back = nodeData.type_goals.background !== null && nodeData.type_goals.background !== "" ? nodeData.type_goals.background : "";
- const col = nodeData.type_goals.color !== null && nodeData.type_goals.color !== "" ? nodeData.type_goals.color : "";
+ if(nodeData !== undefined && nodeData) {
+  if(nodeData.indikator !== undefined) {
+    nodeData.indikator.forEach((el) => {
+      // console.log(el);
+      ind.push(
+        <Row className="g-0 py-1" key={el.key}>
+        <Col xs="auto">
+          <div className="sw-3 d-inline-block d-flex justify-content-start align-items-center h-100">
+            <div className="sh-3">
+              <CsLineIcons icon="dashboard-1" className="text-primary align-top" />
+            </div>
+          </div>
+        </Col>
+        <Col>
+          <div className="d-flex flex-column pt-0 pb-0 ps-3 pe-4 h-100 justify-content-center">
+            <div className="d-flex flex-column">
+              <div className="text-alternate mt-n1 lh-1-25" style={{fontSize: '12px'}}>{el.indikator}</div>
+            </div>
+          </div>
+        </Col>
+      </Row>
+      );
+     });
+  }
+ }
+ const back = null;
+ const col = null;
+ if(nodeData.type_goals !== undefined) {
+  back = nodeData.type_goals.background !== null && nodeData.type_goals.background !== "" ? nodeData.type_goals.background : "";
+  col = nodeData.type_goals.color !== null && nodeData.type_goals.color !== "" ? nodeData.type_goals.color : "";
+ }
 //  console.log(back);
 //  console.log(col);
 
   return (
-     <div className="org-node-container" key={nodeData.id_goals} onClick={CompShow}>
+     <div className="org-node-container" key={nodeData.id_goals != undefined ? nodeData.id_goals : ''} onClick={CompShow}>
         <div  className="sw-40 hover-scale-up cursor-pointer card" >
             <div className="h-200 py-3 align-items-top card-body" style={{backgroundColor:back, color:col, borderRadius:10}}>
               <div className="g-0 h-200 align-items-top row">
@@ -151,13 +159,13 @@ const MyNode = ({ nodeData }) => {
                   <div className="col">
                     <div className="gx-2 d-flex align-content-center row">
                       <div className="col-14 d-flex col-14">
-                        <div className="d-flex align-items-center lh-2-25 " style={{fontSize: '9px'}}>PIC : {nodeData.pic_goals}</div>
+                        <div className="d-flex align-items-center lh-2-25 " style={{fontSize: '9px'}}>PIC : {nodeData.pic_goals != undefined ? nodeData.pic_goals: ''}</div>
                       </div>
                       <div className="col-14 d-flex col-14">
-                        <div className="cta-2" style={{fontSize: '14px',color:col,}} >{nodeData.title_goals}</div>
+                        <div className="cta-2" style={{fontSize: '14px',color:col,}} >{nodeData.title_goals != undefined ? nodeData.title_goals : ''}</div>
                       </div>
                       <div className="col-14 d-flex col-14">
-                        <div className="d-flex align-items-center lh-1-25 clamp">{nodeData.desc_goals}</div>
+                        <div className="d-flex align-items-center lh-1-25 clamp">{nodeData.desc_goals != undefined ? nodeData.desc_goals : ''}</div>
                       </div>
                     </div>
                   </div> 

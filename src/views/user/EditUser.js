@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useHistory } from 'react-router-dom';
 import { Button, Row, Col, Card, Nav, Form, InputGroup, Dropdown } from 'react-bootstrap';
+import Autosuggest from 'react-autosuggest';
 import DatePicker from 'react-datepicker';
 import { useSelector } from 'react-redux';
 import * as Yup from 'yup';
@@ -13,6 +14,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { toast } from 'react-toastify';
 import { DEFAULT_PATHS } from '../../config';
+import { GetAllArea } from '../../services/userservice';
 import { LAYOUT } from '../../constants';
 
 const EditUser = (props) => {
@@ -21,6 +23,7 @@ const EditUser = (props) => {
     const states = props;
     const user = states.location.state;
     const ref = useRef(null);
+    const [isChecked, setIsChecked] = useState(null);
 
     const title = 'Update Node Page';
     const description = 'An page for update the tree view node.';
@@ -29,7 +32,90 @@ const EditUser = (props) => {
         { to: `setting/usersetting`, text: 'User Setting' },
     ];
 
-    // console.log(user);
+    const { currentUser, isLogin } = useSelector((state) => state.auth);
+    const [valueState, setValueState] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
+    const [data, setData] = useState(null);
+    const [isLoading, setLoading] = useState(true);
+
+    const getAllArea = () => {
+        setLoading(true);
+        let result = null;
+        const GetAreas  =  GetAllArea(currentUser.token).then(function(response) {
+            if(response) {
+            // console.log(response);
+            if(response.responseCode === 200) {
+                toast.success(response.responseDesc, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+                // console.log(response.responseData);
+                result = response.responseData;
+                // console.log(result);
+                setData(result);
+                setLoading(false);
+            }else{  
+                toast.error(response.responseDesc, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+
+                // if(response.responseCode === 401) {
+                //   // dispatch(setCurrentUser(''));
+                //   const path = `${appRoot}/login`; 
+                //   history.push(path);
+                // }
+            }
+            }
+        });
+    };
+
+    useEffect(() => {
+        getAllArea();
+    }, []);
+
+    const escapeRegexCharacters = (str) => {
+        return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    };
+
+    const getSuggestions = (value) => {
+        const escapedValue = escapeRegexCharacters(value.trim());
+        if (escapedValue === '') {
+            return [];
+        }
+        const regex = new RegExp(`^${escapedValue}`, 'i');
+            return data.filter((product) => regex.test(product.name));
+    };
+
+    const changeInput = (event, { newValue }) => {
+        setValueState(newValue);
+    };
+
+    const onSuggestionsFetchRequested = ({ value: val }) => {
+        setSuggestions(getSuggestions(val));
+    };
+
+    const onSuggestionsClearRequested = () => {
+        setSuggestions([]);
+    };
+
+    const getSuggestionValue = (suggestion) => suggestion.name;
+
+    const renderSuggestion = (suggestion) => <div>{suggestion.name}</div>;
+
+    const renderInputComponent = (props) => <input {...props} className="form-control" />;
+
+    // console.log(user); 
     const initialValues = { 
         name: user.name, 
         flag_active: user.flag_active,
@@ -42,7 +128,7 @@ const EditUser = (props) => {
         id_area: user.id_area,
         desc_area: user.desc_area,
         id_sub_area: user.id_sub_area,
-        desc_sub_area: user.desc_sub_area, 
+        desc_sub_area: user.desc_sub_area,
     };
     const validationSchema = Yup.object().shape({
         id: Yup.string().required('Id Title is required'),
@@ -59,6 +145,9 @@ const EditUser = (props) => {
         // console.log(path);
         history.push(path);
     };
+    const handleChecked = () => {
+        setIsChecked(!isChecked);
+    }
 
     const formik = useFormik({ initialValues, validationSchema, onSubmit });
     const { handleSubmit, handleChange, values, touched, errors } = formik;
@@ -140,7 +229,30 @@ const EditUser = (props) => {
                                     <Form.Label className="col-form-label">Flag Active</Form.Label>
                                 </Col>
                                 <Col sm="8" md="9" lg="10">
-                                    <Form.Check ref={ref} type="checkbox" className="mt-2" label="active" id="status" name="status"/>
+                                    <Form.Check ref={ref} type="checkbox" className="mt-2" label="active" id="status" name="status" checked={isChecked !== null ? isChecked : values.flag_active} onChange={() => handleChecked()}/>
+                                    {errors.status  && touched.status && <div className="d-block invalid-tooltip">{errors.status}</div>}
+                                </Col>
+                            </Row>
+                            <Row className="mb-2 filled tooltip-end-top">
+                                <Col lg="2" md="3" sm="4">
+                                    <Form.Label className="col-form-label">Flag Active</Form.Label>
+                                </Col>
+                                <Col sm="8" md="9" lg="10">
+                                    <Autosuggest
+                                        suggestions={suggestions}
+                                        onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+                                        onSuggestionsClearRequested={onSuggestionsClearRequested}
+                                        getSuggestionValue={getSuggestionValue}
+                                        renderSuggestion={renderSuggestion}
+                                        focusInputOnSuggestionClick={false}
+                                        inputProps={{
+                                            placeholder: 'Breads',
+                                            value: valueState,
+                                            onChange: changeInput,
+                                        }}
+                                        renderInputComponent={renderInputComponent}
+                                    />
+                                    
                                     {errors.status  && touched.status && <div className="d-block invalid-tooltip">{errors.status}</div>}
                                 </Col>
                             </Row>
