@@ -6,7 +6,7 @@ import { MENU_PLACEMENT } from 'constants.js';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { layoutShowingNavMenu } from 'layout/layoutSlice';
 import { useHistory } from "react-router-dom";
-import authReducer, { setCurrentUser } from 'auth/authSlice';
+import { setCurrentUser } from 'auth/authSlice';
 import { DEFAULT_PATHS } from '../../config';
 
 const NavUserMenuDropdownToggle = React.memo(

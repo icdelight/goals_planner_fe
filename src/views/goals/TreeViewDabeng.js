@@ -12,10 +12,10 @@ import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
-import MyNode from "../components/node/mynode";
-import { TreeView } from '../services/treeservice';
-import { Signup } from '../services/signin';
-import { DEFAULT_PATHS } from '../config';
+import MyNode from "../../components/node/mynode";
+import { TreeView } from '../../services/treeservice';
+import { Signup } from '../../services/signin';
+import { DEFAULT_PATHS } from '../../config';
 
 
 let handleClick = null;
@@ -47,12 +47,7 @@ const TreeViewDabeng = () => {
           if(response.responseCode === 200) {
             toast.success(response.responseDesc, {
               position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
+              autoClose: 1000,
             });
             // console.log(response.responseData);
             result = response.responseData;
@@ -62,12 +57,7 @@ const TreeViewDabeng = () => {
           }else{  
             toast.error(response.responseDesc, {
               position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
+              autoClose: 1000,
             });
             // getGoals([]);
             setLoading(false);
@@ -126,9 +116,9 @@ const TreeViewDabeng = () => {
         });
       }
       // console.log(nodes.type_goals);
-      const styBack = null;
-      const styCol = null;
-      if(nodeData.type_goals !== undefined) {
+      let styBack = null;
+      let styCol = null;
+      if(nodeData.type_goals !== undefined && nodeData.type_goals !== '' && nodeData.type_goals !== null) {
         styBack = nodes.type_goals.background !== null && nodes.type_goals.background !== "" ? nodes.type_goals.background : "";
         styCol = nodes.type_goals.color !== null && nodes.type_goals.color !== "" ? nodes.type_goals.color : "";
       }

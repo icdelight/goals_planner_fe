@@ -1,17 +1,17 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useHistory } from 'react-router-dom';
-import { Button, Row, Col, Card, Nav, Form, InputGroup, Dropdown } from 'react-bootstrap';
+import { Button, Row, Col, Card, Form, InputGroup, Dropdown } from 'react-bootstrap';
 import Autosuggest from 'react-autosuggest';
-import DatePicker from 'react-datepicker';
+// import DatePicker from 'react-datepicker';
 import { useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { useFormik, Formik, Field } from 'formik';
 import HtmlHead from 'components/html-head/HtmlHead';
 import BreadcrumbList from 'components/breadcrumb-list/BreadcrumbList';
-import CsLineIcons from 'cs-line-icons/CsLineIcons';
-import useCustomLayout from 'hooks/useCustomLayout';
+// import CsLineIcons from 'cs-line-icons/CsLineIcons';
+// import useCustomLayout from 'hooks/useCustomLayout';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useWindowSize } from 'hooks/useWindowSize';
+// import { useWindowSize } from 'hooks/useWindowSize';
 import { toast } from 'react-toastify';
 import { DEFAULT_PATHS } from '../../config';
 import { GetAllArea } from '../../services/userservice';
@@ -47,12 +47,7 @@ const EditUser = (props) => {
             if(response.responseCode === 200) {
                 toast.success(response.responseDesc, {
                     position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
+                    autoClose: 1000,
                 });
                 // console.log(response.responseData);
                 result = response.responseData;
@@ -62,12 +57,7 @@ const EditUser = (props) => {
             }else{  
                 toast.error(response.responseDesc, {
                     position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
+                    autoClose: 1000,
                 });
 
                 // if(response.responseCode === 401) {
@@ -257,14 +247,14 @@ const EditUser = (props) => {
                                 </Col>
                             </Row>
                             <Row className="mt-5">
-                                    <Col lg="2" md="3" sm="4" />
-                                    <Col sm="8" md="9" lg="10">
-                                        <div className="btn-group">
-                                            <Button type="submit" variant="outline-primary" className="mb-1">Submit</Button>
-                                            <Button id="backButton" name="backButton" type="button" variant="outline-warning" className="mb-1" onClick={() => handleClickBackButton()}>Back</Button>
-                                        </div>
-                                    </Col>
-                                </Row>
+                                <Col lg="2" md="3" sm="4" />
+                                <Col sm="8" md="9" lg="10">
+                                    <div className="btn-group">
+                                        <Button type="submit" variant="outline-primary" className="mb-1">Submit</Button>
+                                        <Button id="backButton" name="backButton" type="button" variant="outline-warning" className="mb-1" onClick={() => handleClickBackButton()}>Back</Button>
+                                    </div>
+                                </Col>
+                            </Row>
                         </Card.Body>
                     </Card>
                     </Form>

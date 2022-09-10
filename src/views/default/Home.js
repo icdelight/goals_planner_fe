@@ -12,7 +12,7 @@ const Home = () => {
     const title = 'Home Page';
     const description = 'An empty home page with a boxed layout.';
     const breadcrumbs = [{ to: '', text: 'Home' }];
-
+    // console.log(currentUser);
     useCustomLayout({ placement: MENU_PLACEMENT.Vertical, layout: LAYOUT.Boxed });
     return (
         <>

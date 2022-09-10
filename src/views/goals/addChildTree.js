@@ -1,22 +1,21 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState } from "react";
 import { useHistory } from 'react-router-dom';
-import { Button, Row, Col, Card, Nav, Form, InputGroup, Dropdown } from 'react-bootstrap';
+import { Button, Row, Col, Card, Form, InputGroup } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
-import Select from 'react-select';
 import { useSelector } from 'react-redux';
 import * as Yup from 'yup';
-import { useFormik, Formik, Field } from 'formik';
+import { useFormik } from 'formik';
 import HtmlHead from 'components/html-head/HtmlHead';
 import BreadcrumbList from 'components/breadcrumb-list/BreadcrumbList';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import useCustomLayout from 'hooks/useCustomLayout';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useWindowSize } from 'hooks/useWindowSize';
+// import { useWindowSize } from 'hooks/useWindowSize';
 import { toast } from 'react-toastify';
 import { BlockPicker } from "react-color";
-import { EditNode } from '../services/treeservice';
-import { DEFAULT_PATHS } from '../config';
-import { LAYOUT } from '../constants';
+import { AddChildTreeService } from '../../services/treeservice';
+import { DEFAULT_PATHS } from '../../config';
+import { LAYOUT } from '../../constants';
 
 const RowInd = function(propss){
     const {value, onChange, onDelete} = propss;
@@ -36,39 +35,36 @@ const RowInd = function(propss){
     );
 }
 
-const UpdNode = (props) => {
+const AddChildTree = (props) => {
     const appRoot = DEFAULT_PATHS.APP.endsWith('/') ? DEFAULT_PATHS.APP.slice(1, DEFAULT_PATHS.APP.length) : DEFAULT_PATHS.APP;
     const history = useHistory();
     const states = props;
     const parent = states.location.state;
     // console.log(parent);
     // console.log(parent.title);
-    // console.log(rowsId);
     const [startDate, setStartDate] = useState(new Date());
     const [dueDate, setDueDate] = useState(new Date());
-
     useCustomLayout({ layout: LAYOUT.Boxed });
-    const { width } = useWindowSize();
-    const ref = useRef(null);
+    // const { width } = useWindowSize();
     const { currentUser, isLogin } = useSelector((state) => state.auth);
-    const styBack = parent.typeGoals.background !== null && parent.typeGoals.background !== "" ? parent.typeGoals.background : "";
-    const [blockPickerColor, setBlockPickerColor] = useState(styBack);
-    const { themeValues } = useSelector((state) => state.settings);
-    const lgBreakpoint = parseInt(themeValues.lg.replace('px', ''), 10);
+    const [blockPickerColor, setBlockPickerColor] = useState("#37d67a");
 
-    const indik = parent.indikator !== null && parent.indikator !== "" ? parent.indikator : "";
+    const { themeValues } = useSelector((state) => state.settings);
+    // const lgBreakpoint = parseInt(themeValues.lg.replace('px', ''), 10);
+
+    // const indik = parent.indikator !== null && parent.indikator !== "" ? parent.indikator : "";
     const rowsId = [];
     // console.log(indik);
-    indik.forEach((el) => {
-        const obj = {value:el.indikator};
-        rowsId.push(obj);
-    });
+    // indik.forEach((el) => {
+    //     const obj = {value:el.indikator};
+    //     rowsId.push(obj);
+    // });
     // setRowState(rowsId);
 
     const [rowState, setRowState] = useState(rowsId);
 
-    const title = 'Update Node Page';
-    const description = 'An page for update the tree view node.';
+    const title = 'Add Child Page';
+    const description = 'An page for adding child the tree view node.';
     const breadcrumbs = [
         { to: ``, text: 'Home' },
         { to: `tree/treeadmf`, text: 'Tree Admin' },
@@ -107,16 +103,22 @@ const UpdNode = (props) => {
         setRowState(rows);
     }
 
+    const validationSchema = Yup.object().shape({
+        childTitle: Yup.string().required('Title is required'),
+        childDesc: Yup.string().required('Description is required'),
+        // startDate: Yup.string().required('Start date is required'),
+        // dueDate: Yup.string().required('Due date is required'),
+    });
+
+    const initialValues = { childTitle: '', childDesc: '', startDate: '', dueDate: '', backCol: blockPickerColor};
+
     const onSubmit = (values) => {
-        let act = "0";
+        console.log('submit form', values);
         let textCol = "#000";
-        const ind = [];
+        // const ind = [];
         if(blockPickerColor === "#697689" || blockPickerColor === "#555555") {
             textCol = "#fff";
         }
-        if (ref.current.checked) {
-            act = "1";
-        } 
         const type = {
             "background" : blockPickerColor,
             "color": textCol,
@@ -126,53 +128,31 @@ const UpdNode = (props) => {
             const obj = {key:idx.toString(), indikator:el.value};
             indRes.push(obj);
         });
-        // console.log('submit form', JSON.stringify(indRes));
-        console.log('submit form', values);
-        const updNode  =  EditNode(currentUser.token, values.id, values.title, values.desc, currentUser.email, startDate, dueDate, act, type, JSON.stringify(indRes)).then(function(response) {
+        AddChildTreeService(currentUser.token, values.childTitle, values.childDesc, currentUser.email, startDate, dueDate, parent.id, type, JSON.stringify(indRes)).then(function(response) {
         //   console.log(response);
           if(response) {
             if(response.responseCode === 200) {
               toast.success(response.responseDesc, {
                 position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
+                autoClose: 1000,
               });
               const path = `${appRoot}/tree/treeadmf`; 
               history.push(path);
             }else{  
               toast.error(response.responseDesc, {
                 position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
+                autoClose: 1000,
               });
             }
           }
         });   
     };
 
-    const validationSchema = Yup.object().shape({
-        id: Yup.string().required('Id Title is required'),
-        title: Yup.string().required('Title is required'),
-        desc: Yup.string().required('Description is required'),
-        // startDate: Yup.string().required('Start date is required'),
-        // dueDate: Yup.string().required('Due date is required'),
-    });
-
-    const initialValues = { id: parent.id, title: parent.title, desc: parent.desc, startDate: parent.startDate, dueDate: parent.dueDate, status: '', backCol: blockPickerColor};
-
     const formik = useFormik({ initialValues, validationSchema, onSubmit });
     const { handleSubmit, handleChange, values, touched, errors } = formik;
 
     return (
-        <div className="App" style={{  }}>
+        <div className="App" style={{ }}>
             <HtmlHead title={title} description={description} />
             <Row>
                 <Col>
@@ -187,35 +167,42 @@ const UpdNode = (props) => {
             </Row>
             <Row>
                 <Col>
-                    <h2 className="small-title">Node Info</h2>
+                    <h2 className="small-title">Parent Info</h2>
+
                     <Form id="loginForm" className="tooltip-end-bottom" onSubmit={handleSubmit}>
+                    <Card className="mb-3">
+                        <Card.Body className="p-3">
+                                <Row>
+                                    <Col lg="2" md="3" sm="4">
+                                        <Form.Label className="col-form-label">Title Parent</Form.Label>
+                                    </Col>
+                                    <Col sm="8" md="9" lg="10">
+                                        <Form.Label type="text" className="col-form-label" text={parent.title} name="parentTitle" id="parentTitle" value={parent.title} defaultValue={parent.title} readOnly={1}>{parent.title}</Form.Label>
+                                        {errors.parentTitle  && touched.parentTitle && <div className="d-block invalid-tooltip">{errors.parentTitle}</div>}
+                                        <Form.Label type="text" name="parentId" id="parentId" defaultValue={parent.id} value={parent.id} readOnly={1} hidden={1}/>
+                                    </Col>
+                                </Row>
+                        </Card.Body>
+                    </Card>
+                    <h2 className="small-title">Child Info</h2>
                     <Card className="mb-2">
                         <Card.Body className="p-3">
                                 <Row className="mb-2 filled tooltip-end-top">
                                     <Col lg="2" md="3" sm="4">
-                                        <Form.Label className="col-form-label">Id Title</Form.Label>
+                                        <Form.Label className="col-form-label">Title Child</Form.Label>
                                     </Col>
                                     <Col sm="8" md="9" lg="10">
-                                        <Form.Control type="text" name="title" id="title" value={values.id}  onChange={handleChange} readOnly={1}/>
-                                        {errors.id  && touched.id && <div className="d-block invalid-tooltip">{errors.id}</div>}
+                                        <Form.Control type="text" name="childTitle" id="childTitle" values={values.childTitle} value={values.childTitle} onChange={handleChange}/>
+                                        {errors.childTitle  && touched.childTitle && <div className="d-block invalid-tooltip">{errors.childTitle}</div>}
                                     </Col>
                                 </Row>
                                 <Row className="mb-2 filled tooltip-end-top">
                                     <Col lg="2" md="3" sm="4">
-                                        <Form.Label className="col-form-label">Title</Form.Label>
+                                        <Form.Label className="col-form-label">Description Child</Form.Label>
                                     </Col>
                                     <Col sm="8" md="9" lg="10">
-                                        <Form.Control type="text" name="title" id="title" value={values.title}  onChange={handleChange}/>
-                                        {errors.title  && touched.title && <div className="d-block invalid-tooltip">{errors.title}</div>}
-                                    </Col>
-                                </Row>
-                                <Row className="mb-2 filled tooltip-end-top">
-                                    <Col lg="2" md="3" sm="4">
-                                        <Form.Label className="col-form-label">Description</Form.Label>
-                                    </Col>
-                                    <Col sm="8" md="9" lg="10">
-                                        <Form.Control type="text" name="desc" id="desc" value={values.desc}  onChange={handleChange}/>
-                                        {errors.desc  && touched.desc && <div className="d-block invalid-tooltip">{errors.desc}</div>}
+                                        <Form.Control type="text" name="childDesc" id="childDesc" values={values.childDesc} value={values.childDesc} onChange={handleChange}/>
+                                        {errors.childDesc  && touched.childDesc && <div className="d-block invalid-tooltip">{errors.childDesc}</div>}
                                     </Col>
                                 </Row>
                                 <Row className="mb-2 filled tooltip-end-top">
@@ -224,7 +211,7 @@ const UpdNode = (props) => {
                                     </Col>
                                     <Col sm="4" md="4" lg="4">
                                         {/* <Form.Control type="text" name="startDate" id="startDate" defaultValue=""/> */}
-                                        <DatePicker className="form-control" name="startDates" id="startDates" value={startDate === "" ? parent.startDate : startDate} selected={startDate} onChange={(date) => setStartDate(date)} />
+                                        <DatePicker className="form-control" name="startDates" id="startDates" value={startDate} values={startDate} selected={startDate} onChange={(date) => setStartDate(date)} />
                                         {errors.startDate  && touched.startDate && <div className="d-block invalid-tooltip">{errors.startDate}</div>}
                                     </Col>
                                     <Col lg="2" md="2" sm="2">
@@ -232,17 +219,8 @@ const UpdNode = (props) => {
                                     </Col>
                                     <Col sm="4" md="4" lg="4" >
                                         {/* <Form.Control type="text" name="dueDate" id="dueDate" defaultValue=""/> */}
-                                        <DatePicker className="form-control" name="dueDates" id="dueDates" value={dueDate === "" ? parent.dueDate : dueDate} selected={dueDate} onChange={(date) => setDueDate(date)} />
+                                        <DatePicker className="form-control" name="dueDates" id="dueDates" value={dueDate} values={dueDate} selected={dueDate} onChange={(date) => setDueDate(date)} />
                                         {errors.dueDate  && touched.dueDate && <div className="d-block invalid-tooltip">{errors.dueDate}</div>}
-                                    </Col>
-                                </Row>
-                                <Row className="mb-3">
-                                    <Col lg="2" md="3" sm="4">
-                                        <Form.Label className="col-form-label">Status</Form.Label>
-                                    </Col>
-                                    <Col sm="8" md="9" lg="10">
-                                        <Form.Check ref={ref} type="checkbox" className="mt-2" label="active" id="status" name="status"/>
-                                        {errors.status  && touched.status && <div className="d-block invalid-tooltip">{errors.status}</div>}
                                     </Col>
                                 </Row>
                                 <Row className="mb-2 filled tooltip-end-top">
@@ -304,7 +282,7 @@ const UpdNode = (props) => {
                                     <Col sm="8" md="9" lg="10">
                                         <div className="btn-group">
                                             <Button type="submit" variant="outline-primary" className="mb-1">Submit</Button>
-                                            <Button id="backButton" name="backButton" type="button" variant="outline-warning" className="mb-1" onClick={() => handleClickBackButton()}>Back</Button>
+                                            <Button id="backButton" name="backButton" type="button" variant="outline-warning" className="mb-1" onClick={handleClickBackButton}>Back</Button>
                                         </div>
                                     </Col>
                                 </Row>
@@ -317,4 +295,4 @@ const UpdNode = (props) => {
     );
 }
 
-export default UpdNode;
+export default AddChildTree;

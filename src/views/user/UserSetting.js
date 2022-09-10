@@ -70,7 +70,7 @@ const UserSettingPage = () => {
   const { currentUser, isLogin } = useSelector((state) => state.auth);
 
   const rowsId = [];
-  const [rowState, setRowState] = useState(rowsId);
+  // const [rowState, setRowState] = useState(rowsId);
   const [ds, getUsers] = useState(rowsId);
   const [isLoading, setLoading] = useState(true);
 
@@ -90,33 +90,22 @@ const UserSettingPage = () => {
       
     setLoading(true);
     let result = null;
-    const Signups  =  GetAllUsers(currentUser.token).then(function(response) {
+    GetAllUsers(currentUser.token).then(function(response) {
       if(response) {
-        console.log(response);
+        // console.log(response);
         if(response.responseCode === 200) {
           toast.success(response.responseDesc, {
             position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
+            autoClose: 1000,
           });
           // console.log(response.responseData);
           result = response.responseData;
-          console.log(result);
           getUsers(result);
           setLoading(false);
         }else{  
           toast.error(response.responseDesc, {
             position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
+            autoClose: 1000,
           });
 
           // if(response.responseCode === 401) {
@@ -161,40 +150,45 @@ const UserSettingPage = () => {
   const { handleSubmit, handleChange, values, touched, errors } = formik;
 
   useCustomLayout({ placement: MENU_PLACEMENT.Vertical, layout: LAYOUT.Boxed });
+
+  if (isLoading) {
+    return <div className="App">Loading...</div>;
+  }
   
   return (
     <>
       <HtmlHead title={title} description={description} />
       <Row>
         <Col>
-          {/* Title Start */}
           <section className="scroll-section" id="title">
-            <div className="page-title-container">
-              <h1 className="mb-0 pb-0 display-4">{title}</h1>
-              <BreadcrumbList items={breadcrumbs} />
-            </div>
-            <Row>
-                {/* <Col>
-                <Card className="mb-5" body> */}
-                    <div className="g-0 row mb-3">
-                        <div className="d-flex align-items-start justify-content-end justify-content-lg-start col-md col-12">
-                            <form id="searchForm" className="tooltip-end-bottom me-lg-auto w-md-auto search-input-container border border-separator col-12" onSubmit={handleSubmit}>
-                            <div className="input-group">
-                            <Form.Control id="searchField" className="" placeholder="Search" value={values.searchField} onChange={handleChange} />
-                            <button id="button-addon" type="submit" className="btn btn-outline-secondary">
-                                <span className="search-magnifier-icon pe-none">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="cs-icon search ">
-                                    <circle cx="9" cy="9" r="7"> </circle>
-                                    <path d="M14 14L17.5 17.5"> </path>
-                                    </svg>
-                                </span>
-                            </button>
-                            </div>
-                            </form> 
+            <Row className="g-0">
+              {/* Title Start */}
+              <Col xs="auto" className="mb-2 mb-md-0 me-auto">
+                <div className="page-title-container">
+                  <h1 className="mb-0 pb-0 display-4">{title}</h1>
+                  <BreadcrumbList items={breadcrumbs} />
+                </div>
+              </Col>
+              <div className="w-100 d-md-none" />
+              <Col xs="12" sm="6" md="auto" className="d-flex align-items-start justify-content-end order-3 order-sm-2">
+                <div className="g-0 row mb-3">
+                    <div className="d-flex align-items-start justify-content-end justify-content-lg-start col-md col-12">
+                        <form id="searchForm" className="tooltip-end-bottom me-lg-auto w-md-auto search-input-container border border-separator col-12" onSubmit={handleSubmit}>
+                        <div className="input-group">
+                        <Form.Control id="searchField" className="" placeholder="Search" value={values.searchField} onChange={handleChange} />
+                        <button id="button-addon" type="submit" className="btn btn-outline-secondary">
+                            <span className="search-magnifier-icon pe-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="cs-icon search ">
+                                <circle cx="9" cy="9" r="7"> </circle>
+                                <path d="M14 14L17.5 17.5"> </path>
+                                </svg>
+                            </span>
+                        </button>
                         </div>
-                    </div> 
-                {/* </Card>
-                </Col> */}
+                        </form> 
+                    </div>
+                </div> 
+              </Col>
             </Row>
             {/* <section className="scroll-section" id="responsiveVertical"> */}
             <h2 className="small-title">List Users</h2>
@@ -202,19 +196,19 @@ const UserSettingPage = () => {
               <Col>
                 <div className="display-data-Container">
                     {ds.map((row, idx) => {
-                        delete row.pass;
-                        return(
-                            <RowInd 
-                              key={idx}
-                              name={row.name}
-                              firstname={row.firstName}
-                              role={row.role_name}
-                              area={row.desc_area}
-                              subarea={row.desc_sub_area}
-                              createDate={row.createdAt}
-                              onClick={(e) => clickRows(row)}
-                            /> 
-                        )
+                      delete row.pass;
+                      return(
+                        <RowInd 
+                          key={idx}
+                          name={row.name}
+                          firstname={row.firstName}
+                          role={row.role_name}
+                          area={row.desc_area}
+                          subarea={row.desc_sub_area}
+                          createDate={row.createdAt}
+                          onClick={(e) => clickRows(row)}
+                        /> 
+                      )
                     })
                     }
                 </div>

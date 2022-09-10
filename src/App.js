@@ -11,7 +11,7 @@ import RouteIdentifier from 'routing/components/RouteIdentifier';
 import { getRoutes } from 'routing/helper';
 import routesAndMenuItems from 'routes.js';
 import Loading from 'components/loading/Loading';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 
 const App = () => {
   const { currentUser, isLogin } = useSelector((state) => state.auth);
@@ -22,13 +22,13 @@ const App = () => {
       <Layout>
         <ToastContainer
         position="top-right"
-        autoClose={5000}
+        autoClose={2000}
         hideProgressBar={false}
         newestOnTop
         closeOnClick
         rtl={false}
-        pauseOnFocusLoss
-        draggable
+        // pauseOnFocusLoss
+        // draggable
         pauseOnHover
         />
         <RouteIdentifier routes={routes} fallback={<Loading />} />
