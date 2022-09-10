@@ -25,18 +25,13 @@ const Login = () => {
   const initialValues = { email: '', password: '' };
   const onSubmit = (values) => {
     // console.log('submit form', values);
-    const signin  =  Signin(values.email, values.password, dispatch).then(function(response) {
+    Signin(values.email, values.password, dispatch).then(function(response) {
       // console.log(response);
       if(response) {
         if(response.responseCode === 200) {
           toast.success(response.responseDesc, {
             position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
+            autoClose: 1000,
           });
           const path = `home`; 
           history.push(path);
@@ -44,11 +39,6 @@ const Login = () => {
           toast.error(response.responseDesc, {
             position: "top-right",
             autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
           });
         }
       }

@@ -7,9 +7,9 @@ import useCustomLayout from 'hooks/useCustomLayout';
 import { MENU_PLACEMENT, LAYOUT } from 'constants.js';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
-import { Signup } from '../services/signin';
-import MyNode from "../components/node/mynode";
-import { TreeView } from '../services/treeservice';
+import { Signup } from '../../services/signin';
+import MyNode from "../../components/node/mynode";
+import { TreeView } from '../../services/treeservice';
 
 
 const title = 'Tree Admin Page';
@@ -35,24 +35,14 @@ export default class TreeAdmin extends Component {
               if(response.responseCode === 200) {
                 toast.success(response.responseDesc, {
                   position: "top-right",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
+                  autoClose: 1000,
                 });
                 // getGoals(response.responseData);
                 this.setState({goals: response.responseData})
               }else{  
                 toast.error(response.responseDesc, {
                   position: "top-right",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
+                  autoClose: 1000,
                 });
               }
             }

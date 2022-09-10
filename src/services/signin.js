@@ -1,7 +1,6 @@
-import React from 'react';
+
 import axios from 'axios';
-import authReducer, { setCurrentUser } from 'auth/authSlice';
-import { LAYOUT, MENU_BEHAVIOUR, NAV_COLOR, MENU_PLACEMENT, RADIUS, THEME_COLOR, USER_ROLE } from 'constants.js';
+import { setCurrentUser } from 'auth/authSlice';
 import { URL_SERVICE } from 'config.js';
 
 let response = {
@@ -9,11 +8,11 @@ let response = {
     responseDesc : "",
     responseData : null,
 };
-const header = {
-    headers: {
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-    }
-};
+// const header = {
+//     headers: {
+//         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+//     }
+// };
 
 export const Signin = async (email,password,dispatch) => {
     const result = await axios.post( `${URL_SERVICE}auth/signin`, { user: email, pass: password })

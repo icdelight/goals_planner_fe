@@ -43,7 +43,8 @@ export const MENU_BEHAVIOUR = {
 };
 
 export const USER_ROLE = {
-  Admin: 'superadmin',
+  SuperAdmin: 'superadmin',
+  Admin: 'admin',
   Editor: 'editor',
   Viewer: 'viewer'
 };

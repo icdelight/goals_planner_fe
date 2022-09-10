@@ -1,98 +1,95 @@
-import React, { Component,useState, setState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from "prop-types";
 import "./mynode.css";
-import { Modal, Button, Form , Row, Col, Card } from "react-bootstrap";
-import Offcanvas from 'react-bootstrap/Offcanvas';
+import { Row, Col, Card } from "react-bootstrap";
+// import Offcanvas from 'react-bootstrap/Offcanvas';
 // import "bootstrap/dist/css/bootstrap.css";
-import styled from "styled-components";
-import { Link } from 'react-router-dom';
-import CardHeader from 'react-bootstrap/esm/CardHeader';
+// import styled from "styled-components";
+// import { Link } from 'react-router-dom';
+// import CardHeader from 'react-bootstrap/esm/CardHeader';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 
-const DropDownContainerNew = styled("div")`
-  width: 200px;
-  margin: 0 auto;
- 
-`;
+// const DropDownContainerNew = styled("div")`
+//   width: 200px;
+//   margin: 0 auto;
+// `;
 
-const DropDownContainerEdit = styled("div")`
-  width: 200px;
-  margin: 0 auto;
- 
-`;
+// const DropDownContainerEdit = styled("div")`
+//   width: 200px;
+//   margin: 0 auto;
+// `;
 
-const DropDownHeaderNew = styled("div")`
-  margin-bottom: 0.8em;
-  padding: 0.4em 2em 0.4em 1em;
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
-  font-weight: 500;
-  font-size: 15px;
-  color: #ffffff;
-  background: #6593F5;
-  border-radius:5px;
-`;
+// const DropDownHeaderNew = styled("div")`
+//   margin-bottom: 0.8em;
+//   padding: 0.4em 2em 0.4em 1em;
+//   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
+//   font-weight: 500;
+//   font-size: 15px;
+//   color: #ffffff;
+//   background: #6593F5;
+//   border-radius:5px;
+// `;
 
-const DropDownHeaderEdit = styled("div")`
-  margin-bottom: 0.8em;
-  padding: 0.4em 2em 0.4em 1em;
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
-  font-weight: 500;
-  font-size: 15px;
-  color: #6593F5;
-  background: #ffffff;
-  border-radius:5px;
-  border-color: #6593f5;
-  border-width: 2px;
-  border-style: solid;
+// const DropDownHeaderEdit = styled("div")`
+//   margin-bottom: 0.8em;
+//   padding: 0.4em 2em 0.4em 1em;
+//   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
+//   font-weight: 500;
+//   font-size: 15px;
+//   color: #6593F5;
+//   background: #ffffff;
+//   border-radius:5px;
+//   border-color: #6593f5;
+//   border-width: 2px;
+//   border-style: solid;
+// `;
 
-`;
+// const DropDownListContainerNew = styled("div")``;
+// const DropDownListContainerEdit = styled("div")``;
 
-const DropDownListContainerNew = styled("div")``;
-const DropDownListContainerEdit = styled("div")``;
+// const DropDownListNew = styled("ul")`
+//   padding:0;
+//   margin-bottom: 40px;
+//   background: #ffffff;
+//   border: 2px solid #e5e5e5;
+//   box-sizing: border-box;
+//   color: #646464;
+//   font-size: 0px;
+//   font-weight: 400;
+//   &:first-child {
+//     padding-top: 0.8em;
+//   }
+//   border-radius:5px;
+// `;
 
-const DropDownListNew = styled("ul")`
-  padding:0;
-  margin-bottom: 40px;
-  background: #ffffff;
-  border: 2px solid #e5e5e5;
-  box-sizing: border-box;
-  color: #646464;
-  font-size: 0px;
-  font-weight: 400;
-  &:first-child {
-    padding-top: 0.8em;
-  }
-  border-radius:5px;
-`;
+// const DropDownListEdit = styled("ul")`
+//  padding:0;
+//   margin-bottom: 40px;
+//   background: #ffffff;
+//   border: 2px solid #e5e5e5;
+//   box-sizing: border-box;
+//   color: #646464;
+//   font-size: 0px;
+//   font-weight: 400;
+//   &:first-child {
+//     padding-top: 0.8em;
+//   }
+//   border-radius:5px;
+// `;
 
-const DropDownListEdit = styled("ul")`
- padding:0;
-  margin-bottom: 40px;
-  background: #ffffff;
-  border: 2px solid #e5e5e5;
-  box-sizing: border-box;
-  color: #646464;
-  font-size: 0px;
-  font-weight: 400;
-  &:first-child {
-    padding-top: 0.8em;
-  }
-  border-radius:5px;
-`;
+// const ListItemNew = styled("li")`
+//   list-style: none;
+//   padding:6px;
+//   margin-bottom:5px;
+//   font-size: 15px;
+// `;
 
-const ListItemNew = styled("li")`
-  list-style: none;
-  padding:6px;
-  margin-bottom:5px;
-  font-size: 15px;
-`;
-
-const ListItemEdit = styled("li")`
-  list-style: none;
-  padding:6px;
-  margin-bottom:5px;
-  font-size: 15px;
-`;
+// const ListItemEdit = styled("li")`
+//   list-style: none;
+//   padding:6px;
+//   margin-bottom:5px;
+//   font-size: 15px;
+// `;
 
 const propTypes = {
   // nodeData: PropTypes.object.isRequired
@@ -103,39 +100,47 @@ const MyNode = ({ nodeData }) => {
   // console.log(nodeData);
  const [show,setShow] = useState(false);
  
- const CompClose = () => setShow(false);
+//  const CompClose = () => setShow(false);
  const CompShow = () => setShow(true);
 
 
  const ind = [];
- nodeData.indikator.forEach((el) => {
-  // console.log(el);
-  ind.push(
-    <Row className="g-0 py-1" key={el.key}>
-    <Col xs="auto">
-      <div className="sw-3 d-inline-block d-flex justify-content-start align-items-center h-100">
-        <div className="sh-3">
-          <CsLineIcons icon="dashboard-1" className="text-primary align-top" />
-        </div>
-      </div>
-    </Col>
-    <Col>
-      <div className="d-flex flex-column pt-0 pb-0 ps-3 pe-4 h-100 justify-content-center">
-        <div className="d-flex flex-column">
-          <div className="text-alternate mt-n1 lh-1-25" style={{fontSize: '12px'}}>{el.indikator}</div>
-        </div>
-      </div>
-    </Col>
-  </Row>
-  );
- });
- const back = nodeData.type_goals.background !== null && nodeData.type_goals.background !== "" ? nodeData.type_goals.background : "";
- const col = nodeData.type_goals.color !== null && nodeData.type_goals.color !== "" ? nodeData.type_goals.color : "";
+ if(nodeData !== undefined && nodeData) {
+  if(nodeData.indikator !== undefined) {
+    nodeData.indikator.forEach((el) => {
+      // console.log(el);
+      ind.push(
+        <Row className="g-0 py-1" key={el.key}>
+        <Col xs="auto">
+          <div className="sw-3 d-inline-block d-flex justify-content-start align-items-center h-100">
+            <div className="sh-3">
+              <CsLineIcons icon="dashboard-1" className="text-primary align-top" />
+            </div>
+          </div>
+        </Col>
+        <Col>
+          <div className="d-flex flex-column pt-0 pb-0 ps-3 pe-4 h-100 justify-content-center">
+            <div className="d-flex flex-column">
+              <div className="text-alternate mt-n1 lh-1-25" style={{fontSize: '12px'}}>{el.indikator}</div>
+            </div>
+          </div>
+        </Col>
+      </Row>
+      );
+     });
+  }
+ }
+ let back = null;
+ let col = null;
+ if(nodeData.type_goals !== undefined && nodeData.type_goals !== '' && nodeData.type_goals !== null) {
+  back = nodeData.type_goals.background !== null && nodeData.type_goals.background !== "" ? nodeData.type_goals.background : "";
+  col = nodeData.type_goals.color !== null && nodeData.type_goals.color !== "" ? nodeData.type_goals.color : "";
+ }
 //  console.log(back);
 //  console.log(col);
 
   return (
-     <div className="org-node-container" key={nodeData.id_goals} onClick={CompShow}>
+     <div className="org-node-container" key={nodeData.id_goals !== undefined ? nodeData.id_goals : ''} onClick={CompShow}>
         <div  className="sw-40 hover-scale-up cursor-pointer card" >
             <div className="h-200 py-3 align-items-top card-body" style={{backgroundColor:back, color:col, borderRadius:10}}>
               <div className="g-0 h-200 align-items-top row">
@@ -151,13 +156,13 @@ const MyNode = ({ nodeData }) => {
                   <div className="col">
                     <div className="gx-2 d-flex align-content-center row">
                       <div className="col-14 d-flex col-14">
-                        <div className="d-flex align-items-center lh-2-25 " style={{fontSize: '9px'}}>PIC : {nodeData.pic_goals}</div>
+                        <div className="d-flex align-items-center lh-2-25 " style={{fontSize: '9px'}}>PIC : {nodeData.pic_goals !== undefined ? nodeData.pic_goals: ''}</div>
                       </div>
                       <div className="col-14 d-flex col-14">
-                        <div className="cta-2" style={{fontSize: '14px',color:col,}} >{nodeData.title_goals}</div>
+                        <div className="cta-2" style={{fontSize: '14px',color:col,}} >{nodeData.title_goals !== undefined ? nodeData.title_goals : ''}</div>
                       </div>
                       <div className="col-14 d-flex col-14">
-                        <div className="d-flex align-items-center lh-1-25 clamp">{nodeData.desc_goals}</div>
+                        <div className="d-flex align-items-center lh-1-25 clamp">{nodeData.desc_goals !== undefined ? nodeData.desc_goals : ''}</div>
                       </div>
                     </div>
                   </div> 

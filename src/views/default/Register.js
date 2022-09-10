@@ -6,7 +6,7 @@ import { useFormik } from 'formik';
 import LayoutFullpage from 'layout/LayoutFullpage';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import HtmlHead from 'components/html-head/HtmlHead';
-import {useSelector , useDispatch} from 'react-redux';
+import { useDispatch} from 'react-redux';
 import { toast } from 'react-toastify';
 import { Signup } from '../../services/signin';
 
@@ -25,29 +25,19 @@ const Register = () => {
   const initialValues = { name: '', email: '', password: '', terms: false };
   const onSubmit = (values) => {
     // console.log('submit form', values);
-    const Signups  =  Signup(values.name, values.email, values.password, dispatch).then(function(response) {
+    Signup(values.name, values.email, values.password, dispatch).then(function(response) {
       if(response) {
         if(response.responseCode === 200) {
           toast.success(response.responseDesc, {
             position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
+            autoClose: 1000,
           });
           const path = `login`; 
           history.push(path);
         }else{  
           toast.error(response.responseDesc, {
             position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
+            autoClose: 1000,
           });
         }
       }
