@@ -1,7 +1,4 @@
-import React from 'react';
 import axios from 'axios';
-import authReducer, { setCurrentUser } from 'auth/authSlice';
-import { LAYOUT, MENU_BEHAVIOUR, NAV_COLOR, MENU_PLACEMENT, RADIUS, THEME_COLOR, USER_ROLE } from 'constants.js';
 import { URL_SERVICE } from 'config.js';
 
 let response = {
@@ -160,27 +157,26 @@ export const TreeAdmin = async (token) => {
 }
 
 export const AddChildTreeService = async (token,titleReq,descReq,picReq,startReq,endReq,parentReq,typeReq,indReq) => {
+    const params = new URLSearchParams();
+    params.append('title_goals',titleReq);
+    params.append('desc_goals',descReq);
+    params.append('pic_goals',picReq);
+    params.append('start_date',startReq);
+    params.append('due_date',endReq);
+    params.append('parent_goals',parentReq);
+    params.append('type_goals',JSON.stringify(typeReq));
+    params.append('indikator',indReq);
     const header = {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
             'Authorization': `Bearer ${token}`,
         },
-        params : {
-            title_goals: titleReq, 
-            desc_goals: descReq, 
-            pic_goals: picReq, 
-            start_date: startReq, 
-            due_date: endReq, 
-            parent_goals: parentReq,
-            type_goals: typeReq,
-            indikator: indReq,
-        }
     };
 
     // console.log(header.params);
     const result = await axios.post( 
         `${URL_SERVICE}goals/addgoals`, 
-        { }, 
+        params, 
         header
     )
     .then(res => {
@@ -250,6 +246,17 @@ export const AddChildTreeService = async (token,titleReq,descReq,picReq,startReq
 }
 
 export const EditNode = async (token,idReq,titleReq,descReq,picReq,startReq,endReq,statusReq,typeReq,indReq) => {
+    const params = new URLSearchParams();
+    params.append('id_goals',idReq);
+    params.append('title_goals',titleReq);
+    params.append('desc_goals',descReq);
+    params.append('pic_goals',picReq);
+    params.append('start_date',startReq);
+    params.append('due_date',endReq);
+    params.append('status',statusReq);
+    params.append('type_goals',JSON.stringify(typeReq));
+    params.append('indikator',indReq);
+
     const header = {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -271,7 +278,7 @@ export const EditNode = async (token,idReq,titleReq,descReq,picReq,startReq,endR
     // console.log(header.params);
     const result = await axios.post( 
         `${URL_SERVICE}goals/editgoals`, 
-        { }, 
+        params, 
         header
     )
     .then(res => {
@@ -340,20 +347,20 @@ export const EditNode = async (token,idReq,titleReq,descReq,picReq,startReq,endR
     return result;
 }
 export const RemapNode = async (token,Req) => {
+    const params = new URLSearchParams();
+    params.append('NewMap',JSON.stringify(Req));
+    // console.log(params.toString());
     const header = {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
             'Authorization': `Bearer ${token}`,
         },
-        params : {
-            NewMap: Req,
-        }
     };
 
     // console.log(header.params);
     const result = await axios.post( 
         `${URL_SERVICE}goals/remapgoals`, 
-        { }, 
+        params, 
         header
     )
     .then(res => {

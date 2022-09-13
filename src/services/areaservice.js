@@ -7,18 +7,21 @@ let response = {
     responseData : null,
 };
 
-export const GetAllUsers = async (token) => {
+export const GetAllAreas = async (token,paging) => {
+    const params = new URLSearchParams();
+    params.append('page',paging);
     const header = {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
             'Authorization': `Bearer ${token}`,
         },
     };
-    const result = await axios.post( `${URL_SERVICE}users/allusers`, { }, header)
+    const result = await axios.post( `${URL_SERVICE}area/allareapage`,params, header)
     .then(res => {
+        console.log('result',res.data);
         if(res) {
             if(res.data) {
-                if(res.data.statusCode) {
+                if(res.data.statusCode != undefined && res.data.statusCode != null) {
                     // console.log(res.data.data);
                     response = {
                         responseCode : res.data.statusCode,
@@ -81,18 +84,22 @@ export const GetAllUsers = async (token) => {
     return result;
 }
 
-export const GetAllArea = async (token) => {
+export const FindAreas = async (token,paging,filter) => {
+    const params = new URLSearchParams();
+    params.append('page',paging);
+    params.append('search',filter);
     const header = {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
             'Authorization': `Bearer ${token}`,
         },
     };
-    const result = await axios.post( `${URL_SERVICE}users/allarea`, { }, header)
+    const result = await axios.post( `${URL_SERVICE}area/findareapage`,params, header)
     .then(res => {
+        console.log('result',res.data);
         if(res) {
             if(res.data) {
-                if(res.data.statusCode) {
+                if(res.data.statusCode != undefined && res.data.statusCode != null) {
                     // console.log(res.data.data);
                     response = {
                         responseCode : res.data.statusCode,

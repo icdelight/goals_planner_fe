@@ -12,10 +12,10 @@ import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
-import MyNode from "../components/node/mynode";
-import { TreeView } from '../services/treeservice';
-import { Signup } from '../services/signin';
-import { DEFAULT_PATHS } from '../config';
+import MyNode from "../../components/node/mynode";
+import { TreeView } from '../../services/treeservice';
+import { Signup } from '../../services/signin';
+import { DEFAULT_PATHS } from '../../config';
 
 
 let handleClick = null;
@@ -26,7 +26,7 @@ const TreeViewDabeng = () => {
     const history = useHistory();
     const ref = useRef(null);
     const { currentUser, isLogin } = useSelector((state) => state.auth);
-    const [ds, getGoals] = useState('');
+    const [ds, getGoals] = useState({});
     const [isLoading, setLoading] = useState(true);
     const [nodeData, setNode] = useState(true);
     const [indData, setInd] = useState(true);
@@ -47,12 +47,7 @@ const TreeViewDabeng = () => {
           if(response.responseCode === 200) {
             toast.success(response.responseDesc, {
               position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
+              autoClose: 1000,
             });
             // console.log(response.responseData);
             result = response.responseData;
@@ -62,13 +57,10 @@ const TreeViewDabeng = () => {
           }else{  
             toast.error(response.responseDesc, {
               position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
+              autoClose: 1000,
             });
+            // getGoals([]);
+            setLoading(false);
 
             // if(response.responseCode === 401) {
             //   // dispatch(setCurrentUser(''));
@@ -101,29 +93,35 @@ const TreeViewDabeng = () => {
     NodeClicked = (nodes) => {
       CompShow();
       const ind = [];
-      nodes.indikator.forEach((el) => {
-        ind.push(
-          <Row className="g-0 py-1" key={el.key}>
-          <Col xs="auto">
-            <div className="sw-3 d-inline-block d-flex justify-content-start align-items-center h-100">
-              <div className="sh-3">
-                <CsLineIcons icon="dashboard-1" className="text-primary align-top" />
+      if(nodes !== undefined && nodes && nodes.length > 0) {
+        nodes.indikator.forEach((el) => {
+          ind.push(
+            <Row className="g-0 py-1" key={el.key}>
+            <Col xs="auto">
+              <div className="sw-3 d-inline-block d-flex justify-content-start align-items-center h-100">
+                <div className="sh-3">
+                  <CsLineIcons icon="dashboard-1" className="text-primary align-top" />
+                </div>
               </div>
-            </div>
-          </Col>
-          <Col>
-            <div className="d-flex flex-column pt-0 pb-0 ps-3 pe-4 h-100 justify-content-center">
-              <div className="d-flex flex-column">
-                <div className="text-alternate mt-n1 lh-1-25" style={{fontSize: '12px'}}>{el.indikator}</div>
+            </Col>
+            <Col>
+              <div className="d-flex flex-column pt-0 pb-0 ps-3 pe-4 h-100 justify-content-center">
+                <div className="d-flex flex-column">
+                  <div className="text-alternate mt-n1 lh-1-25" style={{fontSize: '12px'}}>{el.indikator}</div>
+                </div>
               </div>
-            </div>
-          </Col>
-        </Row>
-        );
-      });
+            </Col>
+          </Row>
+          );
+        });
+      }
       // console.log(nodes.type_goals);
-      const styBack = nodes.type_goals.background !== null && nodes.type_goals.background !== "" ? nodes.type_goals.background : "";
-      const styCol = nodes.type_goals.color !== null && nodes.type_goals.color !== "" ? nodes.type_goals.color : "";
+      let styBack = null;
+      let styCol = null;
+      if(nodeData.type_goals !== undefined && nodeData.type_goals !== '' && nodeData.type_goals !== null) {
+        styBack = nodes.type_goals.background !== null && nodes.type_goals.background !== "" ? nodes.type_goals.background : "";
+        styCol = nodes.type_goals.color !== null && nodes.type_goals.color !== "" ? nodes.type_goals.color : "";
+      }
       setStyleBack(styBack);
       setStyleCol(styCol);
       setInd(ind);

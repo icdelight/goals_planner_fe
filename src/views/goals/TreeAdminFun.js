@@ -10,8 +10,8 @@ import HtmlHead from 'components/html-head/HtmlHead';
 import BreadcrumbList from 'components/breadcrumb-list/BreadcrumbList';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
-import { TreeAdmin, RemapNode } from '../services/treeservice';
-import { DEFAULT_PATHS } from '../config';
+import { TreeAdmin, RemapNode } from '../../services/treeservice';
+import { DEFAULT_PATHS } from '../../config';
 
 const TreeContainer = function() {
 
@@ -38,16 +38,11 @@ const TreeAdminFun = () => {
       let result = [];
       const Signups  =  TreeAdmin(currentUser.token).then(function(response) {
         if(response) {
-            console.log(response);
+            // console.log(response);
           if(response.responseCode === 200) {
             toast.success(response.responseDesc, {
               position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
+              autoClose: 1000,
             });
             // console.log(response.responseData);
             result = response.responseData;
@@ -55,15 +50,11 @@ const TreeAdminFun = () => {
             getGoals(result);
             // setShowBtn(false);
             setLoading(false);
+            setDismissingAlertShow(false);
           }else{  
             toast.error(response.responseDesc, {
               position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
+              autoClose: 1000,
             });
             getGoals(result);
             setDismissingAlertShow(true);
