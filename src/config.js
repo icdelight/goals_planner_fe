@@ -44,9 +44,4 @@ export const DEFAULT_USER = {
 
 export const REDUX_PERSIST_KEY = 'starter-project';
 
-<<<<<<< HEAD
 export const URL_SERVICE = `https://stingray-app-jrjnu.ondigitalocean.app/`;
-=======
-// export const URL_SERVICE = `https://stingray-app-jrjnu.ondigitalocean.app/`;
-export const URL_SERVICE = `http://localhost:8000/`;
->>>>>>> 07979780f5547a5cf52f1921bec342b08e7a908d
