@@ -28,6 +28,10 @@ export const Signin = async (email,password,dispatch) => {
                             role: res.data.userData.role,
                             email: res.data.userData.name,
                             token: res.data.tokens.access_token,
+                            id_area: res.data.userData.id_area,
+                            id_sub_area: res.data.userData.id_sub_area,
+                            desc_area: res.data.userData.desc_area,
+                            desc_sub_area: res.data.userData.desc_sub_area,
                         };
                         dispatch(setCurrentUser(user));
                         // authReducer.bind();

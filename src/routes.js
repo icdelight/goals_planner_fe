@@ -12,8 +12,11 @@ import UpdNode from 'views/goals/UpdNode';
 import UserSetting from 'views/user/UserSetting';
 import UpdUser from 'views/user/EditUser';
 import AreaSetting from 'views/area/AreaSetting';
-import AddArea from 'views/area/AddArea'
-import EditArea from 'views/area/EditArea'
+import AddArea from 'views/area/AddArea';
+import EditArea from 'views/area/EditArea';
+import ClusterSettingPage from 'views/cluster/ClusterSetting';
+import AddCluster from 'views/cluster/AddCluster';
+import EditCluster from 'views/cluster/EditCluster';
 import { USER_ROLE } from 'constants.js';
 
 const appRoot = DEFAULT_PATHS.APP.endsWith('/') ? DEFAULT_PATHS.APP.slice(1, DEFAULT_PATHS.APP.length) : DEFAULT_PATHS.APP;
@@ -116,13 +119,13 @@ const routesAndMenuItems = {
             }
           ]
         },
-        {
-          path: `${appRoot}/rolesetting`,
-          label: 'Role Setting',
-          icon: 'menu-dashed',
-          component: UserSetting,
-          roles: [USER_ROLE.SuperAdmin,USER_ROLE.Admin],
-        },
+        // {
+        //   path: `${appRoot}/rolesetting`,
+        //   label: 'Role Setting',
+        //   icon: 'menu-dashed',
+        //   component: UserSetting,
+        //   roles: [USER_ROLE.SuperAdmin,USER_ROLE.Admin],
+        // },
         {
           path: `${appRoot}/areasetting`,
           label: 'Area Setting',
@@ -143,6 +146,31 @@ const routesAndMenuItems = {
               label: 'Edit Area', 
               icon: 'flag',
               component: EditArea, 
+              roles: [USER_ROLE.SuperAdmin,USER_ROLE.Admin], 
+              hideInMenu: true,
+            }
+          ]
+        },
+        {
+          path: `${appRoot}/clustersetting`,
+          label: 'Cluster Setting',
+          icon: 'bookmark',
+          component: ClusterSettingPage,
+          roles: [USER_ROLE.SuperAdmin,USER_ROLE.Admin],
+          subs : [
+            { 
+              path: `${appRoot}/addcluster`, 
+              label: 'Add Cluster', 
+              icon: 'flag',
+              component: AddCluster, 
+              roles: [USER_ROLE.SuperAdmin,USER_ROLE.Admin], 
+              hideInMenu: true,
+            },
+            { 
+              path: `${appRoot}/editcluster`, 
+              label: 'Edit Cluster', 
+              icon: 'flag',
+              component: EditCluster, 
               roles: [USER_ROLE.SuperAdmin,USER_ROLE.Admin], 
               hideInMenu: true,
             }

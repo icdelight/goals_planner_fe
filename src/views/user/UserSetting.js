@@ -1,6 +1,6 @@
 import {React,useState,useEffect} from 'react';
 import { useHistory } from 'react-router-dom';
-import { Row, Col, Card, Form , Button} from 'react-bootstrap';
+import { Row, Col, Card, Form , Button, Pagination} from 'react-bootstrap';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import HtmlHead from 'components/html-head/HtmlHead';
@@ -10,7 +10,7 @@ import { MENU_PLACEMENT, LAYOUT } from 'constants.js';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { GetAllUsers } from '../../services/userservice';
+import { GetAllUsers, FindUsers } from '../../services/userservice';
 import { DEFAULT_PATHS } from '../../config';
 
 const RowInd = function(propss){
@@ -73,24 +73,14 @@ const UserSettingPage = () => {
   // const [rowState, setRowState] = useState(rowsId);
   const [ds, getUsers] = useState(rowsId);
   const [isLoading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
 
   const breadcrumbs = [{ to: '', text: 'Home' }];
 
-  const onSubmit = (values) => {
-    // console.log(values);
-    // const chart = document.getElementsByClassName('myChart');
-    // // chart[0].classLiss;
-    // // console.log(chart[0].getAttribute('class'));
-    // chart[0].setAttribute('class',`${chart[0].getAttribute('class')} noncollapsable`);
-    // // console.log(chart[0]);
-    // chart[0].querySelectorAll(["classname=node"]).forEach();
-  }
-
-  const getAllUsers = () => {
-      
+  const getAllUsers = (paging) => { 
     setLoading(true);
     let result = null;
-    GetAllUsers(currentUser.token).then(function(response) {
+    GetAllUsers(currentUser.token, paging).then(function(response) {
       if(response) {
         // console.log(response);
         if(response.responseCode === 200) {
@@ -102,11 +92,13 @@ const UserSettingPage = () => {
           result = response.responseData;
           getUsers(result);
           setLoading(false);
+          setPage(paging);
         }else{  
           toast.error(response.responseDesc, {
             position: "top-right",
-            autoClose: 1000,
+            autoClose: 5000,
           });
+          setLoading(false);
 
           // if(response.responseCode === 401) {
           //   // dispatch(setCurrentUser(''));
@@ -118,9 +110,73 @@ const UserSettingPage = () => {
     });
   };
 
+  const findUsers = (paging,search) => { 
+    setLoading(true);
+    let result = null;
+    FindUsers(currentUser.token, paging, search).then(function(response) {
+      if(response) {
+        // console.log(response);
+        if(response.responseCode === 200) {
+          toast.success(response.responseDesc, {
+            position: "top-right",
+            autoClose: 1000,
+          });
+          // console.log(response.responseData);
+          result = response.responseData;
+          getUsers(result);
+          setLoading(false);
+          setPage(paging);
+        }else{  
+          toast.error(response.responseDesc, {
+            position: "top-right",
+            autoClose: 5000,
+          });
+          setLoading(false);
+
+          // if(response.responseCode === 401) {
+          //   // dispatch(setCurrentUser(''));
+          //   const path = `${appRoot}/login`; 
+          //   history.push(path);
+          // }
+        }
+      }
+    });
+  };
+
+  const nextPage = () => {
+      const paging = page + 1;
+      // console.log(values.searchField);
+      if(values.searchField != '') {
+        findUsers(paging,values.searchField);
+      }else{
+        getAllUsers(paging);
+      }
+  };
+
+  const prevPage = () => {
+      let paging = 0;
+      if(page == 1) {
+          paging = page;
+      }else{
+          paging = page - 1;
+      }
+      // console.log(values.searchField);
+      if(values.searchField != '') {
+        findUsers(paging,values.searchField);
+      }else{
+        getAllUsers(paging);
+      }
+  };
+
   useEffect(() => {
-    getAllUsers();
+    getAllUsers(page);
   }, []);
+
+
+  const onSubmit = (values) => {
+    // console.log(values.searchField);
+    findUsers(page,values.searchField);
+  }
 
   const clickRows = (val) => {
       // console.log(val);;
@@ -144,7 +200,7 @@ const UserSettingPage = () => {
 
   const initialValues = { searchField: '' };
   const validationSchema = Yup.object().shape({
-    searchField: Yup.string().required('Search is required'),
+    // searchField: Yup.string().required('Search is required'),
   });
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
   const { handleSubmit, handleChange, values, touched, errors } = formik;
@@ -214,6 +270,19 @@ const UserSettingPage = () => {
                 </div>
               </Col>
             </Row>
+            <div className="mb-5">
+              <nav>
+                <Pagination className="justify-content-center">
+                    <Pagination.Prev className="shadow" onClick={() => prevPage()}>
+                        <CsLineIcons icon="chevron-left" />
+                    </Pagination.Prev>
+                    <Pagination.Item className="shadow" disabled>{page}</Pagination.Item>
+                    <Pagination.Next className="shadow" onClick={() => nextPage()}>
+                        <CsLineIcons icon="chevron-right" />
+                    </Pagination.Next>
+                </Pagination>
+              </nav>
+            </div>
           </section>
           {/* Title End */}
         </Col>

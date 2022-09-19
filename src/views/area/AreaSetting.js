@@ -19,7 +19,7 @@ const RowInd = function(propss){
     // const newDate= new Date(createDate); 
     // const cratedString = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(newDate);
     // console.log(cratedString)
-    console.log('act',active);
+    // console.log('act',active);
     return (
       <Card className="mb-2">
       <Row className="g-0 h-auto sh-sm-19 sh-lg-9">
@@ -31,15 +31,15 @@ const RowInd = function(propss){
             <Row className="g-0 h-100 align-content-center">
               <Col lg="3" xs="6" sm="6" className="d-flex flex-column mb-lg-0 mb-3 mb-lg-0 pe-3 d-flex">
                   <div className="lh-1">{descarea}</div>
-                  <div className="text-small text-muted text-truncate">Area</div>
+                  <div className="text-small text-muted text-truncate">Region Area</div>
+              </Col>
+              <Col lg="3" sm="6" xs="6" className="d-flex flex-column pe-1 mb-2 mb-lg-0 ">
+                <div className="lh-1 text-alternate" style={{textAlign:"left"}}>{descparentarea}</div>
+                <div className="text-muted text-small" style={{textAlign:"left"}}>Parents Area</div>
               </Col>
               <Col lg="3" xs="6" sm="6" className="d-flex flex-column mb-lg-0 mb-3 mb-lg-0 pe-3 d-flex">
                 <div className="lh-1 text-alternate" style={{textAlign:"left"}}>{descsubarea}</div>
                 <div className="text-muted text-small" style={{textAlign:"left"}}>Sub Area</div>
-              </Col>
-              <Col lg="3" sm="6" xs="6" className="d-flex flex-column pe-1 mb-2 mb-lg-0 ">
-                <div className="lh-1 text-alternate" style={{textAlign:"left"}}>{descparentarea}</div>
-                <div className="text-muted text-small" style={{textAlign:"left"}}>Parents</div>
               </Col>
               <Col lg="2" sm="5" xs="4" className="d-flex flex-column pe-1 mb-2 mb-lg-0 align-items-lg-end">
                 <div className="lh-1 text-alternate" style={{textAlign:"left"}}>{active == "1" ? 'Active' : 'Not Active'}</div>
@@ -79,7 +79,7 @@ const AreaSettingPage = () => {
         // console.log(paging);
         GetAllAreas(currentUser.token, paging).then(function(response) {
           if(response) {
-            console.log(response);
+            // console.log(response);
             if(response.responseCode === 200) {
               toast.success(response.responseDesc, {
                 position: "top-right",
@@ -107,38 +107,19 @@ const AreaSettingPage = () => {
         });
     };
 
-    const clickRows = (val) => {
-        console.log(val);
-        const path = `${appRoot}/setting/areasetting/editarea`; 
-          // console.log(path);
-        history.push(path,{
-            idarea: val.id_area,
-            idsubarea: val.id_sub_area,
-            descarea: val.desc_area,
-            descsubarea: val.desc_sub_area,
-            idparentarea: val.id_parent_area,
-            descparentarea: val.desc_parent_area,
-            active: val.active,
-        });
-    };
-
-    const onSubmit = (values) => {
-        // console.log(values);
-        setLoading(true);
-        let result = null;
-        // console.log(paging);
-        FindAreas(currentUser.token, page, values.searchField).then(function(response) {
+    const findAreas = (paging,search) => {
+      setLoading(true);
+      let result = null;
+      if(search == "") {
+        getAllAreas(paging);
+      }else{
+        FindAreas(currentUser.token, paging, search).then(function(response) {
           if(response) {
-            console.log(response);
+            // console.log(response);
             if(response.responseCode === 200) {
               toast.success(response.responseDesc, {
                 position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
+                autoClose: 1000,
               });
               // console.log(response.responseData);
               result = response.responseData;
@@ -148,11 +129,6 @@ const AreaSettingPage = () => {
               toast.error(response.responseDesc, {
                 position: "top-right",
                 autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
               });
               
               setLoading(false);
@@ -164,12 +140,44 @@ const AreaSettingPage = () => {
             }
           }
         });
+      }
+    };
 
+    const addAreaClick = () => {
+      const path = `${appRoot}/setting/areasetting/addarea`; 
+          // console.log(path);
+        history.push(path);
+    };
+
+    const clickRows = (val) => {
+        // console.log(val);
+        const path = `${appRoot}/setting/areasetting/editarea`; 
+          // console.log(path);
+        history.push(path,{
+            idarea: val.id_area,
+            idsubarea: val.id_sub_area,
+            descarea: val.desc_area,
+            descsubarea: val.desc_sub_area,
+            idparentarea: val.id_parent_area,
+            descparentarea: val.desc_parent_area == null ? '' : val.desc_parent_area,
+            active: val.active,
+        });
+    };
+
+    const onSubmit = (values) => {
+        // console.log(values);
+        // console.log(paging);
+        findAreas(page,values.searchField);
     };
 
     const nextPage = () => {
         const paging = page + 1;
-        getAllAreas(paging);
+        // console.log(values.searchField);
+        if(values.searchField != '') {
+          findAreas(paging,values.searchField);
+        }else{
+          getAllAreas(paging);
+        }
     };
 
     const prevPage = () => {
@@ -179,12 +187,17 @@ const AreaSettingPage = () => {
         }else{
             paging = page - 1;
         }
-        getAllAreas(paging);
+        // console.log(values.searchField);
+        if(values.searchField != '') {
+          findAreas(paging,values.searchField);
+        }else{
+          getAllAreas(paging);
+        }
     };
 
     const initialValues = { searchField: '' };
     const validationSchema = Yup.object().shape({
-        searchField: Yup.string().required('Search is required'),
+        // searchField: Yup.string().required('Search is required'),
     });
     const formik = useFormik({ initialValues, validationSchema, onSubmit });
     const { handleSubmit, handleChange, values, touched, errors } = formik;
@@ -229,6 +242,9 @@ const AreaSettingPage = () => {
                                                 </svg>
                                             </span>
                                         </button>
+                                        <button id="button-addon" type="submit" className="btn btn-outline-warning" onClick={()=>addAreaClick()} >
+                                          <CsLineIcons icon="plus" className="me-2" size="17" />
+                                        </button>
                                     </div>
                                 </form> 
                             </div>
@@ -265,17 +281,17 @@ const AreaSettingPage = () => {
                 </Col>
                 </Row>
                 <div className="mb-5">
-                <nav>
-                <Pagination className="justify-content-center">
-                    <Pagination.Prev className="shadow" onClick={() => prevPage()}>
-                        <CsLineIcons icon="chevron-left" />
-                    </Pagination.Prev>
-                    <Pagination.Item className="shadow" disabled>{page}</Pagination.Item>
-                    <Pagination.Next className="shadow" onClick={() => nextPage()}>
-                        <CsLineIcons icon="chevron-right" />
-                    </Pagination.Next>
-                </Pagination>
-                </nav>
+                  <nav>
+                    <Pagination className="justify-content-center">
+                        <Pagination.Prev className="shadow" onClick={() => prevPage()}>
+                            <CsLineIcons icon="chevron-left" />
+                        </Pagination.Prev>
+                        <Pagination.Item className="shadow" disabled>{page}</Pagination.Item>
+                        <Pagination.Next className="shadow" onClick={() => nextPage()}>
+                            <CsLineIcons icon="chevron-right" />
+                        </Pagination.Next>
+                    </Pagination>
+                  </nav>
                 </div>
                 </section>
             </Col>

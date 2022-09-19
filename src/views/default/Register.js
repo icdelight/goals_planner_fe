@@ -37,7 +37,7 @@ const Register = () => {
         }else{  
           toast.error(response.responseDesc, {
             position: "top-right",
-            autoClose: 1000,
+            autoClose: 5000,
           });
         }
       }

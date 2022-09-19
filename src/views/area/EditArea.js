@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useHistory } from 'react-router-dom';
 import { Button, Row, Col, Card, Form, InputGroup, Dropdown } from 'react-bootstrap';
+import Select from 'react-select';
 import Autosuggest from 'react-autosuggest';
 // import DatePicker from 'react-datepicker';
 import { useSelector } from 'react-redux';
@@ -14,7 +15,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 // import { useWindowSize } from 'hooks/useWindowSize';
 import { toast } from 'react-toastify';
 import { DEFAULT_PATHS } from '../../config';
-import { GetAllArea } from '../../services/userservice';
+import { EditAreas, GetAllAreasSelection } from '../../services/areaservice';
 import { LAYOUT } from '../../constants';
 
 const EditArea = (props) => {
@@ -24,6 +25,7 @@ const EditArea = (props) => {
     const area = states.location.state;
     const ref = useRef(null);
     const [isChecked, setIsChecked] = useState(null);
+    const [value, setValue] = useState();
 
     const title = 'Update Area Page';
     const description = 'An page for update the area.';
@@ -33,6 +35,10 @@ const EditArea = (props) => {
     ];
 
     const { currentUser, isLogin } = useSelector((state) => state.auth);
+
+    const [isLoading, setLoading] = useState(true);
+    const options = [];
+    const [opt, setOpt] = useState(options);
 
     const initialValues = { 
         id_area: area.idarea,
@@ -45,11 +51,61 @@ const EditArea = (props) => {
     };
     const validationSchema = Yup.object().shape({
         id_area: Yup.string().required('Area is required'),
-        id_sub_area: Yup.string().required('Sub Area is required'),
-        id_parent_area: Yup.string().required('Parent Area is required'),
+        desc_sub_area: Yup.string().required('Sub Area is required'),
+        desc_parent_area: Yup.string().required('Parent Area is required'),
     });
-    const onSubmit = (values) => {
 
+    const fetchArea = () => {
+        setLoading(true);
+        GetAllAreasSelection(currentUser.token,area.idarea,area.idsubarea).then(function(response) {
+            if(response) {
+              console.log(response);
+              if(response.responseCode === 200) {
+                toast.success(response.responseDesc, {
+                  position: "top-right",
+                  autoClose: 1000,
+                });
+                const objSelected = {
+                    value: area.idparentarea,
+                    label: area.descparentarea,
+                };
+                setValue(objSelected);
+                setOpt(response.responseData);
+                setLoading(false);
+              }else{  
+                toast.error(response.responseDesc, {
+                  position: "top-right",
+                  autoClose: 5000,
+                });
+                setLoading(false);
+              }
+            }
+        });
+    };
+    const onSubmit = (values) => {
+        // console.log(value.value);
+        let act = "0";
+        if (ref.current.checked) {
+            act = "1";
+        } 
+        EditAreas(currentUser.token,values.id_area,values.id_sub_area,values.desc_sub_area,value.value,act).then(function(response) {
+            if(response) {
+              console.log(response);
+              if(response.responseCode === 200) {
+                toast.success(response.responseDesc, {
+                  position: "top-right",
+                  autoClose: 1000,
+                });
+                const path = `${appRoot}/setting/areasetting`; 
+                history.push(path);
+              }else{  
+                toast.error(response.responseDesc, {
+                  position: "top-right",
+                  autoClose: 5000,
+                });
+              }
+            }
+        });
     };
     const handleClickBackButton = () => {
         const path = `${appRoot}/setting/areasetting`; 
@@ -62,6 +118,14 @@ const EditArea = (props) => {
 
     const formik = useFormik({ initialValues, validationSchema, onSubmit });
     const { handleSubmit, handleChange, values, touched, errors } = formik;
+
+    useEffect(() => {
+        fetchArea();
+    }, []);
+
+    if (isLoading) {
+        return <div className="App">Loading...</div>;
+    }
 
     return (
         <div className="App" style={{  }}>
@@ -85,7 +149,7 @@ const EditArea = (props) => {
                         <Card.Body className="p-3">
                             <Row className="mb-2 filled tooltip-end-top">
                                 <Col lg="2" md="3" sm="4">
-                                    <Form.Label className="col-form-label">Area</Form.Label>
+                                    <Form.Label className="col-form-label">Region Area</Form.Label>
                                 </Col>
                                 <Col sm="8" md="9" lg="10">
                                     <Form.Control type="text" name="name" id="name" value={values.desc_area}  onChange={handleChange} readOnly={1}/>
@@ -94,20 +158,21 @@ const EditArea = (props) => {
                             </Row>
                             <Row className="mb-2 filled tooltip-end-top">
                                 <Col lg="2" md="3" sm="4">
-                                    <Form.Label className="col-form-label">Sub Area</Form.Label>
+                                    <Form.Label className="col-form-label">Parent Area</Form.Label>
                                 </Col>
                                 <Col sm="8" md="9" lg="10">
-                                    <Form.Control type="text" name="name" id="name" value={values.desc_sub_area}  onChange={handleChange}/>
-                                    {errors.desc_sub_area  && touched.desc_sub_area && <div className="d-block invalid-tooltip">{errors.desc_sub_area}</div>}
+                                    {/* <Form.Control type="text" name="desc_parent_area" id="desc_parent_area" value={values.desc_parent_area}  onChange={handleChange} readOnly={values.id_sub_area == 1? 1 : 0}/> */}
+                                    <Select classNamePrefix="react-select" options={opt} value={value} onChange={setValue} placeholder="" />
+                                    {errors.desc_parent_area  && touched.desc_parent_area && <div className="d-block invalid-tooltip">{errors.desc_parent_area}</div>}
                                 </Col>
                             </Row>
                             <Row className="mb-2 filled tooltip-end-top">
                                 <Col lg="2" md="3" sm="4">
-                                    <Form.Label className="col-form-label">Parent Area</Form.Label>
+                                    <Form.Label className="col-form-label">Sub Area</Form.Label>
                                 </Col>
                                 <Col sm="8" md="9" lg="10">
-                                    <Form.Control type="text" name="name" id="name" value={values.desc_parent_area}  onChange={handleChange} readOnly={values.id_sub_area == 1? 1 : 0}/>
-                                    {errors.desc_parent_area  && touched.desc_parent_area && <div className="d-block invalid-tooltip">{errors.desc_parent_area}</div>}
+                                    <Form.Control type="text" name="desc_sub_area" id="desc_sub_area" value={values.desc_sub_area}  values={values.desc_sub_area} onChange={handleChange}/>
+                                    {errors.desc_sub_area  && touched.desc_sub_area && <div className="d-block invalid-tooltip">{errors.desc_sub_area}</div>}
                                 </Col>
                             </Row>
                             <Row className="mb-2 filled tooltip-end-top">
