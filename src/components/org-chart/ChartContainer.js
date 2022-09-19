@@ -270,12 +270,13 @@ const ChartContainer = forwardRef(
         container.current.scrollLeft = 0;
         const originalScrollTop = container.current.scrollTop;
         container.current.scrollTop = 0;
-        html2canvas(chart.current, {
-          width: chart.current.clientWidth,
-          height: chart.current.clientHeight,
+        console.log(container);
+        html2canvas(container.current, {
+          width: container.current.clientWidth,
+          height: container.current.clientHeight,
           onclone: function (clonedDoc) {
             clonedDoc.querySelector(".orgchart").style.background = "none";
-            clonedDoc.querySelector(".orgchart").style.transform = "";
+            // clonedDoc.querySelector(".orgchart").style.transform = "";
           },
         }).then(
           (canvas) => {
