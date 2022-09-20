@@ -35,17 +35,30 @@ export const TreeGoals = async (token, body) => {
 };
 
 export const ChildGoals = async (token, body) => {
-    const options = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
-    const result = await axios
-      .post(`${URL_SERVICE}goals/childGoals`, body, options)
-      .then(defaultSuccessRes)
-      .catch(defaultFailedRes);
-    return result;
+  const options = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   };
+  const result = await axios
+    .post(`${URL_SERVICE}goals/childGoals`, body, options)
+    .then(defaultSuccessRes)
+    .catch(defaultFailedRes);
+  return result;
+};
+
+export const SearchGoals = async (token, body) => {
+  const options = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const result = await axios
+    .post(`${URL_SERVICE}goals/searchgoals`, body, options)
+    .then(defaultSuccessRes)
+    .catch(defaultFailedRes);
+  return result;
+};
 
 export const TreeView = async (token) => {
   const header = {
@@ -313,7 +326,7 @@ export const EditNode = async (
   params.append("pic_goals", picReq);
   params.append("start_date", startReq);
   params.append("due_date", endReq);
-  params.append("status", statusReq);
+  params.append("status_goals", statusReq);
   params.append("type_goals", JSON.stringify(typeReq));
   params.append("indikator", indReq);
 

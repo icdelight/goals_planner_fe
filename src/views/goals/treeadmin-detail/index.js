@@ -1,24 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import SortableTree from "react-sortable-tree";
-import { Alert, Row, Col, Card, Form, ButtonGroup } from "react-bootstrap";
+import {
+  Alert,
+  Row,
+  Col,
+  Card,
+  ButtonGroup,
+  Button,
+  Spinner,
+} from "react-bootstrap";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import CsLineIcons from "cs-line-icons/CsLineIcons";
-import * as Yup from "yup";
-import { useFormik } from "formik";
 import HtmlHead from "components/html-head/HtmlHead";
 import BreadcrumbList from "components/breadcrumb-list/BreadcrumbList";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import { debounce } from "lodash";
 import {
-  ChildGoals,
   RemapNode,
+  SearchGoals,
   TreeGoals,
 } from "../../../services/treeservice";
 import { DEFAULT_PATHS } from "../../../config";
 import SelectServerSide from "components/select/SelectServerSide";
 
 const TreeAdminDetail = ({ location }) => {
+  const stateData = location.state;
   const appRoot = DEFAULT_PATHS.APP.endsWith("/")
     ? DEFAULT_PATHS.APP.slice(1, DEFAULT_PATHS.APP.length)
     : DEFAULT_PATHS.APP;
@@ -34,41 +42,54 @@ const TreeAdminDetail = ({ location }) => {
   const [styleBackround, setStyleBack] = useState(true);
   const [styleColor, setStyleCol] = useState(true);
   const [indData, setInd] = useState(true);
+  const [selectedSearch, setSelectedSearch] = useState(null);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const getTreeGoals = () => {
-    let result = [];
-    TreeGoals(currentUser.token, { parent_family: Number(id) }).then(function (
-      response
-    ) {
-      if (response) {
-        // console.log(response);
-        if (response.responseCode === 200) {
-          toast.success(response.responseDesc, {
-            position: "top-right",
-            autoClose: 1000,
-          });
-          // console.log(response.responseData);
-          result = response.responseData;
-          // console.log(result);
-          setTreeData(result);
-          // setShowBtn(false);
-          setLoading(false);
-          setDismissingAlertShow(false);
-        } else {
-          toast.error(response.responseDesc, {
-            position: "top-right",
-            autoClose: 1000,
-          });
-          setTreeData(result?.[0]);
-          setDismissingAlertShow(true);
-          setLoading(false);
+  const searchGoals = (inputValue, callback) => {
+    SearchGoals(currentUser.token, { searchTerm: inputValue })
+      .then((response) => {
+        if (response) {
+          // console.log(response);
+          if (response.responseCode === 200) {
+            callback(response.responseData);
+            return;
+          }
         }
-      }
-      // console.log(result);
-    });
+        callback([]);
+      })
+      .catch(() => {
+        callback([]);
+      });
+  };
+  const getTreeGoals = (idGoals) => {
+    let result = [];
+    setLoading(true);
+    TreeGoals(currentUser.token, {
+      parent_family: Number(id),
+      id_goals: idGoals,
+    })
+      .then(function (response) {
+        if (response) {
+          if (response.responseCode === 200) {
+            result = response.responseData;
+            setTreeData(result);
+            setDismissingAlertShow(false);
+          } else {
+            toast.error(response.responseDesc, {
+              position: "top-right",
+              autoClose: 1000,
+            });
+            setTreeData(result?.[0]);
+            setDismissingAlertShow(true);
+          }
+        }
+        // console.log(result);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const handleNodeClick = (node) => {
@@ -151,7 +172,7 @@ const TreeAdminDetail = ({ location }) => {
         if (d.expanded) {
           // this.loopParseData(d);
           obj = {
-            id_goals: d.id,
+            id_goals: d.id_goals,
             parent_goals: parent,
             title_goals: d.title,
             pic_goals: currentUser.email,
@@ -159,10 +180,10 @@ const TreeAdminDetail = ({ location }) => {
           // console.log(`${d.title}, id : ${d.id}, parent : ${parent} Parent of : `);
           // resJson += `${d.title} Parent of : `;
           // console.log(obj);
-          loopParseData(res, d.children, d.id);
+          loopParseData(res, d.children, d.id_goals);
         } else {
           obj = {
-            id_goals: d.id,
+            id_goals: d.id_goals,
             parent_goals: parent,
             title_goals: d.title,
             pic_goals: currentUser.email,
@@ -196,9 +217,7 @@ const TreeAdminDetail = ({ location }) => {
   const handleClickRemapButton = () => {
     const newMap = loopParseData(resJson, treeData, 0);
     // console.log(newMap);
-    const Remap = RemapNode(currentUser.token, newMap).then(function (
-      response
-    ) {
+    RemapNode(currentUser.token, newMap).then(function (response) {
       if (response) {
         if (response.responseCode === 200) {
           toast.success(response.responseDesc, {
@@ -215,7 +234,9 @@ const TreeAdminDetail = ({ location }) => {
           // console.log(result);
           // getGoals(result);
           // setLoading(false);
-          getTreeGoals();
+          getTreeGoals(
+            newMap?.find((item) => item.parent_goals === 0)?.id_goals
+          );
         } else {
           toast.error(response.responseDesc, {
             position: "top-right",
@@ -231,11 +252,8 @@ const TreeAdminDetail = ({ location }) => {
     });
   };
 
-  const handleClickCancleButton = () => {
-    // const treeDatas = [...treeData];
-    // console.log(treeDatas);
-    // getGoals(treeDatas);
-    getTreeGoals();
+  const handleClickCancelButton = () => {
+    getTreeGoals(stateData?.id_goals);
   };
 
   const handleClickAddParentButton = (parentCanvas) => {
@@ -272,29 +290,20 @@ const TreeAdminDetail = ({ location }) => {
     });
   };
 
-  const onSubmit = (values) => {
-    console.log(values);
-  };
-
   useEffect(() => {
-    getTreeGoals();
+    getTreeGoals(
+      selectedSearch ? selectedSearch?.id_goals : stateData?.id_goals
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [selectedSearch]);
 
   // const maxDepth = 5;
   const title = "Tree Admin Page";
   const description = "An page for configure the tree view.";
-  const breadcrumbs = [{ to: "", text: "Home" }];
-  const validationSchema = Yup.object().shape({
-    searchField: Yup.string().required("Search is required"),
-  });
-  const initialValues = { searchField: "" };
-  const formik = useFormik({ initialValues, validationSchema, onSubmit });
-  const { handleSubmit, handleChange, values, touched, errors } = formik;
-
-  if (isLoading) {
-    return <div className="App">Loading...</div>;
-  }
+  const breadcrumbs = [
+    { to: "", text: "Home" },
+    { to: "tree/treeadmin", text: "Tree Admin" },
+  ];
 
   return (
     <div className="App scroll-out">
@@ -311,30 +320,24 @@ const TreeAdminDetail = ({ location }) => {
               <Card className="mb-2" body>
                 <Card.Text>{description}</Card.Text>
                 <div className="g-0 row">
-                  <div className="col-md col-12 mb-1">
-                    <SelectServerSide />
+                  <div className="col-md col-12 mb-1 mr-2">
+                    <SelectServerSide
+                      value={selectedSearch}
+                      placeholder="Search here..."
+                      loadOptions={debounce(searchGoals, 500)}
+                      onChange={setSelectedSearch}
+                      getOptionLabel={(e) => e.title_goals}
+                      getOptionValue={(e) => e.id_goals}
+                    />
                   </div>
                   <div className="d-flex align-items-start justify-content-end justify-content-lg-start col-md col-12 mb-1">
-                    <button
-                      type="button"
-                      className="btn-icon btn-icon-start ms-1 btn btn-outline-primary"
+                    <Button
+                      variant="outline-muted"
+                      className="btn-icon btn-icon-start mb-1 mx-2"
+                      onClick={() => setSelectedSearch(null)}
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="cs-icon plus "
-                      >
-                        <path d="M10 17 10 3M3 10 17 10"> </path>
-                      </svg>
-                      <span>Go to Top</span>
-                    </button>
+                      <CsLineIcons icon="close" /> <span>Clear</span>
+                    </Button>{" "}
                   </div>
                 </div>
               </Card>
@@ -348,52 +351,58 @@ const TreeAdminDetail = ({ location }) => {
                     Node.
                   </Alert>
                 )}
-                <SortableTree
-                  className="mb-3"
-                  treeData={treeData}
-                  onChange={handleTreeOnChange}
-                  isVirtualized={false}
-                  // maxDepth={maxDepth}
-                  generateNodeProps={(rowInfo) => {
-                    const { node } = rowInfo;
-                    // console.log(node);
-                    return {
-                      buttons: [
-                        <button
-                          type="button"
-                          key={node}
-                          className="btn-xs btn-outline-default"
-                          style={{
-                            verticalAlign: "middle",
-                            background:
-                              node.type_goals?.background !== null &&
-                              node.type_goals?.background !== ""
-                                ? node.type_goals?.background
-                                : "",
-                            color:
-                              node.type_goals?.color !== null &&
-                              node.type_goals?.color !== ""
-                                ? node.type_goals?.color
-                                : "",
-                            width: "50px",
-                          }}
-                          onClick={() => alertNodeInfo(rowInfo)}
-                        >
-                          ℹ
-                        </button>,
-                      ],
-                      onClick: () => {
-                        handleNodeClick(node);
-                      },
-                      style:
-                        node === nodeClicked
-                          ? {
-                              border: "3px solid yellow",
-                            }
-                          : {},
-                    };
-                  }}
-                />
+                {isLoading ? (
+                  <div className="d-flex justify-content-center">
+                    <Spinner animation="border" />
+                  </div>
+                ) : (
+                  <SortableTree
+                    className="mb-3"
+                    treeData={treeData}
+                    onChange={handleTreeOnChange}
+                    isVirtualized={false}
+                    // maxDepth={maxDepth}
+                    generateNodeProps={(rowInfo) => {
+                      const { node } = rowInfo;
+                      // console.log(node);
+                      return {
+                        buttons: [
+                          <button
+                            type="button"
+                            key={node}
+                            className="btn-xs btn-outline-default"
+                            style={{
+                              verticalAlign: "middle",
+                              background:
+                                node.type_goals?.background !== null &&
+                                node.type_goals?.background !== ""
+                                  ? node.type_goals?.background
+                                  : "",
+                              color:
+                                node.type_goals?.color !== null &&
+                                node.type_goals?.color !== ""
+                                  ? node.type_goals?.color
+                                  : "",
+                              width: "50px",
+                            }}
+                            onClick={() => alertNodeInfo(rowInfo)}
+                          >
+                            ℹ
+                          </button>,
+                        ],
+                        onClick: () => {
+                          handleNodeClick(node);
+                        },
+                        style:
+                          node === nodeClicked
+                            ? {
+                                border: "3px solid yellow",
+                              }
+                            : {},
+                      };
+                    }}
+                  />
+                )}
                 <ButtonGroup aria-label="Basic outlined example">
                   <button
                     type="button"
@@ -404,7 +413,7 @@ const TreeAdminDetail = ({ location }) => {
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleClickCancleButton()}
+                    onClick={() => handleClickCancelButton()}
                     className="btn-icon btn-icon-start ms-1 btn btn-outline-warning"
                   >
                     Cancel

@@ -51,7 +51,10 @@ const TreeAdminIndex = () => {
           return (
             <Link
               className="list-item-heading body"
-              to={`${appRoot}/tree/treeadmin/${row.original.parent_family}/detail`}
+              to={{
+                pathname: `${appRoot}/tree/treeadmin/${row.original.parent_family}/detail`,
+                state: row.original,
+              }}
             >
               {cell.value}
             </Link>

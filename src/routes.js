@@ -7,9 +7,9 @@ import HomePage from "views/default/Home";
 import TreeAdminDetail from "views/goals/treeadmin-detail";
 // import TreeView from 'views/goals/TreeView';
 import TreeAdminIndex from "views/goals/treeadmin-index";
+import TreeAdminUpdate from "views/goals/treeadmin-update";
+import TreeAdminAddChild from "views/goals/treeadmin-addchild";
 import TreeViewDabeng from "views/goals/treeview-dabeng";
-import AddChild from "views/goals/addChildTree";
-import UpdNode from "views/goals/UpdNode";
 import UserSetting from "views/user/UserSetting";
 import UpdUser from "views/user/EditUser";
 import AreaSetting from "views/area/AreaSetting";
@@ -82,7 +82,7 @@ const routesAndMenuItems = {
               path: `${appRoot}/addchild`,
               label: "Tree Admin F Child",
               icon: "grid-2",
-              component: AddChild,
+              component: TreeAdminAddChild,
               roles: [USER_ROLE.SuperAdmin, USER_ROLE.Admin, USER_ROLE.Editor],
               hideInMenu: true,
             },
@@ -112,7 +112,7 @@ const routesAndMenuItems = {
               path: `${appRoot}/:id/update`,
               label: "Update Node",
               icon: "grid-2",
-              component: UpdNode,
+              component: TreeAdminUpdate,
               roles: [USER_ROLE.SuperAdmin, USER_ROLE.Admin, USER_ROLE.Editor],
               hideInMenu: true,
             },
@@ -120,7 +120,7 @@ const routesAndMenuItems = {
               path: `${appRoot}/:id/addchild`,
               label: "Tree Admin F Child",
               icon: "grid-2",
-              component: AddChild,
+              component: TreeAdminAddChild,
               roles: [USER_ROLE.SuperAdmin, USER_ROLE.Admin, USER_ROLE.Editor],
               hideInMenu: true,
             },
