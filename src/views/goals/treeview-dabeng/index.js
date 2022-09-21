@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import CsLineIcons from "cs-line-icons/CsLineIcons";
 
-import { InitialGoals, TreeView } from "../../../services/treeservice";
+import { InitialGoals, TreeGoals } from "../../../services/treeservice";
 import View from "./view";
 
 const TreeViewDabeng = () => {
@@ -13,7 +13,8 @@ const TreeViewDabeng = () => {
   //   : DEFAULT_PATHS.APP;
 
   const { currentUser } = useSelector((state) => state.auth);
-  const [goals, setGoals] = useState([]);
+  const [trees, setTrees] = useState(null);
+  const [selectedParents, setSelectedParents] = useState([]);
   const [initialGoals, setInitialGoals] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [nodeData, setNode] = useState(true);
@@ -25,57 +26,53 @@ const TreeViewDabeng = () => {
   const compClose = () => setShow(false);
   const compShow = () => setShow(true);
 
-  const getAllGoals = () => {
-    setLoading(true);
-    let result = null;
-    TreeView(currentUser.token).then(function (response) {
+  console.log("trees", trees);
+
+  const handleTreeGoals = (parentFamily, idGoals) => {
+    let result = [];
+    TreeGoals(currentUser.token, {
+      parent_family: Number(parentFamily),
+      id_goals: Number(idGoals),
+    }).then(function (response) {
       if (response) {
-        // console.log(response);
         if (response.responseCode === 200) {
+          result = response.responseData;
+          const data = result?.[0];
+          setTrees((prevState) => ({
+            ...prevState,
+            [data?.id_goals]: data,
+          }));
           toast.success(response.responseDesc, {
             position: "top-right",
             autoClose: 1000,
           });
-          // console.log(response.responseData);
-          result = response.responseData;
-          // console.log(result.type_goals);
-          setGoals(result);
-          setLoading(false);
         } else {
           toast.error(response.responseDesc, {
             position: "top-right",
             autoClose: 1000,
           });
-          // getGoals([]);
-          setLoading(false);
-
-          // if(response.responseCode === 401) {
-          //   // dispatch(setCurrentUser(''));
-          //   const path = `${appRoot}/login`;
-          //   history.push(path);
-          // }
         }
       }
+      // console.log(result);
     });
   };
 
   const getInitialGoals = () => {
     let result = null;
-    InitialGoals(currentUser.token).then(function (response) {
-      if (response) {
-        if (response.responseCode === 200) {
-          result = response.responseData;
-          setInitialGoals(result);
+    setLoading(true);
+    InitialGoals(currentUser.token)
+      .then(function (response) {
+        if (response) {
+          if (response.responseCode === 200) {
+            result = response.responseData;
+            setInitialGoals(result);
+          }
         }
-      }
-    });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
-
-  useEffect(() => {
-    getAllGoals();
-    getInitialGoals();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleNodeClicked = (nodes) => {
     compShow();
@@ -138,6 +135,11 @@ const TreeViewDabeng = () => {
   const description = "An page for view all goals as a tree view.";
   const breadcrumbs = [{ to: "", text: "Home" }];
 
+  useEffect(() => {
+    getInitialGoals();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   if (isLoading) {
     return <div className="App">Loading...</div>;
   }
@@ -147,7 +149,8 @@ const TreeViewDabeng = () => {
       title={title}
       description={description}
       show={show}
-      goals={goals}
+      selectedParents={selectedParents}
+      trees={trees}
       initialGoals={initialGoals}
       indData={indData}
       nodeData={nodeData}
@@ -157,6 +160,8 @@ const TreeViewDabeng = () => {
       onNodeClicked={handleNodeClicked}
       onCompShow={compShow}
       onCompClose={compClose}
+      onSelectedParents={setSelectedParents}
+      onTreeLoaded={handleTreeGoals}
     />
   );
 };

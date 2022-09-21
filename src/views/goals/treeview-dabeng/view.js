@@ -1,4 +1,5 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import _ from "lodash";
 import { Row, Col, Card, Button, Tab, Nav, Form } from "react-bootstrap";
 import HtmlHead from "components/html-head/HtmlHead";
 import BreadcrumbList from "components/breadcrumb-list/BreadcrumbList";
@@ -7,12 +8,14 @@ import CsLineIcons from "cs-line-icons/CsLineIcons";
 import OrganizationChart from "../../../components/org-chart/ChartContainer";
 import MyNode from "../../../components/node/mynode";
 import SelectMultiple from "components/select/SelectMultiple";
+import { el } from "date-fns/locale";
 
 const View = ({
   title,
   description,
   breadcrumbs = [],
-  goals = [],
+  trees = null,
+  selectedParents = [],
   initialGoals = [],
   onNodeClicked,
   show,
@@ -20,14 +23,22 @@ const View = ({
   indData,
   styleBackround,
   styleColor,
-  onCompShow,
   onCompClose,
+  onSelectedParents,
+  onTreeLoaded,
 }) => {
-  const orgchart = useRef();
+  const orgchart = useRef([]);
+  const [navActiveKey, setNavActiveKey] = useState("");
 
-  const exportTo = () => {
-    orgchart.current.exportTo("organization_chart", "pdf");
+  const exportTo = (index) => {
+    orgchart.current[index].exportTo("organization_chart", "pdf");
   };
+
+  useEffect(() => {
+    if (selectedParents.length === 1) {
+      setNavActiveKey(`tab-${selectedParents?.[0]?.value?.id_goals}`);
+    }
+  }, [selectedParents]);
 
   return (
     <div className="App2">
@@ -46,67 +57,91 @@ const View = ({
               <Col lg="4">
                 <Form.Label className="d-block">Select Parent</Form.Label>
                 <SelectMultiple
+                  placeholder="Please Select the Parent First"
                   options={initialGoals.map((item) => ({
                     label: item.title_goals,
-                    value: item.id_goals,
+                    value: item,
                   }))}
+                  onChange={(val) => {
+                    const current = selectedParents;
+                    const diff = _.difference(current, val);
+                    const isAdded = diff.length === 0;
+                    onSelectedParents(val);
+                    if (isAdded) {
+                      const lastItem = val?.[val.length - 1];
+                      onTreeLoaded(
+                        lastItem?.value?.parent_family,
+                        lastItem?.value?.id_goals
+                      );
+                    }
+                  }}
+                  value={selectedParents}
                 />
               </Col>
-              <Col>
-                <Button
-                  onClick={exportTo}
-                  variant="gradient-primary"
-                  className="btn-icon btn-icon-end"
-                >
-                  <span>Export</span> <CsLineIcons icon="download" />
-                </Button>
-              </Col>
+              <Col></Col>
             </Row>
-            <Tab.Container defaultActiveKey="tab-0">
+            <Tab.Container activeKey={navActiveKey}>
               <Nav
+                activeKey={navActiveKey}
                 variant="tabs"
                 className="nav-tabs-title nav-tabs-line-title my-4 mx-1"
-                activeKey={"tab-0"}
+                onSelect={setNavActiveKey}
               >
-                {goals.map((item, index) => (
+                {selectedParents.map((item, index) => (
                   <Nav.Item key={`tab-${index}`}>
-                    <Nav.Link eventKey={`tab-${index}`}>
-                      {item.desc_goals}
+                    <Nav.Link eventKey={`tab-${item.value.id_goals}`}>
+                      {item.value.title_goals}
                     </Nav.Link>
                   </Nav.Item>
                 ))}
               </Nav>
               <Tab.Content>
-                {goals.map((item, index) => (
-                  <Tab.Pane key={`content-${index}`} eventKey={`tab-${index}`}>
-                    <div className="scroll-section EmptyDiv os-host os-host-foreign os-host-resize-disabled os-host-scrollbar-vertical-hidden os-host-transition">
-                      <OrganizationChart
-                        ref={orgchart}
-                        id="chartTree"
-                        datasource={item}
-                        chartClass="myChart"
-                        NodeTemplate={MyNode}
-                        pan
-                        // zoom
-                        onClickNode={(clickedNode) =>
-                          onNodeClicked(clickedNode)
-                        }
-                      />
-                    </div>
-                  </Tab.Pane>
-                ))}
+                {trees &&
+                  selectedParents.map((item, index) => (
+                    <Tab.Pane
+                      key={`content-${index}`}
+                      eventKey={`tab-${item.value.id_goals}`}
+                    >
+                      <div className="scroll-section EmptyDiv os-host os-host-foreign os-host-resize-disabled os-host-scrollbar-vertical-hidden os-host-transition">
+                        {trees?.[item?.value?.id_goals] && (
+                          <OrganizationChart
+                            ref={(el) => (orgchart.current[index] = el)}
+                            key={`react-org-${item?.value?.id_goals}`}
+                            id="chartTree"
+                            datasource={trees?.[item?.value?.id_goals]}
+                            chartClass="myChart"
+                            NodeTemplate={MyNode}
+                            pan
+                            // zoom
+                            onClickNode={(clickedNode) =>
+                              onNodeClicked(clickedNode)
+                            }
+                          />
+                        )}
+                        <Button
+                          onClick={() => exportTo(index)}
+                          variant="gradient-primary"
+                          className="btn-icon btn-icon-end"
+                          style={{ position: "absolute", right: 16, top: 8 }}
+                        >
+                          <span>Export To PDF</span>{" "}
+                          <CsLineIcons icon="download" />
+                        </Button>
+                      </div>
+                    </Tab.Pane>
+                  ))}
               </Tab.Content>
             </Tab.Container>
 
             {/* </Card> */}
           </section>
           {/* Title End */}
-          <button
+          {/* <button
             type="button"
             className="btn-icon btn-icon-start ms-1 btn btn-outline-primary"
           >
             Click Me
-          </button>
+          </button> */}
         </Col>
       </Row>
 
