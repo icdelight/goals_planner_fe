@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from 'react-router-dom';
 import SortableTree from "react-sortable-tree";
-import { Alert, Row, Col, Card , Form, ButtonGroup} from 'react-bootstrap';
+import { Button, Alert, Row, Col, Card , Form, ButtonGroup} from 'react-bootstrap';
+import AsyncSelect from 'react-select/async';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import * as Yup from 'yup';
@@ -10,8 +11,11 @@ import HtmlHead from 'components/html-head/HtmlHead';
 import BreadcrumbList from 'components/breadcrumb-list/BreadcrumbList';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
-import { TreeAdmin, RemapNode } from '../../services/treeservice';
+import { TreeAdmin, RemapNode, FindTree } from '../../services/treeservice';
 import { DEFAULT_PATHS } from '../../config';
+import { elementType } from "prop-types";
+import { URL_SERVICE } from 'config.js';
+import axios from 'axios';
 
 const TreeContainer = function() {
 
@@ -21,7 +25,9 @@ const TreeAdminFun = () => {
     const history = useHistory();
     const { currentUser, isLogin } = useSelector((state) => state.auth);
     const [treeData, getGoals] = useState('');
+    const [selectData, setSelect] = useState('');
     const [canvas, setCanvas] = useState('');
+    const [selectedOption, setSelectedOption] = useState('');
     const [isLoading, setLoading] = useState(true);
     const [nodeClicked, clickNode] = useState(true);
     const [show, setShow] = useState(false);
@@ -64,6 +70,64 @@ const TreeAdminFun = () => {
         // console.log(result);
       });
     }
+
+    const fetchData = async (inputValue) => {
+        let resp = [];
+        let result = [];
+        setSelect(resp);
+        if(inputValue.length > 3) {
+            FindTree(currentUser.token,inputValue).then(function(response) {
+                if(response) {
+                    // console.log(response);
+                    if(response.responseCode === 200) {
+                        result = response.responseData;
+                        result.forEach(element => {
+                            if(element !== null) {
+                                const obj = {
+                                    name: element.title_goals,
+                                    description: element.desc_goals,
+                                }
+                                resp.push(obj);
+                            }
+                        });
+                        setSelect(resp);
+                        // console.log(resp);
+                    }else{
+                        toast.error(response.responseDesc, {
+                            position: "top-right",
+                            autoClose: 5000,
+                        });
+                    }
+                }else{
+                    toast.error(response.responseDesc, {
+                        position: "top-right",
+                        autoClose: 5000,
+                    });
+                }
+            });
+        }else{
+            // toast.error('Minimum filter lebih dari 3 char.', {
+            //     position: "top-right",
+            //     autoClose: 5000,
+            // });
+        }
+        // return (await axios.get(`${SERVICE_URL}/products`, { params: { term: inputValue } })).data;
+        return selectData;
+    };
+
+    const fetchSelect = async (inputValue) => {
+        const params = new URLSearchParams();
+        params.append('search',inputValue);
+        const header = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'Authorization': `Bearer ${currentUser.token}`,
+            }
+        };
+        return await (await axios.post( `${URL_SERVICE}goals/findgoals`, params, header)).data.data;
+        // console.log(res);
+        // return (await axios.post( `${URL_SERVICE}goals/findgoals`, params, header)).data;
+    };
 
     const handleNodeClick = (node) => {
         // setState({
@@ -162,6 +226,28 @@ const TreeAdminFun = () => {
         return res;
     }
 
+    const promiseOptions = (inputValue) =>
+    new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(fetchSelect(inputValue));
+        // resolve(fetchData(inputValue));
+      }, 1000);
+    });
+    const formatOptionLabel = ({ id_goals, title_goals }) => (
+        <div>
+          <div className="clearfix" />
+          <div>{title_goals}</div>
+          {id_goals && <div className="text-muted" hidden="1">{id_goals}</div>}
+        </div>
+    );
+    const getOptionValue = (option) => {
+        return option.name;
+    };
+    const onChangeSelectedOption = (e) => {
+        // console.log(e);
+        const selectedOption = e.id_goals; // <--- you can get value from object directly
+        setSelectedOption(selectedOption);
+    };
     const handleClickButton = () => {
         // const { treeData } = this.state;
         // const loopData = '';
@@ -257,7 +343,8 @@ const TreeAdminFun = () => {
 
     
     const onSubmit = (values) => {
-        console.log(values);
+        const search = selectedOption;
+        console.log(search);
     };
 
 
@@ -270,7 +357,7 @@ const TreeAdminFun = () => {
     const description = 'An page for configure the tree view.';
     const breadcrumbs = [{ to: '', text: 'Home' }];
     const validationSchema = Yup.object().shape({
-        searchField: Yup.string().required('Search is required'),
+        // searchField: Yup.string().required('Search is required'),
     });
     const initialValues = { searchField: '' };
     const formik = useFormik({ initialValues, validationSchema, onSubmit });
@@ -288,35 +375,114 @@ const TreeAdminFun = () => {
                 <Col>
                     {/* Title Start */}
                     <section className="scroll-section" id="title">
-                    <div className="page-title-container">
-                        <h1 className="mb-0 pb-0 display-4">{title}</h1>
-                        <BreadcrumbList items={breadcrumbs} />
-                    </div>
+                    <Row className="g-0">
+                        <Col xs="auto" className="mb-2 mb-md-0 me-auto">
+                        <div className="page-title-container">
+                            <h1 className="mb-0 pb-0 display-4">{title}</h1>
+                            <BreadcrumbList items={breadcrumbs} />
+                        </div>
+                        </Col>
+                        <div className="w-100 d-md-none" />
+                        {/* <Col>
+                        <Card className="mb-5" body> */}
+                        {/* <Col xs="12" sm="6" md="auto" className="d-flex align-items-start justify-content-end order-3 order-sm-2">
+                            <div className="g-0 row mb-3">
+                                <div className="d-flex align-items-start justify-content-end justify-content-lg-start col-md col-12">
+                                    <form id="searchForm" className="tooltip-end-bottom me-lg-auto w-md-auto search-input-container border border-separator col-12" onSubmit={handleSubmit}>
+                                        <div className="input-group">
+                                            <div width="500px">
+                                                <AsyncSelect
+                                                    // style={{width: `${(8*selectedOption2.length) + 100}px`}}
+                                                    // Style={{width: `${(8*this.state.selectedOption2.length) + 100}px`}}
+                                                    MenuPlacement="auto"
+                                                    MenuPosition="fixed"
+                                                    cacheOptions={false}
+                                                    defaultOptions
+                                                    classNamePrefix="react-select"
+                                                    loadOptions={promiseOptions}
+                                                    formatOptionLabel={formatOptionLabel}
+                                                    getOptionValue={getOptionValue}
+                                                    />
+                                            </div>
+                                            <Form.Control id="searchField" className="" placeholder="Search" value={values.searchField} onChange={handleChange} />
+                                            <button id="button-addon" type="submit" className="btn btn-outline-secondary">
+                                                <span className="search-magnifier-icon pe-none">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="cs-icon search ">
+                                                    <circle cx="9" cy="9" r="7"> </circle>
+                                                    <path d="M14 14L17.5 17.5"> </path>
+                                                    </svg>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </form> 
+                                </div>
+                            </div> 
+                        </Col> */}
+                    </Row>
                     <Card className="mb-2" body>
                         <Card.Text>{description}</Card.Text>
-                        <div className="g-0 row">
+                        <Form id="loginForm" className="tooltip-end-bottom" onSubmit={handleSubmit}>
+                            <Row className="mb-2 filled tooltip-end-top">
+                                <Col lg="2" md="3" sm="4">
+                                    <Form.Label className="col-form-label">Filter Node</Form.Label>
+                                </Col>
+                                <Col sm="8" md="9" lg="10">
+                                    <AsyncSelect
+                                        MenuPlacement="auto"
+                                        MenuPosition="fixed"
+                                        cacheOptions={false}
+                                        defaultOptions
+                                        classNamePrefix="react-select"
+                                        loadOptions={promiseOptions}
+                                        formatOptionLabel={formatOptionLabel}
+                                        getOptionValue={getOptionValue}
+                                        onChange={onChangeSelectedOption}
+                                        />
+                                </Col>
+                            </Row>
+                            <Row className="mt-5">
+                                <Col lg="2" md="3" sm="4" />
+                                <Col sm="8" md="9" lg="10">
+                                    <div className="btn-group">
+                                        <Button type="submit" variant="outline-primary" className="mb-1">Search</Button>
+                                    </div>
+                                </Col>
+                            </Row>
+                        </Form>
+                        {/* <div className="g-0 row">
                             <div className="d-flex align-items-start justify-content-end justify-content-lg-start col-md col-12 mb-1">
+                                
                                 <form id="searchForm" className="tooltip-end-bottom me-lg-auto w-100 w-md-auto search-input-container border border-separator " onSubmit={handleSubmit}>
-                                <div className="input-group">
-                                <Form.Control id="searchField" className="" placeholder="Search Node" value={values.searchField} onChange={handleChange} />
-                                <button id="button-addon" type="submit" className="btn btn-outline-secondary">
-                                    <span className="search-magnifier-icon pe-none">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="cs-icon search ">
-                                        <circle cx="9" cy="9" r="7"> </circle>
-                                        <path d="M14 14L17.5 17.5"> </path>
-                                        </svg>
-                                    </span>
-                                </button>
+                                <div className="input-group w-100 w-md-auto">
+                                    <AsyncSelect
+                                        className="w-100 w-md-auto"
+                                        width="500"
+                                        cacheOptions={false}
+                                        defaultOptions
+                                        classNamePrefix="react-select"
+                                        loadOptions={promiseOptions}
+                                        formatOptionLabel={formatOptionLabel}
+                                        getOptionValue={getOptionValue}
+                                        />
+                                    
+                                    <button id="button-addon" type="submit" className="btn btn-outline-secondary">
+                                        <span className="search-magnifier-icon pe-none">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="cs-icon search ">
+                                            <circle cx="9" cy="9" r="7"> </circle>
+                                            <path d="M14 14L17.5 17.5"> </path>
+                                            </svg>
+                                        </span>
+                                    </button>
                                 </div>
-                                </form> 
+                                </form>  
                                 <button type="button" className="btn-icon btn-icon-start ms-1 btn btn-outline-primary">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="cs-icon plus ">
-                                    <path d="M10 17 10 3M3 10 17 10"> </path>
-                                </svg> 
-                                <span>Go to Top</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="cs-icon plus ">
+                                        <path d="M10 17 10 3M3 10 17 10"> </path>
+                                    </svg> 
+                                    <span>Go to Top</span>
                                 </button>
                             </div>
-                        </div>
+                        </div> */}
                     </Card>
                     <Card className="mb-3" body>
                         {dismissingAlertShow && (

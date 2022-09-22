@@ -105,9 +105,11 @@ const MyNode = ({ nodeData }) => {
 
 
  const ind = [];
+ console.log(nodeData);
  if(nodeData !== undefined && nodeData) {
   if(nodeData.indikator !== undefined) {
-    nodeData.indikator.forEach((el) => {
+    const indJson = JSON.parse(nodeData.indikator);
+    indJson.forEach((el) => {
       // console.log(el);
       ind.push(
         <Row className="g-0 py-1" key={el.key}>
@@ -133,8 +135,9 @@ const MyNode = ({ nodeData }) => {
  let back = null;
  let col = null;
  if(nodeData.type_goals !== undefined && nodeData.type_goals !== '' && nodeData.type_goals !== null) {
-  back = nodeData.type_goals.background !== null && nodeData.type_goals.background !== "" ? nodeData.type_goals.background : "";
-  col = nodeData.type_goals.color !== null && nodeData.type_goals.color !== "" ? nodeData.type_goals.color : "";
+  const typeJson = JSON.parse(nodeData.type_goals);
+  back = typeJson.background !== null && typeJson.background !== "" ? typeJson.background : "";
+  col = typeJson.color !== null && typeJson.color !== "" ? typeJson.color : "";
  }
 //  console.log(back);
 //  console.log(col);
