@@ -175,7 +175,11 @@ const UserSettingPage = () => {
 
   const onSubmit = (values) => {
     // console.log(values.searchField);
-    findUsers(page,values.searchField);
+    if(values.searchField == "") {
+      getAllUsers(page);
+    }else{
+      findUsers(page,values.searchField);
+    }
   }
 
   const clickRows = (val) => {
