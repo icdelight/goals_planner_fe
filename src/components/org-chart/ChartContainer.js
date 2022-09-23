@@ -271,9 +271,9 @@ const ChartContainer = forwardRef(
         const originalScrollTop = container.current.scrollTop;
         container.current.scrollTop = 0;
         console.log(container);
-        html2canvas(container.current, {
-          width: container.current.clientWidth,
-          height: container.current.clientHeight,
+        html2canvas(chart.current, {
+          width: chart.current.clientWidth,
+          height: chart.current.clientHeight,
           onclone: function (clonedDoc) {
             clonedDoc.querySelector(".orgchart").style.background = "none";
             // clonedDoc.querySelector(".orgchart").style.transform = "";

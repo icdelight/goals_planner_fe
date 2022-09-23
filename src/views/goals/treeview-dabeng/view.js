@@ -112,7 +112,7 @@ const View = ({
                             chartClass="myChart"
                             NodeTemplate={MyNode}
                             pan
-                            // zoom
+                            zoom
                             onClickNode={(clickedNode) =>
                               onNodeClicked(clickedNode)
                             }
