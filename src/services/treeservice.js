@@ -342,7 +342,7 @@ export const EditNode = async (
       pic_goals: picReq,
       start_date: startReq,
       due_date: endReq,
-      status: statusReq,
+      status_goals: statusReq,
       type_goals: typeReq,
       indikator: indReq,
     },

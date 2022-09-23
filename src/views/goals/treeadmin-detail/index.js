@@ -262,11 +262,13 @@ const TreeAdminDetail = ({ location }) => {
     // console.log(path);
     history.push(path, {
       id: parentCanvas.id_goals,
+      parentFamilyId: parentCanvas.parent_family,
       title: parentCanvas.title,
     });
   };
 
   const handleClicUpdkButton = (parentCanvas) => {
+    console.log("parentCanvas", parentCanvas);
     const path = `${appRoot}/tree/treeadmin/${parentCanvas.id_goals}/update`;
     // console.log(path);
     history.push(path, {
@@ -277,6 +279,7 @@ const TreeAdminDetail = ({ location }) => {
       dueDate: parentCanvas.due_date,
       typeGoals: parentCanvas.type_goals,
       indikator: parentCanvas.indikator,
+      status: parentCanvas.status_goals,
     });
   };
 
@@ -287,6 +290,7 @@ const TreeAdminDetail = ({ location }) => {
     history.push(path, {
       id: parentCanvas.id_goals,
       title: parentCanvas.title,
+      parentFamilyId: parentCanvas.parent_family,
     });
   };
 

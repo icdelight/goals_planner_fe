@@ -1,6 +1,14 @@
 import React, { useState, useRef } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Button, Row, Col, Card, Form, InputGroup } from "react-bootstrap";
+import {
+  Button,
+  Row,
+  Col,
+  Card,
+  Form,
+  InputGroup,
+  Modal,
+} from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { useSelector } from "react-redux";
 import * as Yup from "yup";
@@ -43,6 +51,8 @@ const RowInd = function (propss) {
   );
 };
 
+const showModalInitialValue = { isVisible: false, data: null };
+
 const TreeAdminUpdate = (props) => {
   const appRoot = DEFAULT_PATHS.APP.endsWith("/")
     ? DEFAULT_PATHS.APP.slice(1, DEFAULT_PATHS.APP.length)
@@ -56,9 +66,11 @@ const TreeAdminUpdate = (props) => {
   // console.log(rowsId);
   const [startDate, setStartDate] = useState(new Date());
   const [dueDate, setDueDate] = useState(new Date());
+  const [modalConfirmation, setModalConfirmation] = useState(
+    showModalInitialValue
+  );
 
   useCustomLayout({ layout: LAYOUT.Boxed });
-  const { width } = useWindowSize();
   const ref = useRef(null);
   const { currentUser, isLogin } = useSelector((state) => state.auth);
   const styBack =
@@ -66,8 +78,6 @@ const TreeAdminUpdate = (props) => {
       ? parent.typeGoals.background
       : "";
   const [blockPickerColor, setBlockPickerColor] = useState(styBack);
-  const { themeValues } = useSelector((state) => state.settings);
-  const lgBreakpoint = parseInt(themeValues.lg.replace("px", ""), 10);
 
   const indik =
     parent.indikator !== null && parent.indikator !== ""
@@ -124,15 +134,11 @@ const TreeAdminUpdate = (props) => {
     setRowState(rows);
   };
 
-  const onSubmit = (values) => {
-    let act = "0";
+  const onSubmit = (values, isConfirm = false) => {
+    console.log("values", values);
     let textCol = "#000";
-    const ind = [];
     if (blockPickerColor === "#697689" || blockPickerColor === "#555555") {
       textCol = "#fff";
-    }
-    if (ref.current.checked) {
-      act = "1";
     }
     const type = {
       background: blockPickerColor,
@@ -143,6 +149,11 @@ const TreeAdminUpdate = (props) => {
       const obj = { key: idx.toString(), indikator: el.value };
       indRes.push(obj);
     });
+
+    if (values.status === "0" && !isConfirm) {
+      setModalConfirmation({ isVisible: true, data: values });
+      return;
+    }
     // console.log('submit form', JSON.stringify(indRes));
     // console.log('submit form', values);
     EditNode(
@@ -153,9 +164,9 @@ const TreeAdminUpdate = (props) => {
       currentUser.email,
       startDate,
       dueDate,
-      act,
+      values.status,
       type,
-      JSON.stringify(indRes)
+      indRes ? JSON.stringify(indRes) : null
     ).then(function (response) {
       //   console.log(response);
       if (response) {
@@ -189,206 +200,221 @@ const TreeAdminUpdate = (props) => {
     desc: parent.desc,
     startDate: parent.startDate,
     dueDate: parent.dueDate,
-    status: "",
+    status: parent.status ? `${parent.status}` : "0",
     backCol: blockPickerColor,
   };
 
-  const formik = useFormik({ initialValues, validationSchema, onSubmit });
-  const { handleSubmit, handleChange, values, touched, errors } = formik;
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit: (val) => onSubmit(val),
+  });
+  const { handleSubmit, handleChange, setFieldValue, values, touched, errors } =
+    formik;
 
   return (
     <div className="App" style={{}}>
       <HtmlHead title={title} description={description} />
-      <Row>
-        <Col>
-          <section className="scroll-section" id="title">
-            <div className="page-title-container">
-              <h1 className="mb-0 pb-0 display-4">{title}</h1>
-              <BreadcrumbList items={breadcrumbs} />
-            </div>
-          </section>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <h2 className="small-title">Node Info</h2>
-          <Form
-            id="loginForm"
-            className="tooltip-end-bottom"
-            onSubmit={handleSubmit}
-          >
-            <Card className="mb-2">
-              <Card.Body className="p-3">
-                <Row className="mb-2 filled tooltip-end-top">
-                  <Col lg="2" md="3" sm="4">
-                    <Form.Label className="col-form-label">Id Title</Form.Label>
-                  </Col>
-                  <Col sm="8" md="9" lg="10">
-                    <Form.Control
-                      type="text"
-                      name="title"
-                      id="title"
-                      value={values.id}
-                      onChange={handleChange}
-                      readOnly={1}
-                    />
-                    {errors.id && touched.id && (
-                      <div className="d-block invalid-tooltip">{errors.id}</div>
-                    )}
-                  </Col>
-                </Row>
-                <Row className="mb-2 filled tooltip-end-top">
-                  <Col lg="2" md="3" sm="4">
-                    <Form.Label className="col-form-label">Title</Form.Label>
-                  </Col>
-                  <Col sm="8" md="9" lg="10">
-                    <Form.Control
-                      type="text"
-                      name="title"
-                      id="title"
-                      value={values.title}
-                      onChange={handleChange}
-                    />
-                    {errors.title && touched.title && (
-                      <div className="d-block invalid-tooltip">
-                        {errors.title}
-                      </div>
-                    )}
-                  </Col>
-                </Row>
-                <Row className="mb-2 filled tooltip-end-top">
-                  <Col lg="2" md="3" sm="4">
-                    <Form.Label className="col-form-label">
-                      Description
-                    </Form.Label>
-                  </Col>
-                  <Col sm="8" md="9" lg="10">
-                    <Form.Control
-                      type="text"
-                      name="desc"
-                      id="desc"
-                      value={values.desc}
-                      onChange={handleChange}
-                    />
-                    {errors.desc && touched.desc && (
-                      <div className="d-block invalid-tooltip">
-                        {errors.desc}
-                      </div>
-                    )}
-                  </Col>
-                </Row>
-                <Row className="mb-2 filled tooltip-end-top">
-                  <Col lg="2" md="2" sm="2">
-                    <Form.Label className="col-form-label">
-                      Start Date
-                    </Form.Label>
-                  </Col>
-                  <Col sm="4" md="4" lg="4">
-                    {/* <Form.Control type="text" name="startDate" id="startDate" defaultValue=""/> */}
-                    <DatePicker
-                      className="form-control"
-                      name="startDates"
-                      id="startDates"
-                      value={startDate === "" ? parent.startDate : startDate}
-                      selected={startDate}
-                      onChange={(date) => setStartDate(date)}
-                    />
-                    {errors.startDate && touched.startDate && (
-                      <div className="d-block invalid-tooltip">
-                        {errors.startDate}
-                      </div>
-                    )}
-                  </Col>
-                  <Col lg="2" md="2" sm="2">
-                    <Form.Label className="col-form-label">Due Date</Form.Label>
-                  </Col>
-                  <Col sm="4" md="4" lg="4">
-                    {/* <Form.Control type="text" name="dueDate" id="dueDate" defaultValue=""/> */}
-                    <DatePicker
-                      className="form-control"
-                      name="dueDates"
-                      id="dueDates"
-                      value={dueDate === "" ? parent.dueDate : dueDate}
-                      selected={dueDate}
-                      onChange={(date) => setDueDate(date)}
-                    />
-                    {errors.dueDate && touched.dueDate && (
-                      <div className="d-block invalid-tooltip">
-                        {errors.dueDate}
-                      </div>
-                    )}
-                  </Col>
-                </Row>
-                <Row className="mb-3">
-                  <Col lg="2" md="3" sm="4">
-                    <Form.Label className="col-form-label">Status</Form.Label>
-                  </Col>
-                  <Col sm="8" md="9" lg="10">
-                    <Form.Check
-                      ref={ref}
-                      type="checkbox"
-                      className="mt-2"
-                      label="active"
-                      id="status"
-                      name="status"
-                    />
-                    {errors.status && touched.status && (
-                      <div className="d-block invalid-tooltip">
-                        {errors.status}
-                      </div>
-                    )}
-                  </Col>
-                </Row>
-                <Row className="mb-2 filled tooltip-end-top">
-                  <Col lg="2" md="2" sm="2">
-                    <Form.Label className="col-form-label">
-                      Background-color
-                    </Form.Label>
-                  </Col>
-                  <Col sm="4" md="4" lg="4" height="200px">
-                    <Form.Control
-                      type="text"
-                      name="backCol"
-                      id="backCol"
-                      value={blockPickerColor}
-                      values={blockPickerColor}
-                      readOnly={1}
-                      onChange={handleChange}
-                    />
-                    {errors.backCol && touched.backCol && (
-                      <div className="d-block invalid-tooltip">
-                        {errors.backCol}
-                      </div>
-                    )}
-                    <div className="blockpicker">
-                      <BlockPicker
-                        color={blockPickerColor}
-                        onChange={(color) => {
-                          setBlockPickerColor(color.hex);
-                        }}
+      <>
+        <Row>
+          <Col>
+            <section className="scroll-section" id="title">
+              <div className="page-title-container">
+                <h1 className="mb-0 pb-0 display-4">{title}</h1>
+                <BreadcrumbList items={breadcrumbs} />
+              </div>
+            </section>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <h2 className="small-title">Node Info</h2>
+            <Form
+              id="loginForm"
+              className="tooltip-end-bottom"
+              onSubmit={handleSubmit}
+            >
+              <Card className="mb-2">
+                <Card.Body className="p-3">
+                  <Row className="mb-2 filled tooltip-end-top">
+                    <Col lg="2" md="3" sm="4">
+                      <Form.Label className="col-form-label">
+                        Id Title
+                      </Form.Label>
+                    </Col>
+                    <Col sm="8" md="9" lg="10">
+                      <Form.Control
+                        type="text"
+                        name="title"
+                        id="title"
+                        value={values.id}
+                        onChange={handleChange}
+                        readOnly={1}
                       />
-                    </div>
-                  </Col>
-                </Row>
-                <Row className="mb-2 filled tooltip-end-top">
-                  <Col lg="2" md="3" sm="4">
-                    <Form.Label className="col-form-label">
-                      Indikator
-                    </Form.Label>
-                  </Col>
-                  <Col sm="8" md="9" lg="10" height="200px">
-                    <InputGroup>
-                      {/* <Form.Control name="ind" placeholder="Indikator" aria-label="" /> */}
-                      <Button
-                        variant="outline-primary"
-                        onClick={() => handleClickAddIndButton()}
-                      >
-                        <CsLineIcons icon="plus" />
-                      </Button>
-                    </InputGroup>
-                  </Col>
-                </Row>
-                {/* <Row className="mb-2 filled tooltip-end-top">
+                      {errors.id && touched.id && (
+                        <div className="d-block invalid-tooltip">
+                          {errors.id}
+                        </div>
+                      )}
+                    </Col>
+                  </Row>
+                  <Row className="mb-2 filled tooltip-end-top">
+                    <Col lg="2" md="3" sm="4">
+                      <Form.Label className="col-form-label">Title</Form.Label>
+                    </Col>
+                    <Col sm="8" md="9" lg="10">
+                      <Form.Control
+                        type="text"
+                        name="title"
+                        id="title"
+                        value={values.title}
+                        onChange={handleChange}
+                      />
+                      {errors.title && touched.title && (
+                        <div className="d-block invalid-tooltip">
+                          {errors.title}
+                        </div>
+                      )}
+                    </Col>
+                  </Row>
+                  <Row className="mb-2 filled tooltip-end-top">
+                    <Col lg="2" md="3" sm="4">
+                      <Form.Label className="col-form-label">
+                        Description
+                      </Form.Label>
+                    </Col>
+                    <Col sm="8" md="9" lg="10">
+                      <Form.Control
+                        type="text"
+                        name="desc"
+                        id="desc"
+                        value={values.desc}
+                        onChange={handleChange}
+                      />
+                      {errors.desc && touched.desc && (
+                        <div className="d-block invalid-tooltip">
+                          {errors.desc}
+                        </div>
+                      )}
+                    </Col>
+                  </Row>
+                  <Row className="mb-2 filled tooltip-end-top">
+                    <Col lg="2" md="2" sm="2">
+                      <Form.Label className="col-form-label">
+                        Start Date
+                      </Form.Label>
+                    </Col>
+                    <Col sm="4" md="4" lg="4">
+                      {/* <Form.Control type="text" name="startDate" id="startDate" defaultValue=""/> */}
+                      <DatePicker
+                        className="form-control"
+                        name="startDates"
+                        id="startDates"
+                        value={startDate === "" ? parent.startDate : startDate}
+                        selected={startDate}
+                        onChange={(date) => setStartDate(date)}
+                      />
+                      {errors.startDate && touched.startDate && (
+                        <div className="d-block invalid-tooltip">
+                          {errors.startDate}
+                        </div>
+                      )}
+                    </Col>
+                    <Col lg="2" md="2" sm="2">
+                      <Form.Label className="col-form-label">
+                        Due Date
+                      </Form.Label>
+                    </Col>
+                    <Col sm="4" md="4" lg="4">
+                      {/* <Form.Control type="text" name="dueDate" id="dueDate" defaultValue=""/> */}
+                      <DatePicker
+                        className="form-control"
+                        name="dueDates"
+                        id="dueDates"
+                        value={dueDate === "" ? parent.dueDate : dueDate}
+                        selected={dueDate}
+                        onChange={(date) => setDueDate(date)}
+                      />
+                      {errors.dueDate && touched.dueDate && (
+                        <div className="d-block invalid-tooltip">
+                          {errors.dueDate}
+                        </div>
+                      )}
+                    </Col>
+                  </Row>
+                  <Row className="mb-3">
+                    <Col lg="2" md="3" sm="4">
+                      <Form.Label className="col-form-label">Status</Form.Label>
+                    </Col>
+                    <Col sm="8" md="9" lg="10">
+                      <Form.Check
+                        type="checkbox"
+                        className="mt-2"
+                        label="active"
+                        id="status"
+                        name="status"
+                        checked={values.status === "1"}
+                        onChange={(e) =>
+                          setFieldValue("status", e.target.checked ? "1" : "0")
+                        }
+                      />
+                      {errors.status && touched.status && (
+                        <div className="d-block invalid-tooltip">
+                          {errors.status}
+                        </div>
+                      )}
+                    </Col>
+                  </Row>
+                  <Row className="mb-2 filled tooltip-end-top">
+                    <Col lg="2" md="2" sm="2">
+                      <Form.Label className="col-form-label">
+                        Background-color
+                      </Form.Label>
+                    </Col>
+                    <Col sm="4" md="4" lg="4" height="200px">
+                      <Form.Control
+                        type="text"
+                        name="backCol"
+                        id="backCol"
+                        value={blockPickerColor}
+                        values={blockPickerColor}
+                        readOnly={1}
+                        onChange={handleChange}
+                      />
+                      {errors.backCol && touched.backCol && (
+                        <div className="d-block invalid-tooltip">
+                          {errors.backCol}
+                        </div>
+                      )}
+                      <div className="blockpicker">
+                        <BlockPicker
+                          color={blockPickerColor}
+                          onChange={(color) => {
+                            setBlockPickerColor(color.hex);
+                          }}
+                        />
+                      </div>
+                    </Col>
+                  </Row>
+                  <Row className="mb-2 filled tooltip-end-top">
+                    <Col lg="2" md="3" sm="4">
+                      <Form.Label className="col-form-label">
+                        Indikator
+                      </Form.Label>
+                    </Col>
+                    <Col sm="8" md="9" lg="10" height="200px">
+                      <InputGroup>
+                        {/* <Form.Control name="ind" placeholder="Indikator" aria-label="" /> */}
+                        <Button
+                          variant="outline-primary"
+                          onClick={() => handleClickAddIndButton()}
+                        >
+                          <CsLineIcons icon="plus" />
+                        </Button>
+                      </InputGroup>
+                    </Col>
+                  </Row>
+                  {/* <Row className="mb-2 filled tooltip-end-top">
                                     <Col lg="2" md="3" sm="4"> </Col>
                                     <Col sm="8" md="9" lg="10" height="200px">  
                                         <InputGroup>
@@ -399,47 +425,73 @@ const TreeAdminUpdate = (props) => {
                                         </InputGroup>
                                     </Col>
                                 </Row> */}
-                <div className="display-data-Container">
-                  {rowState.map((row, idx) => {
-                    return (
-                      <RowInd
-                        key={idx}
-                        value={row.value}
-                        onChange={(e) => updateValue(e, idx)}
-                        onDelete={(e) => deleteRows(row.value)}
-                      />
-                    );
-                  })}
-                </div>
-                <Row className="mt-5">
-                  <Col lg="2" md="3" sm="4" />
-                  <Col sm="8" md="9" lg="10">
-                    <div className="btn-group">
-                      <Button
-                        type="submit"
-                        variant="outline-primary"
-                        className="mb-1"
-                      >
-                        Submit
-                      </Button>
-                      <Button
-                        id="backButton"
-                        name="backButton"
-                        type="button"
-                        variant="outline-warning"
-                        className="mb-1"
-                        onClick={() => handleClickBackButton()}
-                      >
-                        Back
-                      </Button>
-                    </div>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-          </Form>
-        </Col>
-      </Row>
+                  <div className="display-data-Container">
+                    {rowState.map((row, idx) => {
+                      return (
+                        <RowInd
+                          key={idx}
+                          value={row.value}
+                          onChange={(e) => updateValue(e, idx)}
+                          onDelete={(e) => deleteRows(row.value)}
+                        />
+                      );
+                    })}
+                  </div>
+                  <Row className="mt-5">
+                    <Col lg="2" md="3" sm="4" />
+                    <Col sm="8" md="9" lg="10">
+                      <div className="btn-group">
+                        <Button
+                          type="submit"
+                          variant="outline-primary"
+                          className="mb-1"
+                        >
+                          Submit
+                        </Button>
+                        <Button
+                          id="backButton"
+                          name="backButton"
+                          type="button"
+                          variant="outline-warning"
+                          className="mb-1"
+                          onClick={() => handleClickBackButton()}
+                        >
+                          Back
+                        </Button>
+                      </div>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+            </Form>
+          </Col>
+        </Row>
+        <Modal
+          show={modalConfirmation.isVisible}
+          onHide={() => setModalConfirmation(showModalInitialValue)}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Attention</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Are you sure want to deactivate this node ?</Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={() => setModalConfirmation(showModalInitialValue)}
+            >
+              Close
+            </Button>
+            <Button
+              onClick={() => {
+                onSubmit(modalConfirmation.data, true);
+                setModalConfirmation(showModalInitialValue);
+              }}
+            >
+              Save
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </>
     </div>
   );
 };

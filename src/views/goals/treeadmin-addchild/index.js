@@ -141,7 +141,7 @@ const TreeAdminAddChild = (props) => {
       dueDate,
       parent.id || 0,
       type,
-      JSON.stringify(indRes)
+      indRes ? JSON.stringify(indRes) : null
     ).then(function (response) {
       //   console.log(response);
       if (response) {
