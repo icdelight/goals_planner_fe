@@ -10,6 +10,7 @@ import UserSetting from 'views/user/UserSetting';
 import UpdUser from 'views/user/EditUser';
 import AreaSetting from 'views/area/AreaSetting';
 import AddArea from 'views/area/AddArea';
+import AddRegion from 'views/area/AddRegion';
 import EditArea from 'views/area/EditArea';
 import ClusterSettingPage from 'views/cluster/ClusterSetting';
 import AddCluster from 'views/cluster/AddCluster';
@@ -195,6 +196,16 @@ const routesAndMenuItems = {
               component: AddArea,
               roles: [USER_ROLE.SuperAdmin, USER_ROLE.Admin],
               hideInMenu: true,
+              subs: [
+                {
+                  path: `${appRoot}/addregion`,
+                  label: "Add Region",
+                  icon: "flag",
+                  component: AddRegion,
+                  roles: [USER_ROLE.SuperAdmin],
+                  hideInMenu: true,
+                },
+              ]
             },
             {
               path: `${appRoot}/editarea`,

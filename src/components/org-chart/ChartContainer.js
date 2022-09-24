@@ -311,7 +311,7 @@ const ChartContainer = forwardRef(
       },
     }));
 
-    console.log("ds", ds);
+    // console.log("ds", ds);
 
     return (
       <div

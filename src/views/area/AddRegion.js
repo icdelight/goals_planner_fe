@@ -15,27 +15,10 @@ import 'react-datepicker/dist/react-datepicker.css';
 // import { useWindowSize } from 'hooks/useWindowSize';
 import { toast } from 'react-toastify';
 import { DEFAULT_PATHS } from '../../config';
-import { GetParentAreasSelection, GetAllAreasSelection, AddAreaService } from '../../services/areaservice';
+import { AddRegionService } from '../../services/areaservice';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 
-const RegionArea = function(propss){
-    const {role, valueAreas, setValueAreas, optParents} = propss;
-    if(role !== 'superadmin') {
-        return (<div></div>);
-    }
-    return (
-        <Row className="mb-2 filled tooltip-end-top">
-            <Col lg="2" md="3" sm="4">
-                <Form.Label className="col-form-label">Region Area</Form.Label>
-            </Col>
-            <Col sm="8" md="9" lg="10">
-                <Select classNamePrefix="react-select" name="desc_area" id="desc_area" options={optParents} value={valueAreas} onChange={setValueAreas} placeholder="Region" />
-            </Col>
-        </Row>
-    );
-}
-
-const AddArea = (props) => {
+const AddRegion = (props) => {
     const appRoot = DEFAULT_PATHS.APP.endsWith('/') ? DEFAULT_PATHS.APP.slice(1, DEFAULT_PATHS.APP.length) : DEFAULT_PATHS.APP;
     const history = useHistory();
     const states = props;
@@ -43,81 +26,18 @@ const AddArea = (props) => {
     const ref = useRef(null);
     const [isChecked, setIsChecked] = useState(false);
 
-    const title = 'Add New Area Page';
-    const description = 'An page for adding new area.';
+    const title = 'Add New Region';
+    const description = 'An page for adding new region.';
     const breadcrumbs = [
         { to: ``, text: 'Home' },
         { to: `setting/areasetting`, text: 'Area Setting' },
+        { to: `setting/areasetting/addarea`, text: 'Add Area' },
     ];
 
     const { currentUser, isLogin } = useSelector((state) => state.auth);
-    const id_area = currentUser.id_area;
-    const desc_area = currentUser.desc_area;
-    // console.log(currentUser);
-    const [isLoading, setLoading] = useState(true);
-    const options = [];
-    const [optRegion, setOptRegion] = useState(options);
-    const [optParent, setOptParent] = useState(options);
-    const [valueRegion, setValueRegion] = useState();
-    const [valueParent, setValueParent] = useState();
-    const [valueArea, setValueArea] = useState();
-
-    const fetchParentArea = () => {
-        setLoading(true);
-        GetAllAreasSelection(currentUser.token,id_area,desc_area).then(function(response) {
-            if(response) {
-            //   console.log(response);
-              if(response.responseCode === 200) {
-                toast.success(response.responseDesc, {
-                  position: "top-right",
-                  autoClose: 1000,
-                });
-                // const objSelected = {
-                //     value: area.idparentarea,
-                //     label: area.descparentarea,
-                // };
-                // setValueParent(objSelected);
-                setOptParent(response.responseData);
-                // setLoading(false);
-              }else{  
-                toast.error(response.responseDesc, {
-                  position: "top-right",
-                  autoClose: 5000,
-                });
-                setLoading(false);
-              }
-            }
-        });
-
-        GetParentAreasSelection(currentUser.token,id_area,desc_area).then(function(response) {
-            if(response) {
-            //   console.log(response);
-              if(response.responseCode === 200) {
-                toast.success(response.responseDesc, {
-                  position: "top-right",
-                  autoClose: 1000,
-                });
-                // const objSelected = {
-                //     value: area.idparentarea,
-                //     label: area.descparentarea,
-                // };
-                // setValueParent(objSelected);
-                setOptRegion(response.responseData);
-                setLoading(false);
-              }else{  
-                toast.error(response.responseDesc, {
-                  position: "top-right",
-                  autoClose: 5000,
-                });
-                setLoading(false);
-              }
-            }
-        });
-    };
-
     const initialValues = { 
-        desc_area: currentUser.desc_area, 
-        id_area: currentUser.id_area,
+        desc_area: '', 
+        id_area: '',
         desc_parent_area: '',
         desc_sub_area: '',
     };
@@ -131,13 +51,7 @@ const AddArea = (props) => {
         if (ref.current.checked) {
             act = "1";
         } 
-        let id_area = currentUser.id_area;
-        let desc_area = currentUser.desc_area;
-        if(currentUser.role == 'superadmin') {
-            id_area = valueArea.value;
-            desc_area = valueArea.label;
-        }
-        AddAreaService(currentUser.token,id_area,desc_area,values.desc_sub_area,valueParent.value,act).then(function(response) {
+        AddRegionService(currentUser.token,values.desc_area,values.desc_sub_area,act).then(function(response) {
             if(response) {
               console.log(response);
               if(response.responseCode === 200) {
@@ -157,11 +71,7 @@ const AddArea = (props) => {
         });
     };
     const handleClickBackButton = () => {
-        const path = `${appRoot}/setting/areasetting`; 
-        history.push(path);
-    };
-    const handleaddregion = () => {
-        const path = `${appRoot}/setting/areasetting/addarea/addregion`; 
+        const path = `${appRoot}/setting/areasetting/addarea`; 
         history.push(path);
     };
     const handleChecked = () => {
@@ -171,13 +81,6 @@ const AddArea = (props) => {
     const formik = useFormik({ initialValues, validationSchema, onSubmit });
     const { handleSubmit, handleChange, values, touched, errors } = formik;
 
-    useEffect(() => {
-        fetchParentArea();
-    }, []);
-
-    if (isLoading) {
-        return <div className="App">Loading...</div>;
-    }
     return (
         <div className="App" style={{  }}>
             <HtmlHead title={title} description={description} />
@@ -191,12 +94,6 @@ const AddArea = (props) => {
                     </div>
                     </section>
                 </Col>
-                <div className="w-100 d-md-none" />
-                <Col xs="12" sm="6" md="auto" className="d-flex align-items-start justify-content-end order-3 order-sm-2">
-                    <button id="button-addon" type="submit" className="btn btn-outline-warning" onClick={() => handleaddregion()} >
-                        <CsLineIcons icon="plus" className="me-2" size="17" /> New Region
-                    </button>
-                </Col>
             </Row>
             <Row>
                 <Col>
@@ -204,20 +101,13 @@ const AddArea = (props) => {
                     <Form id="loginForm" className="tooltip-end-bottom" onSubmit={handleSubmit}>
                     <Card className="mb-2">
                         <Card.Body className="p-3">
-                            <RegionArea 
-                                role = {currentUser.role}
-                                valueAreas = {valueRegion}
-                                setValueAreas = {setValueRegion}
-                                optParents = {optRegion}
-                            />
                             <Row className="mb-2 filled tooltip-end-top">
                                 <Col lg="2" md="3" sm="4">
-                                    <Form.Label className="col-form-label">Parent Area</Form.Label>
+                                    <Form.Label className="col-form-label">Area</Form.Label>
                                 </Col>
                                 <Col sm="8" md="9" lg="10">
-                                    {/* <Form.Control type="text" name="desc_parent_area" id="desc_parent_area" value={values.desc_parent_area}  onChange={handleChange} readOnly={values.id_sub_area == 1? 1 : 0}/> */}
-                                    <Select classNamePrefix="react-select" name="desc_parent_area" id="desc_parent_area" options={optParent} value={valueParent} onChange={setValueParent} placeholder="" />
-                                    {errors.desc_parent_area  && touched.desc_parent_area && <div className="d-block invalid-tooltip">{errors.desc_parent_area}</div>}
+                                    <Form.Control type="text" name="desc_area" id="desc_area" value={values.desc_area}  values={values.desc_area} onChange={handleChange}/>
+                                    {errors.desc_area  && touched.desc_area && <div className="d-block invalid-tooltip">{errors.desc_area}</div>}
                                 </Col>
                             </Row>
                             <Row className="mb-2 filled tooltip-end-top">
@@ -254,6 +144,6 @@ const AddArea = (props) => {
             </Row>
         </div>
     );
-}
 
-export default AddArea;
+}
+export default AddRegion;

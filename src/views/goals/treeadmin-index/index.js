@@ -117,6 +117,7 @@ const TreeAdminIndex = () => {
     InitialGoals(currentUser.token)
       .then(function (response) {
         if (response) {
+          console.log(response);
           if (response.responseCode === 200) {
             result = response.responseData;
             setInitialGoals(result);
@@ -128,7 +129,7 @@ const TreeAdminIndex = () => {
       });
   };
 
-  console.log("first", initialGoals);
+  // console.log("initial", initialGoals);
 
   const handleClickAddParentButton = () => {
     const path = `${appRoot}/tree/treeadmin/addchild`;

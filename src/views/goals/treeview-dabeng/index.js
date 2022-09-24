@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import CsLineIcons from "cs-line-icons/CsLineIcons";
 
-import { InitialGoals, TreeGoals } from "../../../services/treeservice";
+import { InitialGoals, TreeGoals, TreeViewCluster } from "../../../services/treeservice";
 import View from "./view";
 
 const TreeViewDabeng = () => {
@@ -26,7 +26,7 @@ const TreeViewDabeng = () => {
   const compClose = () => setShow(false);
   const compShow = () => setShow(true);
 
-  console.log("trees", trees);
+  // console.log("trees", trees);
 
   const handleTreeGoals = (parentFamily, idGoals) => {
     let result = [];
@@ -38,6 +38,7 @@ const TreeViewDabeng = () => {
         if (response.responseCode === 200) {
           result = response.responseData;
           const data = result?.[0];
+          console.log(data);
           setTrees((prevState) => ({
             ...prevState,
             [data?.id_goals]: data,
@@ -71,6 +72,43 @@ const TreeViewDabeng = () => {
       })
       .finally(() => {
         setLoading(false);
+      });
+  };
+
+  const handleClickCluster = (id_goals,selectedSearch) => {
+    const result = '';
+    console.log('tes',selectedSearch);
+    TreeViewCluster(currentUser.token,id_goals,selectedSearch.id_cluster)
+      .then((response) => {
+        if (response) {
+          if (response.responseCode === 200) {
+            // result = response.responseData;
+
+            const data = response.responseData?.[0];
+            console.log('result',data);
+            setTrees((prevState) => ({
+              ...prevState,
+              [data?.id_goals]: data,
+            }));
+            toast.success(response.responseDesc, {
+              position: "top-right",
+              autoClose: 1000,
+            });
+          }else{
+            toast.error(response.responseDesc, {
+              position: "top-right",
+              autoClose: 1000,
+            });
+          }
+        }
+        // callback([]);
+      })
+      .catch((error) => {
+        toast.error(error, {
+          position: "top-right",
+          autoClose: 1000,
+        });
+        // callback([]);
       });
   };
 
@@ -162,6 +200,8 @@ const TreeViewDabeng = () => {
       onCompClose={compClose}
       onSelectedParents={setSelectedParents}
       onTreeLoaded={handleTreeGoals}
+      onClickCluster={handleClickCluster}
+      onClickClearCluster={handleTreeGoals}
     />
   );
 };
