@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import dayjs from "dayjs"
 import { useHistory, useParams } from "react-router-dom";
 import SortableTree from "react-sortable-tree";
 import {
@@ -467,8 +468,8 @@ const TreeAdminDetail = ({ location }) => {
                   >
                     PIC
                   </small>
-                  <span className="col-md col-6 sm-6">{canvas.firstName}</span>
-                  <span className="col-md col-6 sm-6">{canvas.pic}</span>
+                  <span className="col-md col-6 sm-6">{canvas.pic_goals}</span>
+                  {/* <span className="col-md col-6 sm-6">{canvas.pic_goals}</span> */}
                 </div>
               </Card.Header>
               <Card.Body>
@@ -480,7 +481,7 @@ const TreeAdminDetail = ({ location }) => {
                     Description
                   </small>
                   <span className="sm-12">
-                    <Card.Text>{canvas.description}</Card.Text>
+                    <Card.Text>{canvas.desc_goals}</Card.Text>
                   </span>
                 </div>
               </Card.Body>
@@ -506,7 +507,7 @@ const TreeAdminDetail = ({ location }) => {
                     Start Date
                   </small>
                   <span className="col-md col-6 sm-12">
-                    <Card.Text>{canvas.start_date}</Card.Text>
+                    <Card.Text>{dayjs(canvas.start_date).format('DD/MM/YYYY, HH:mm')}</Card.Text>
                   </span>
                 </div>
                 <div className="row mt-0 mb-0">
@@ -517,7 +518,7 @@ const TreeAdminDetail = ({ location }) => {
                     End Date
                   </small>
                   <span className="col-md col-6 sm-12">
-                    <Card.Text>{canvas.due_date}</Card.Text>
+                    <Card.Text>{dayjs(canvas.due_date).format('DD/MM/YYYY, HH:mm')}</Card.Text>
                   </span>
                 </div>
               </Card.Footer>

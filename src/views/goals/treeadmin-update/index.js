@@ -102,9 +102,7 @@ const TreeAdminUpdate = (props) => {
   ];
 
   const handleClickBackButton = () => {
-    const path = `${appRoot}/tree/treeadmf`;
-    // console.log(path);
-    history.push(path);
+    history.goBack();
   };
 
   const handleClickAddIndButton = () => {
@@ -454,7 +452,7 @@ const TreeAdminUpdate = (props) => {
                           type="button"
                           variant="outline-warning"
                           className="mb-1"
-                          onClick={() => handleClickBackButton()}
+                          onClick={handleClickBackButton}
                         >
                           Back
                         </Button>

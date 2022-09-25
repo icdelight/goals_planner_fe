@@ -77,9 +77,7 @@ const TreeAdminAddChild = (props) => {
   ];
 
   const handleClickBackButton = () => {
-    const path = `${appRoot}/tree/treeadmf`;
-    // console.log(path);
-    history.push(path);
+    history.goBack();
   };
 
   const handleClickAddIndButton = () => {
