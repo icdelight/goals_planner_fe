@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import PropTypes from "prop-types";
+import PropTypes, { node } from "prop-types";
 import "./mynode.css";
 import { Row, Col, Card } from "react-bootstrap";
 // import Offcanvas from 'react-bootstrap/Offcanvas';
@@ -93,7 +93,7 @@ import CsLineIcons from 'cs-line-icons/CsLineIcons';
 
 const propTypes = {
   // nodeData: PropTypes.object.isRequired
-  nodeData: PropTypes.oneOfType([PropTypes.object]).isRequired
+  nodeData: PropTypes.oneOfType([PropTypes.object]).isRequired,
 };
 
 const MyNode = ({ nodeData }) => {
@@ -103,10 +103,9 @@ const MyNode = ({ nodeData }) => {
 //  const CompClose = () => setShow(false);
  const CompShow = () => setShow(true);
 
-
  const ind = [];
  if(nodeData !== undefined && nodeData) {
-  if(nodeData.indikator !== undefined) {
+  if(nodeData.indikator !== undefined && nodeData.indikator !== null && nodeData.indikator !== []) {
     nodeData.indikator.forEach((el) => {
       // console.log(el);
       ind.push(
@@ -132,12 +131,24 @@ const MyNode = ({ nodeData }) => {
  }
  let back = null;
  let col = null;
- if(nodeData.type_goals !== undefined && nodeData.type_goals !== '' && nodeData.type_goals !== null) {
-  back = nodeData.type_goals.background !== null && nodeData.type_goals.background !== "" ? nodeData.type_goals.background : "";
-  col = nodeData.type_goals.color !== null && nodeData.type_goals.color !== "" ? nodeData.type_goals.color : "";
+ if(nodeData.clustered == "1") {
+  if(nodeData.id_cluster == undefined || nodeData.id_cluster == null || nodeData.id_cluster == '' ) {
+    back = '#D8D8D8';
+    col = '#000';
+  }else{
+    if(nodeData.type_goals !== undefined && nodeData.type_goals !== '' && nodeData.type_goals !== null) {
+      back = nodeData.type_goals.background !== null && nodeData.type_goals.background !== "" ? nodeData.type_goals.background : "";
+      col = nodeData.type_goals.color !== null && nodeData.type_goals.color !== "" ? nodeData.type_goals.color : "";
+    }
+  }
+ }else{
+  if(nodeData.type_goals !== undefined && nodeData.type_goals !== '' && nodeData.type_goals !== null) {
+    back = nodeData.type_goals.background !== null && nodeData.type_goals.background !== "" ? nodeData.type_goals.background : "";
+    col = nodeData.type_goals.color !== null && nodeData.type_goals.color !== "" ? nodeData.type_goals.color : "";
+  }
  }
 //  console.log(back);
-//  console.log(col);
+//  console.log(nodeData.id_goals);
 
   return (
      <div className="org-node-container" key={nodeData.id_goals !== undefined ? nodeData.id_goals : ''} onClick={CompShow}>

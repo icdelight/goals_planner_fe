@@ -117,6 +117,7 @@ const TreeAdminIndex = () => {
     InitialGoals(currentUser.token)
       .then(function (response) {
         if (response) {
+          console.log(response);
           if (response.responseCode === 200) {
             result = response.responseData;
             setInitialGoals(result);

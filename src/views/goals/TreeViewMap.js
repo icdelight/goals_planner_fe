@@ -49,8 +49,6 @@ export default class TreeAdmin extends Component {
         });
     }
 
-    
-
     render() {
         const {goals} = this.state;
         useCustomLayout({ placement: MENU_PLACEMENT.Vertical, layout: LAYOUT.Boxed });

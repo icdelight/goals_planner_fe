@@ -49,7 +49,7 @@ const TreeAdminDetail = ({ location }) => {
   const handleShow = () => setShow(true);
 
   const searchGoals = (inputValue, callback) => {
-    SearchGoals(currentUser.token, { searchTerm: inputValue })
+    SearchGoals(currentUser.token, { searchTerm: inputValue, parent_family: id })
       .then((response) => {
         if (response) {
           // console.log(response);
