@@ -2,7 +2,6 @@
   "name": "acorn-react",
   "version": "1.0.1",
   "private": true,
-  "proxy": "http://localhost:8080",
   "dependencies": {
     "@dabeng/react-orgchart": "^0.0.6",
     "@fullcalendar/bootstrap": "^5.9.0",
