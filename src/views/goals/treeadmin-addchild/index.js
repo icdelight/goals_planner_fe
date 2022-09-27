@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
+import Select from "react-select";
+import AsyncSelect from "react-select/async";
 import { Button, Row, Col, Card, Form, InputGroup } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { useSelector } from "react-redux";
@@ -16,6 +18,9 @@ import { BlockPicker } from "react-color";
 import { AddChildTreeService } from "../../../services/treeservice";
 import { DEFAULT_PATHS } from "../../../config";
 import { LAYOUT } from "../../../constants";
+import { GetParentAreasSelection } from "services/areaservice";
+import { debounce } from "lodash";
+import { FindCluster } from "services/clusterservice";
 
 const RowInd = function (propss) {
   const { value, onChange, onDelete } = propss;
@@ -53,6 +58,8 @@ const TreeAdminAddChild = (props) => {
   const parent = states.location.state;
   const [startDate, setStartDate] = useState(new Date());
   const [dueDate, setDueDate] = useState(new Date());
+  const [areas, setAreas] = useState([]);
+  const [initialClusters, setInitialClusters] = useState([]);
   useCustomLayout({ layout: LAYOUT.Boxed });
   const { currentUser, isLogin } = useSelector((state) => state.auth);
   const [blockPickerColor, setBlockPickerColor] = useState("#37d67a");
@@ -76,10 +83,66 @@ const TreeAdminAddChild = (props) => {
     // },
   ];
 
+  const fetchParentArea = () => {
+    GetParentAreasSelection(currentUser.token, currentUser.id_area).then(
+      function (response) {
+        if (response) {
+          //   console.log(response);
+          if (response.responseCode === 200) {
+            setAreas(response.responseData);
+          } else {
+            toast.error(response.responseDesc, {
+              position: "top-right",
+              autoClose: 5000,
+            });
+          }
+        }
+      }
+    );
+  };
+
+  const initialFetchClusters = () => {
+    FindCluster(currentUser.token, 1, "").then((response) => {
+      if (response) {
+        // console.log(response);
+        if (response.responseCode === 200) {
+          setInitialClusters(response.responseData);
+          return;
+        } else {
+          throw response;
+        }
+      } else {
+        throw response;
+      }
+    });
+  };
+
+  const fetchClusters = (inputValue, callback) => {
+    FindCluster(currentUser.token, 1, inputValue)
+      .then((response) => {
+        if (response) {
+          // console.log(response);
+          if (response.responseCode === 200) {
+            callback(response.responseData);
+            return;
+          } else {
+            throw response;
+          }
+        } else {
+          throw response;
+        }
+      })
+      .catch((response) => {
+        callback([]);
+        toast.error(response.responseDesc, {
+          position: "top-right",
+          autoClose: 5000,
+        });
+      });
+  };
+
   const handleClickBackButton = () => {
-    const path = `${appRoot}/tree/treeadmf`;
-    // console.log(path);
-    history.push(path);
+    history.goBack();
   };
 
   const handleClickAddIndButton = () => {
@@ -105,6 +168,7 @@ const TreeAdminAddChild = (props) => {
   const validationSchema = Yup.object().shape({
     childTitle: Yup.string().required("Title is required"),
     childDesc: Yup.string().required("Description is required"),
+    issueGoals: Yup.string().required("Issue is required"),
     // startDate: Yup.string().required('Start date is required'),
     // dueDate: Yup.string().required('Due date is required'),
   });
@@ -112,9 +176,12 @@ const TreeAdminAddChild = (props) => {
   const initialValues = {
     childTitle: "",
     childDesc: "",
+    issueGoals: "",
     startDate: "",
     dueDate: "",
     backCol: blockPickerColor,
+    idArea: "",
+    idCluster: "",
   };
 
   const onSubmit = (values) => {
@@ -132,37 +199,55 @@ const TreeAdminAddChild = (props) => {
       const obj = { key: idx.toString(), indikator: el.value };
       indRes.push(obj);
     });
-    AddChildTreeService(
-      currentUser.token,
-      values.childTitle,
-      values.childDesc,
-      currentUser.email,
-      startDate,
-      dueDate,
-      parent.id || 0,
-      type,
-      indRes ? JSON.stringify(indRes) : null
-    ).then(function (response) {
-      //   console.log(response);
-      if (response) {
-        if (response.responseCode === 200) {
-          toast.success(response.responseDesc, {
-            position: "top-right",
-            autoClose: 1000,
-          });
-          history.goBack();
+    const payload = {
+      title_goals: values.childTitle,
+      desc_goals: values.childDesc,
+      pic_goals: currentUser.email,
+      start_date: startDate,
+      due_date: dueDate,
+      parent_goals: parent.id || 0,
+      type_goals: JSON.stringify(type),
+      indikator: indRes ? JSON.stringify(indRes) : null,
+      id_area: values.idArea,
+      id_cluster: values.idCluster,
+      issue_goals: values.issueGoals,
+    };
+    AddChildTreeService(currentUser.token, payload)
+      .then(function (response) {
+        //   console.log(response);
+        if (response) {
+          if (response.responseCode === 200) {
+            toast.success(response.responseDesc, {
+              position: "top-right",
+              autoClose: 1000,
+            });
+            history.goBack();
+          } else {
+            throw response;
+          }
         } else {
-          toast.error(response.responseDesc, {
-            position: "top-right",
-            autoClose: 1000,
-          });
+          throw response;
         }
-      }
-    });
+      })
+      .catch((response) => {
+        toast.error(response.responseDesc, {
+          position: "top-right",
+          autoClose: 1000,
+        });
+      });
   };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
-  const { handleSubmit, handleChange, values, touched, errors } = formik;
+  const { handleSubmit, handleChange, values, touched, errors, setFieldValue } =
+    formik;
+
+  console.log("values", values);
+
+  useEffect(() => {
+    fetchParentArea();
+    initialFetchClusters();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="App" style={{}}>
@@ -266,13 +351,78 @@ const TreeAdminAddChild = (props) => {
                       type="text"
                       name="childDesc"
                       id="childDesc"
-                      values={values.childDesc}
                       value={values.childDesc}
                       onChange={handleChange}
                     />
                     {errors.childDesc && touched.childDesc && (
                       <div className="d-block invalid-tooltip">
                         {errors.childDesc}
+                      </div>
+                    )}
+                  </Col>
+                </Row>
+                <Row className="mb-2 filled tooltip-end-top">
+                  <Col lg="2" md="3" sm="4">
+                    <Form.Label className="col-form-label">Issue</Form.Label>
+                  </Col>
+                  <Col sm="8" md="9" lg="10">
+                    <Form.Control
+                      type="text"
+                      name="issueGoals"
+                      id="issueGoals"
+                      value={values.issueGoals}
+                      onChange={handleChange}
+                    />
+                    {errors.issueGoals && touched.issueGoals && (
+                      <div className="d-block invalid-tooltip">
+                        {errors.issueGoals}
+                      </div>
+                    )}
+                  </Col>
+                </Row>
+                <Row className="mb-2 filled tooltip-end-top">
+                  <Col lg="2" md="3" sm="4">
+                    <Form.Label className="col-form-label">Area</Form.Label>
+                  </Col>
+                  <Col sm="8" md="9" lg="10">
+                    {/* <Form.Control type="text" name="desc_parent_area" id="desc_parent_area" value={values.desc_parent_area}  onChange={handleChange} readOnly={values.id_sub_area == 1? 1 : 0}/> */}
+                    <Select
+                      classNamePrefix="react-select"
+                      options={areas}
+                      onChange={(e) => setFieldValue("idArea", e.value)}
+                      placeholder=""
+                    />
+                    {errors.idArea && touched.idArea && (
+                      <div className="d-block invalid-tooltip">
+                        {errors.idArea}
+                      </div>
+                    )}
+                  </Col>
+                </Row>
+                <Row className="mb-2 filled tooltip-end-top">
+                  <Col lg="2" md="3" sm="4">
+                    <Form.Label className="col-form-label">Cluster</Form.Label>
+                  </Col>
+                  <Col sm="8" md="9" lg="10">
+                    {/* <Form.Control type="text" name="desc_parent_area" id="desc_parent_area" value={values.desc_parent_area}  onChange={handleChange} readOnly={values.id_sub_area == 1? 1 : 0}/> */}
+                    <AsyncSelect
+                      defaultOptions={initialClusters}
+                      cacheOptions
+                      classNamePrefix="react-select"
+                      placeholder="Search cluster here..."
+                      onChange={(e) => setFieldValue("idCluster", e.id_cluster)}
+                      loadOptions={debounce(fetchClusters, 500)}
+                      getOptionValue={(e) => e.id_cluster}
+                      formatOptionLabel={({ nama_cluster }) => (
+                        <div>
+                          <div className="clearfix" />
+                          <div>{nama_cluster}</div>
+                        </div>
+                      )}
+                    />
+                    {errors.idCluster && touched.idCluster && (
+                      <div className="d-block invalid-tooltip">
+                        {errors.idCluster}
                       </div>
                     )}
                   </Col>

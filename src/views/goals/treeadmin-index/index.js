@@ -129,8 +129,6 @@ const TreeAdminIndex = () => {
       });
   };
 
-  // console.log("initial", initialGoals);
-
   const handleClickAddParentButton = () => {
     const path = `${appRoot}/tree/treeadmin/addchild`;
     history.push({
@@ -185,7 +183,7 @@ const TreeAdminIndex = () => {
               <Col sm="12" md="7" lg="9" xxl="10" className="text-end">
                 <div className="d-inline-block me-0 me-sm-3 float-start float-md-none"></div>
                 <div className="d-inline-block">
-                  <ControlsPageSize tableInstance={tableInstance} />
+                  {/* <ControlsPageSize tableInstance={tableInstance} /> */}
                 </div>
               </Col>
             </Row>

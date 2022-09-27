@@ -47,6 +47,21 @@ export const ChildGoals = async (token, body) => {
   return result;
 };
 
+export const TreeExcelDownload = (token, parentId) => {
+  return axios({
+    method: "GET",
+    url: `${URL_SERVICE}goals/downloadExcelGoal/${parentId}`,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    responseType: "blob",
+  })
+    .then((response) => {
+      return response;
+    })
+    .catch(defaultFailedRes);
+};
+
 export const SearchGoals = async (token, body) => {
   const options = {
     headers: {
@@ -136,8 +151,7 @@ export const TreeView = async (token) => {
   return result;
 };
 
-export const TreeViewCluster = async (token,parent_fams,id_cluster) => {
-  
+export const TreeViewCluster = async (token, parent_fams, id_cluster) => {
   const params = new URLSearchParams();
   params.append("parent_family", parent_fams);
   params.append("id_cluster", id_cluster);
@@ -292,26 +306,13 @@ export const TreeAdmin = async (token) => {
   return result;
 };
 
-export const AddChildTreeService = async (
-  token,
-  titleReq,
-  descReq,
-  picReq,
-  startReq,
-  endReq,
-  parentReq,
-  typeReq,
-  indReq
-) => {
+export const AddChildTreeService = async (token, payload) => {
   const params = new URLSearchParams();
-  params.append("title_goals", titleReq);
-  params.append("desc_goals", descReq);
-  params.append("pic_goals", picReq);
-  params.append("start_date", startReq);
-  params.append("due_date", endReq);
-  params.append("parent_goals", parentReq);
-  params.append("type_goals", JSON.stringify(typeReq));
-  params.append("indikator", indReq);
+
+  for (const key in payload) {
+    params.append(key, payload[key]);
+  }
+
   const header = {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
