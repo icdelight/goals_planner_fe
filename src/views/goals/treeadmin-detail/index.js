@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import dayjs from "dayjs"
+import dayjs from "dayjs";
 import { useHistory, useParams } from "react-router-dom";
 import SortableTree from "react-sortable-tree";
 import {
@@ -49,7 +49,10 @@ const TreeAdminDetail = ({ location }) => {
   const handleShow = () => setShow(true);
 
   const searchGoals = (inputValue, callback) => {
-    SearchGoals(currentUser.token, { searchTerm: inputValue, parent_family: id })
+    SearchGoals(currentUser.token, {
+      searchTerm: inputValue,
+      parent_family: id,
+    })
       .then((response) => {
         if (response) {
           // console.log(response);
@@ -281,6 +284,8 @@ const TreeAdminDetail = ({ location }) => {
       typeGoals: parentCanvas.type_goals,
       indikator: parentCanvas.indikator,
       status: parentCanvas.status_goals,
+      idArea: parentCanvas.id_area,
+      idCluster: parentCanvas.id_cluster,
     });
   };
 
@@ -507,7 +512,9 @@ const TreeAdminDetail = ({ location }) => {
                     Start Date
                   </small>
                   <span className="col-md col-6 sm-12">
-                    <Card.Text>{dayjs(canvas.start_date).format('DD/MM/YYYY, HH:mm')}</Card.Text>
+                    <Card.Text>
+                      {dayjs(canvas.start_date).format("DD/MM/YYYY, HH:mm")}
+                    </Card.Text>
                   </span>
                 </div>
                 <div className="row mt-0 mb-0">
@@ -518,7 +525,9 @@ const TreeAdminDetail = ({ location }) => {
                     End Date
                   </small>
                   <span className="col-md col-6 sm-12">
-                    <Card.Text>{dayjs(canvas.due_date).format('DD/MM/YYYY, HH:mm')}</Card.Text>
+                    <Card.Text>
+                      {dayjs(canvas.due_date).format("DD/MM/YYYY, HH:mm")}
+                    </Card.Text>
                   </span>
                 </div>
               </Card.Footer>

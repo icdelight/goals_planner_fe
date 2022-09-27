@@ -1,6 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
-import { Row, Col, Card, Button, Tab, Nav, Form, InputGroup } from "react-bootstrap";
+import {
+  Row,
+  Col,
+  Card,
+  Button,
+  Tab,
+  Nav,
+  Form,
+  InputGroup,
+  DropdownButton,
+  ButtonGroup,
+  Dropdown,
+} from "react-bootstrap";
 import HtmlHead from "components/html-head/HtmlHead";
 import BreadcrumbList from "components/breadcrumb-list/BreadcrumbList";
 import Offcanvas from "react-bootstrap/Offcanvas";
@@ -11,14 +23,15 @@ import SelectMultiple from "components/select/SelectMultiple";
 import SelectServerSide from "components/select/SelectServerSide";
 import SelectSearchCluster from "components/select/SelectSearchCluster";
 import {
-  SearchGoals,TreeViewCluster,
+  SearchGoals,
+  TreeExcelDownload,
+  TreeViewCluster,
 } from "../../../services/treeservice";
-import {
-  FindCluster
-} from "../../../services/clusterservice"
+import { FindCluster } from "../../../services/clusterservice";
 import { useSelector } from "react-redux";
 import { debounce } from "lodash";
 import { el } from "date-fns/locale";
+import { toast } from "react-toastify";
 
 const View = ({
   title,
@@ -46,58 +59,75 @@ const View = ({
   const [selectedTree, setSelectedTree] = useState(trees);
   const { currentUser, isLogin } = useSelector((state) => state.auth);
 
-  const exportTo = (index) => {
+  const exportToPDF = (index) => {
     orgchart.current[index].exportTo("organization_chart", "pdf");
   };
+  const exportToExcel = (parentId) => {
+    TreeExcelDownload(currentUser.token, parentId).then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "organization_chart.xlsx"); //or any other extension
+      document.body.appendChild(link);
+      link.click();
+    });
+  };
   const searchGoals = (inputValue, callback) => {
-    FindCluster(currentUser.token,1, inputValue)
+    FindCluster(currentUser.token, 1, inputValue)
       .then((response) => {
         if (response) {
           // console.log(response);
           if (response.responseCode === 200) {
             callback(response.responseData);
             return;
+          } else {
+            throw response;
           }
+        } else {
+          throw response;
         }
-        callback([]);
       })
-      .catch(() => {
+      .catch((response) => {
         callback([]);
+        toast.error(response.responseDesc, {
+          position: "top-right",
+          autoClose: 5000,
+        });
       });
   };
 
   const fetchTree = (id_goals) => {
     setLoading(true);
-    console.log('search',selectedSearch);
-    if(selectedSearch == null) {
+    console.log("search", selectedSearch);
+    if (selectedSearch == null) {
       setSelectedTree(trees);
       setLoading(false);
       // console.log('tree',selectedTree);
       // console.log('trees',trees);
-    }else{
+    } else {
       const trees_ = selectedTree;
       // console.log(selectedTree);
-      TreeViewCluster(currentUser.token,id_goals,selectedSearch.id_cluster)
-      .then((response) => {
-        if (response) {
-          console.log(response);
-          // if (response.responseCode === 200) {
-          //   callback(response.responseData);
-          //   return;
-          // }
-          trees_[id_goals] = response.responseData;
-          setSelectedTree(trees_);
-          setLoading(false);
-          console.log('trees',trees_);
-        }
-        // callback([]);
-      })
-      .catch(() => {
-        // callback([]);
-      });
+      TreeViewCluster(currentUser.token, id_goals, selectedSearch.id_cluster)
+        .then((response) => {
+          if (response) {
+            console.log(response);
+            // if (response.responseCode === 200) {
+            //   callback(response.responseData);
+            //   return;
+            // }
+            trees_[id_goals] = response.responseData;
+            setSelectedTree(trees_);
+            setLoading(false);
+            console.log("trees", trees_);
+          }
+          // callback([]);
+        })
+        .catch(() => {
+          // callback([]);
+        });
     }
   };
-  
+
   const ImplementCluster = (id_goals) => {
     // console.log(id_goals,selectedSearch);
     fetchTree(id_goals);
@@ -178,6 +208,7 @@ const View = ({
                         <Row>
                           <Col lg="8" md="8" sm="8">
                             <SelectSearchCluster
+                              cacheOptions
                               value={selectedSearch}
                               placeholder="Search cluster here..."
                               loadOptions={debounce(searchGoals, 500)}
@@ -186,25 +217,36 @@ const View = ({
                               getOptionValue={(e) => e.id_goals}
                             />
                           </Col>
-                          <Col  lg="4" md="4" sm="4">
+                          <Col lg="4" md="4" sm="4">
                             <div className="btn-group">
                               <Button
-                                onClick={() => onClickCluster(item.value.id_goals,selectedSearch)}
+                                onClick={() =>
+                                  onClickCluster(
+                                    item.value.id_goals,
+                                    selectedSearch
+                                  )
+                                }
                                 variant="gradient-primary"
+                                disabled={!selectedSearch}
                                 className="btn-icon btn-icon-end"
                               >
                                 <span>Set Cluster</span>{" "}
                                 <CsLineIcons icon="bookmark" />
                               </Button>
                               <Button
-                                onClick={() => onClickClearCluster(item?.value?.parent_family,item.value.id_goals)}
-                                variant="gradient-primary"
+                                onClick={() => {
+                                  onClickClearCluster(
+                                    item?.value?.parent_family,
+                                    item.value.id_goals
+                                  );
+                                  setSelectedSearch(null);
+                                }}
+                                variant="muted"
                                 className="btn-icon btn-icon-end"
                               >
                                 <span>Clear Cluster</span>{" "}
-                                <CsLineIcons icon="bookmark" />
+                                <CsLineIcons icon="close" />
                               </Button>
-
                             </div>
                           </Col>
                         </Row>
@@ -223,15 +265,25 @@ const View = ({
                             }
                           />
                         )}
-                          <Button
-                            onClick={() => exportTo(index)}
-                            variant="gradient-primary"
-                            className="btn-icon btn-icon-end"
-                            style={{ position: "absolute", right: 20, top: 55 }}
+                        <DropdownButton
+                          as={ButtonGroup}
+                          title="Export As"
+                          variant="primary"
+                          style={{ position: "absolute", right: 20, top: 55 }}
+                        >
+                          <Dropdown.Item onClick={() => exportToPDF(index)}>
+                            Export As PDF
+                          </Dropdown.Item>
+                          <Dropdown.Item
+                            onClick={() =>
+                              exportToExcel(
+                                trees?.[item?.value?.id_goals]?.parent_family
+                              )
+                            }
                           >
-                            <span>Export To PDF</span>{" "}
-                            <CsLineIcons icon="download" />
-                          </Button>
+                            Export As Excel
+                          </Dropdown.Item>
+                        </DropdownButton>
                       </div>
                     </Tab.Pane>
                   ))}

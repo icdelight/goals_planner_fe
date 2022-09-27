@@ -1,4 +1,6 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import Select from "react-select";
+import AsyncSelect from "react-select/async";
 import { useHistory, useParams } from "react-router-dom";
 import {
   Button,
@@ -24,6 +26,9 @@ import { BlockPicker } from "react-color";
 import { EditNode } from "../../../services/treeservice";
 import { DEFAULT_PATHS } from "../../../config";
 import { LAYOUT } from "../../../constants";
+import { GetParentAreasSelection } from "services/areaservice";
+import { FindCluster } from "services/clusterservice";
+import { debounce } from "lodash";
 
 const RowInd = function (propss) {
   const { value, onChange, onDelete } = propss;
@@ -69,6 +74,8 @@ const TreeAdminUpdate = (props) => {
   const [modalConfirmation, setModalConfirmation] = useState(
     showModalInitialValue
   );
+  const [areas, setAreas] = useState([]);
+  const [initialClusters, setInitialClusters] = useState([]);
 
   useCustomLayout({ layout: LAYOUT.Boxed });
   const ref = useRef(null);
@@ -100,6 +107,66 @@ const TreeAdminUpdate = (props) => {
     { to: `tree/treeadmin`, text: "Tree Admin" },
     { to: `tree/treeadmin/${id}/detail`, text: "Tree Admin Detail" },
   ];
+
+  const fetchParentArea = () => {
+    GetParentAreasSelection(currentUser.token, currentUser.id_area).then(
+      function (response) {
+        if (response) {
+          //   console.log(response);
+          if (response.responseCode === 200) {
+            setAreas(response.responseData);
+          } else {
+            toast.error(response.responseDesc, {
+              position: "top-right",
+              autoClose: 5000,
+            });
+          }
+        }
+      }
+    );
+  };
+
+  const initialFetchClusters = () => {
+    FindCluster(currentUser.token, 1, "").then((response) => {
+      if (response) {
+        // console.log(response);
+        if (response.responseCode === 200) {
+          setInitialClusters(response.responseData);
+          return;
+        } else {
+          throw response;
+        }
+      } else {
+        throw response;
+      }
+    });
+  };
+
+  const fetchClusters = (inputValue, callback) => {
+    FindCluster(currentUser.token, 1, inputValue)
+      .then((response) => {
+        if (response) {
+          // console.log(response);
+          if (response.responseCode === 200) {
+            console.log("response.responseData", response.responseData);
+            callback(response.responseData);
+            setInitialClusters(response.responseData);
+            return;
+          } else {
+            throw response;
+          }
+        } else {
+          throw response;
+        }
+      })
+      .catch((response) => {
+        callback([]);
+        toast.error(response.responseDesc, {
+          position: "top-right",
+          autoClose: 5000,
+        });
+      });
+  };
 
   const handleClickBackButton = () => {
     history.goBack();
@@ -200,6 +267,8 @@ const TreeAdminUpdate = (props) => {
     dueDate: parent.dueDate,
     status: parent.status ? `${parent.status}` : "0",
     backCol: blockPickerColor,
+    idArea: parent.idArea,
+    idCluster: parent.idCluster,
   };
 
   const formik = useFormik({
@@ -209,6 +278,15 @@ const TreeAdminUpdate = (props) => {
   });
   const { handleSubmit, handleChange, setFieldValue, values, touched, errors } =
     formik;
+
+  console.log("values", values);
+  console.log("areas", areas);
+
+  useEffect(() => {
+    fetchParentArea();
+    initialFetchClusters();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="App" style={{}}>
@@ -292,6 +370,64 @@ const TreeAdminUpdate = (props) => {
                       {errors.desc && touched.desc && (
                         <div className="d-block invalid-tooltip">
                           {errors.desc}
+                        </div>
+                      )}
+                    </Col>
+                  </Row>
+                  <Row className="mb-2 filled tooltip-end-top">
+                    <Col lg="2" md="3" sm="4">
+                      <Form.Label className="col-form-label">Area</Form.Label>
+                    </Col>
+                    <Col sm="8" md="9" lg="10">
+                      {/* <Form.Control type="text" name="desc_parent_area" id="desc_parent_area" value={values.desc_parent_area}  onChange={handleChange} readOnly={values.id_sub_area == 1? 1 : 0}/> */}
+                      <Select
+                        value={areas.find(
+                          (item) => item.value === values.idArea
+                        )}
+                        classNamePrefix="react-select"
+                        options={areas}
+                        onChange={(e) => setFieldValue("idArea", e.value)}
+                        placeholder=""
+                      />
+                      {errors.idArea && touched.idArea && (
+                        <div className="d-block invalid-tooltip">
+                          {errors.idArea}
+                        </div>
+                      )}
+                    </Col>
+                  </Row>
+                  <Row className="mb-2 filled tooltip-end-top">
+                    <Col lg="2" md="3" sm="4">
+                      <Form.Label className="col-form-label">
+                        Cluster
+                      </Form.Label>
+                    </Col>
+                    <Col sm="8" md="9" lg="10">
+                      {/* <Form.Control type="text" name="desc_parent_area" id="desc_parent_area" value={values.desc_parent_area}  onChange={handleChange} readOnly={values.id_sub_area == 1? 1 : 0}/> */}
+                      <AsyncSelect
+                        value={{
+                          id_cluster: 10,
+                          nama_cluster: "ABC",
+                        }}
+                        defaultOptions={initialClusters}
+                        cacheOptions
+                        classNamePrefix="react-select"
+                        placeholder="Search cluster here..."
+                        onChange={(e) =>
+                          setFieldValue("idCluster", e.id_cluster)
+                        }
+                        loadOptions={debounce(fetchClusters, 500)}
+                        getOptionValue={(e) => e.id_cluster}
+                        formatOptionLabel={({ nama_cluster }) => (
+                          <div>
+                            <div className="clearfix" />
+                            <div>{nama_cluster}</div>
+                          </div>
+                        )}
+                      />
+                      {errors.idCluster && touched.idCluster && (
+                        <div className="d-block invalid-tooltip">
+                          {errors.idCluster}
                         </div>
                       )}
                     </Col>
