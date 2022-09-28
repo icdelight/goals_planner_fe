@@ -208,8 +208,8 @@ const TreeAdminAddChild = (props) => {
       parent_goals: parent.id || 0,
       type_goals: JSON.stringify(type),
       indikator: indRes ? JSON.stringify(indRes) : null,
-      id_area: values.idArea || null,
-      id_cluster: values.idCluster || null,
+      ...(values.idArea && { id_area: values.idArea }),
+      ...(values.idCluster && { id_cluster: values.idCluster }),
       issue_goals: values.issueGoals,
     };
     AddChildTreeService(currentUser.token, payload)
