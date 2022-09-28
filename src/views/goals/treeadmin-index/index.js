@@ -17,7 +17,7 @@ import Table from "./components/Table";
 import TablePagination from "./components/TablePagination";
 import { Link } from "react-router-dom";
 import { DEFAULT_PATHS } from "config";
-import { InitialGoals } from "services/treeservice";
+import { InitialGoals, InitialGoalsAdmin } from "services/treeservice";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import CsLineIcons from "cs-line-icons/CsLineIcons";
@@ -114,7 +114,7 @@ const TreeAdminIndex = () => {
   const getInitialGoals = () => {
     let result = null;
     setIsLoading(true);
-    InitialGoals(currentUser.token)
+    InitialGoalsAdmin(currentUser.token)
       .then(function (response) {
         if (response) {
           console.log(response);
