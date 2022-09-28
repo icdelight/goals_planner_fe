@@ -286,6 +286,8 @@ const TreeAdminDetail = ({ location }) => {
       status: parentCanvas.status_goals,
       idArea: parentCanvas.id_area,
       idCluster: parentCanvas.id_cluster,
+      namaCluster: parentCanvas.nama_cluster,
+      issueGoals: parentCanvas.issue_goals,
     });
   };
 

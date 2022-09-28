@@ -389,44 +389,16 @@ export const AddChildTreeService = async (token, payload) => {
   return result;
 };
 
-export const EditNode = async (
-  token,
-  idReq,
-  titleReq,
-  descReq,
-  picReq,
-  startReq,
-  endReq,
-  statusReq,
-  typeReq,
-  indReq
-) => {
+export const EditNode = async (token, payload) => {
   const params = new URLSearchParams();
-  params.append("id_goals", idReq);
-  params.append("title_goals", titleReq);
-  params.append("desc_goals", descReq);
-  params.append("pic_goals", picReq);
-  params.append("start_date", startReq);
-  params.append("due_date", endReq);
-  params.append("status_goals", statusReq);
-  params.append("type_goals", JSON.stringify(typeReq));
-  params.append("indikator", indReq);
+  for (const key in payload) {
+    params.append(key, payload[key]);
+  }
 
   const header = {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
       Authorization: `Bearer ${token}`,
-    },
-    params: {
-      id_goals: idReq,
-      title_goals: titleReq,
-      desc_goals: descReq,
-      pic_goals: picReq,
-      start_date: startReq,
-      due_date: endReq,
-      status_goals: statusReq,
-      type_goals: typeReq,
-      indikator: indReq,
     },
   };
 

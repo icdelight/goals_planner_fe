@@ -1,4 +1,5 @@
 import { DEFAULT_PATHS } from "config.js";
+import { store } from "store";
 
 import HomePage from "views/default/Home";
 // import HorizontalPage from 'views/Horizontal';
@@ -6,20 +7,21 @@ import HomePage from "views/default/Home";
 // import TreePage from 'views/goals/TreeAdmin';
 import TreeAdminDetail from "views/goals/treeadmin-detail";
 // import TreeView from 'views/goals/TreeView';
-import UserSetting from 'views/user/UserSetting';
-import UpdUser from 'views/user/EditUser';
-import AreaSetting from 'views/area/AreaSetting';
-import AddArea from 'views/area/AddArea';
-import AddRegion from 'views/area/AddRegion';
-import EditArea from 'views/area/EditArea';
-import ClusterSettingPage from 'views/cluster/ClusterSetting';
-import AddCluster from 'views/cluster/AddCluster';
-import EditCluster from 'views/cluster/EditCluster';
-import { USER_ROLE } from 'constants.js';
+import UserSetting from "views/user/UserSetting";
+import UpdUser from "views/user/EditUser";
+import AreaSetting from "views/area/AreaSetting";
+import AddArea from "views/area/AddArea";
+import AddRegion from "views/area/AddRegion";
+import EditArea from "views/area/EditArea";
+import ClusterSettingPage from "views/cluster/ClusterSetting";
+import AddCluster from "views/cluster/AddCluster";
+import EditCluster from "views/cluster/EditCluster";
+import { USER_ROLE } from "constants.js";
 import TreeAdminIndex from "views/goals/treeadmin-index";
 import TreeAdminUpdate from "views/goals/treeadmin-update";
 import TreeAdminAddChild from "views/goals/treeadmin-addchild";
 import TreeViewDabeng from "views/goals/treeview-dabeng";
+import { setCurrentUser } from "auth/authSlice";
 
 const appRoot = DEFAULT_PATHS.APP.endsWith("/")
   ? DEFAULT_PATHS.APP.slice(1, DEFAULT_PATHS.APP.length)
@@ -205,7 +207,7 @@ const routesAndMenuItems = {
                   roles: [USER_ROLE.SuperAdmin],
                   hideInMenu: true,
                 },
-              ]
+              ],
             },
             {
               path: `${appRoot}/editarea`,
@@ -219,30 +221,39 @@ const routesAndMenuItems = {
         },
         {
           path: `${appRoot}/clustersetting`,
-          label: 'Cluster Setting',
-          icon: 'bookmark',
+          label: "Cluster Setting",
+          icon: "bookmark",
           component: ClusterSettingPage,
-          roles: [USER_ROLE.SuperAdmin,USER_ROLE.Admin],
-          subs : [
-            { 
-              path: `${appRoot}/addcluster`, 
-              label: 'Add Cluster', 
-              icon: 'flag',
-              component: AddCluster, 
-              roles: [USER_ROLE.SuperAdmin,USER_ROLE.Admin], 
+          roles: [USER_ROLE.SuperAdmin, USER_ROLE.Admin],
+          subs: [
+            {
+              path: `${appRoot}/addcluster`,
+              label: "Add Cluster",
+              icon: "flag",
+              component: AddCluster,
+              roles: [USER_ROLE.SuperAdmin, USER_ROLE.Admin],
               hideInMenu: true,
             },
-            { 
-              path: `${appRoot}/editcluster`, 
-              label: 'Edit Cluster', 
-              icon: 'flag',
-              component: EditCluster, 
-              roles: [USER_ROLE.SuperAdmin,USER_ROLE.Admin], 
+            {
+              path: `${appRoot}/editcluster`,
+              label: "Edit Cluster",
+              icon: "flag",
+              component: EditCluster,
+              roles: [USER_ROLE.SuperAdmin, USER_ROLE.Admin],
               hideInMenu: true,
-            }
-          ]
+            },
+          ],
         },
-      ]
+      ],
+    },
+    {
+      path: `${appRoot}/login`,
+      label: "Log out",
+      icon: "logout",
+      isButton: true,
+      onClick: () => {
+        store.dispatch(setCurrentUser(""));
+      },
     },
   ],
   sidebarItems: [],
