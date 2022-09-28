@@ -180,8 +180,8 @@ const TreeAdminAddChild = (props) => {
     startDate: "",
     dueDate: "",
     backCol: blockPickerColor,
-    idArea: "",
-    idCluster: "",
+    idArea: null,
+    idCluster: null,
   };
 
   const onSubmit = (values) => {
@@ -208,8 +208,8 @@ const TreeAdminAddChild = (props) => {
       parent_goals: parent.id || 0,
       type_goals: JSON.stringify(type),
       indikator: indRes ? JSON.stringify(indRes) : null,
-      id_area: values.idArea,
-      id_cluster: values.idCluster,
+      id_area: values.idArea || null,
+      id_cluster: values.idCluster || null,
       issue_goals: values.issueGoals,
     };
     AddChildTreeService(currentUser.token, payload)
@@ -230,9 +230,14 @@ const TreeAdminAddChild = (props) => {
         }
       })
       .catch((response) => {
-        toast.error(response.responseDesc, {
+        let message;
+        if (typeof response.responseDesc === "string") {
+          message = response.responseDesc;
+        } else if (Array.isArray(response.responseDesc)) {
+          message = response.responseDesc.join(", ");
+        }
+        toast.error(message, {
           position: "top-right",
-          autoClose: 1000,
         });
       });
   };

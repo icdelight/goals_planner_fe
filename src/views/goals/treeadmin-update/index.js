@@ -200,7 +200,6 @@ const TreeAdminUpdate = (props) => {
   };
 
   const onSubmit = (values, isConfirm = false) => {
-    console.log("values", values);
     let textCol = "#000";
     if (blockPickerColor === "#697689" || blockPickerColor === "#555555") {
       textCol = "#fff";
@@ -219,20 +218,22 @@ const TreeAdminUpdate = (props) => {
       setModalConfirmation({ isVisible: true, data: values });
       return;
     }
-    // console.log('submit form', JSON.stringify(indRes));
-    // console.log('submit form', values);
-    EditNode(
-      currentUser.token,
-      values.id,
-      values.title,
-      values.desc,
-      currentUser.email,
-      startDate,
-      dueDate,
-      values.status,
-      type,
-      indRes ? JSON.stringify(indRes) : null
-    ).then(function (response) {
+
+    const payload = {
+      id_goals: values.id,
+      title_goals: values.title,
+      desc_goals: values.desc,
+      pic_goals: currentUser.email,
+      start_date: startDate,
+      due_date: dueDate,
+      status_goals: values.status,
+      type_goals: JSON.stringify(type),
+      indikator: indRes ? JSON.stringify(indRes) : null,
+      id_area: values.idArea || null,
+      id_cluster: values.idCluster || null,
+      issue_goals: values.issueGoals,
+    };
+    EditNode(currentUser.token, payload).then(function (response) {
       //   console.log(response);
       if (response) {
         if (response.responseCode === 200) {
@@ -255,6 +256,7 @@ const TreeAdminUpdate = (props) => {
     id: Yup.string().required("Id Title is required"),
     title: Yup.string().required("Title is required"),
     desc: Yup.string().required("Description is required"),
+    issueGoals: Yup.string().required("Issue is required"),
     // startDate: Yup.string().required('Start date is required'),
     // dueDate: Yup.string().required('Due date is required'),
   });
@@ -269,6 +271,7 @@ const TreeAdminUpdate = (props) => {
     backCol: blockPickerColor,
     idArea: parent.idArea,
     idCluster: parent.idCluster,
+    issueGoals: parent.issueGoals,
   };
 
   const formik = useFormik({
@@ -278,9 +281,6 @@ const TreeAdminUpdate = (props) => {
   });
   const { handleSubmit, handleChange, setFieldValue, values, touched, errors } =
     formik;
-
-  console.log("values", values);
-  console.log("areas", areas);
 
   useEffect(() => {
     fetchParentArea();
@@ -376,6 +376,25 @@ const TreeAdminUpdate = (props) => {
                   </Row>
                   <Row className="mb-2 filled tooltip-end-top">
                     <Col lg="2" md="3" sm="4">
+                      <Form.Label className="col-form-label">Issue</Form.Label>
+                    </Col>
+                    <Col sm="8" md="9" lg="10">
+                      <Form.Control
+                        type="text"
+                        name="issueGoals"
+                        id="issueGoals"
+                        value={values.issueGoals}
+                        onChange={handleChange}
+                      />
+                      {errors.issueGoals && touched.issueGoals && (
+                        <div className="d-block invalid-tooltip">
+                          {errors.issueGoals}
+                        </div>
+                      )}
+                    </Col>
+                  </Row>
+                  <Row className="mb-2 filled tooltip-end-top">
+                    <Col lg="2" md="3" sm="4">
                       <Form.Label className="col-form-label">Area</Form.Label>
                     </Col>
                     <Col sm="8" md="9" lg="10">
@@ -405,9 +424,9 @@ const TreeAdminUpdate = (props) => {
                     <Col sm="8" md="9" lg="10">
                       {/* <Form.Control type="text" name="desc_parent_area" id="desc_parent_area" value={values.desc_parent_area}  onChange={handleChange} readOnly={values.id_sub_area == 1? 1 : 0}/> */}
                       <AsyncSelect
-                        value={{
-                          id_cluster: 10,
-                          nama_cluster: "ABC",
+                        defaultValue={{
+                          id_cluster: parent.idCluster,
+                          nama_cluster: parent.namaCluster,
                         }}
                         defaultOptions={initialClusters}
                         cacheOptions
