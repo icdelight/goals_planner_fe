@@ -54,17 +54,17 @@ const Login = () => {
       <div className="w-100 w-lg-75 w-xxl-50">
         <div>
           <div className="mb-5">
-            <h1 className="display-3 text-white">Multiple Niches</h1>
-            <h1 className="display-3 text-white">Ready for Your Project</h1>
+            <h1 className="display-3 text-white">Goals Tree Planner</h1>
+            <h1 className="display-3 text-white">Aplikasi Penyusunan Target Rencana Kinerja</h1>
           </div>
           <p className="h6 text-white lh-1-5 mb-5">
-            Dynamically target high-payoff intellectual capital for customized technologies. Objectively integrate emerging core competencies before
-            process-centric communities...
+            Mengintegrasikan seluruh rencana kinerja instansi dengan tetap berfokus pada cluster utama kinerja area anda <br />
+            Permudah penata-kerjaan target anda dengan preview as Tree Planner
           </p>
           <div className="mb-5">
-            <Button size="lg" variant="outline-white" href="/">
+            {/* <Button size="lg" variant="outline-white" href="/">
               Learn More
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>
@@ -81,13 +81,13 @@ const Login = () => {
           </NavLink>
         </div>
         <div className="mb-5">
-          <h2 className="cta-1 mb-0 text-primary">Welcome,</h2>
-          <h2 className="cta-1 text-primary">let's get started!</h2>
+          <h2 className="cta-1 mb-0 text-primary">Selamat Datang,</h2>
+          <h2 className="cta-1 text-primary">susun pohon kerja anda</h2>
         </div>
         <div className="mb-5">
-          <p className="h6">Please use your credentials to login.</p>
+          <p className="h6">Silahkan masukkan credentials untuk login.</p>
           <p className="h6">
-            If you are not a member, please <NavLink to="/register">register</NavLink>.
+            Jika anda bukan member, silahhkan melakukan <NavLink to="/register">registrasi</NavLink>.
           </p>
         </div>
         <div>
@@ -100,9 +100,9 @@ const Login = () => {
             <div className="mb-3 filled form-group tooltip-end-top">
               <CsLineIcons icon="lock-off" />
               <Form.Control type="password" name="password" onChange={handleChange} value={values.password} placeholder="Password" />
-              <NavLink className="text-small position-absolute t-3 e-3" to="/forgot-password">
+              {/* <NavLink className="text-small position-absolute t-3 e-3" to="/forgot-password">
                 Forgot?
-              </NavLink>
+              </NavLink> */}
               {errors.password && touched.password && <div className="d-block invalid-tooltip">{errors.password}</div>}
             </div>
             <Button size="lg" type="submit">
