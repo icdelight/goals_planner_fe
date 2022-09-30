@@ -85,9 +85,9 @@ const Login = () => {
           <h2 className="cta-1 text-primary">susun pohon kerja anda</h2>
         </div>
         <div className="mb-5">
-          <p className="h6">Silahkan masukkan credentials untuk login.</p>
-          <p className="h6">
-            Jika anda bukan member, silahhkan melakukan <NavLink to="/register">registrasi</NavLink>.
+          <p className="h6" style={{color:"#000"}}>Silahkan masukkan credentials untuk login.</p>
+          <p className="h6" style={{color:"#000"}} >
+            Jika anda bukan member, silahkan melakukan <NavLink to="/register">registrasi</NavLink>.
           </p>
         </div>
         <div>

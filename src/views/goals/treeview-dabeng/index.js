@@ -115,7 +115,7 @@ const TreeViewDabeng = () => {
   const handleNodeClicked = (nodes) => {
     compShow();
     const ind = [];
-    if (nodes !== undefined && nodes && nodes.length > 0) {
+    if (nodes !== undefined && nodes) {
       nodes.indikator.forEach((el) => {
         ind.push(
           <Row className="g-0 py-1" key={el.key}>

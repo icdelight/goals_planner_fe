@@ -57,10 +57,10 @@ const EditUser = (props) => {
             if(response) {
             // console.log(response);
             if(response.responseCode === 200) {
-                toast.success(response.responseDesc, {
-                    position: "top-right",
-                    autoClose: 1000,
-                });
+                // toast.success(response.responseDesc, {
+                //     position: "top-right",
+                //     autoClose: 1000,
+                // });
                 const objSelected = {
                     value: user.id_area,
                     label: user.desc_area,
@@ -75,10 +75,10 @@ const EditUser = (props) => {
                 };
                 setValueRole(selectedRole);
             }else{  
-                toast.error(response.responseDesc, {
-                    position: "top-right",
-                    autoClose: 5000,
-                });
+                // toast.error(response.responseDesc, {
+                //     position: "top-right",
+                //     autoClose: 5000,
+                // });
                 setLoading(false);
 
                 // if(response.responseCode === 401) {
@@ -98,10 +98,10 @@ const EditUser = (props) => {
             if(response) {
             // console.log(response);
             if(response.responseCode === 200) {
-                toast.success(response.responseDesc, {
-                    position: "top-right",
-                    autoClose: 1000,
-                });
+                // toast.success(response.responseDesc, {
+                //     position: "top-right",
+                //     autoClose: 1000,
+                // });
                 // if(area == user.id_area) {
                     const objSelected = {
                         value: sub_area,
@@ -119,10 +119,10 @@ const EditUser = (props) => {
                 setOptSub(response.responseData);
                 setLoading(false);
             }else{  
-                toast.error(response.responseDesc, {
-                    position: "top-right",
-                    autoClose: 5000,
-                });
+                // toast.error(response.responseDesc, {
+                //     position: "top-right",
+                //     autoClose: 5000,
+                // });
                 setLoading(false);
 
                 // if(response.responseCode === 401) {
