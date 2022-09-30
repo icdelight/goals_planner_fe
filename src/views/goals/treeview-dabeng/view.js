@@ -56,14 +56,14 @@ const View = ({
   const { currentUser, isLogin } = useSelector((state) => state.auth);
 
   const exportToPDF = (index) => {
-    orgchart.current[index].exportTo("organization_chart", "pdf");
+    orgchart.current[index].exportTo("pohon_kinerja", "pdf");
   };
   const exportToExcel = (parentId) => {
     TreeExcelDownload(currentUser.token, parentId).then((response) => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "organization_chart.xlsx"); //or any other extension
+      link.setAttribute("download", "pohon_kinerja.xlsx"); //or any other extension
       document.body.appendChild(link);
       link.click();
     });
