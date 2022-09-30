@@ -34,6 +34,7 @@ const View = ({
   description,
   breadcrumbs = [],
   trees = null,
+  selectedSearch,
   selectedParents = [],
   initialGoals = [],
   onNodeClicked,
@@ -47,11 +48,11 @@ const View = ({
   onTreeLoaded,
   onClickCluster,
   onClickClearCluster,
+  onSelectedSearch,
 }) => {
   const orgchart = useRef([]);
   const [isLoading, setLoading] = useState(true);
   const [navActiveKey, setNavActiveKey] = useState("");
-  const [selectedSearch, setSelectedSearch] = useState(null);
   const [selectedTree, setSelectedTree] = useState(trees);
   const { currentUser, isLogin } = useSelector((state) => state.auth);
 
@@ -85,7 +86,7 @@ const View = ({
       })
       .catch((response) => {
         callback([]);
-        toast.error(response.responseDesc, {
+        toast.error(response.responseDesc || "Failed to fetch cluster", {
           position: "top-right",
           autoClose: 5000,
         });
@@ -94,7 +95,6 @@ const View = ({
 
   const fetchTree = (id_goals) => {
     setLoading(true);
-    console.log("search", selectedSearch);
     if (selectedSearch == null) {
       setSelectedTree(trees);
       setLoading(false);
@@ -208,7 +208,7 @@ const View = ({
                               value={selectedSearch}
                               placeholder="Search cluster here..."
                               loadOptions={debounce(searchGoals, 500)}
-                              onChange={setSelectedSearch}
+                              onChange={onSelectedSearch}
                               getOptionLabel={(e) => e.title_goals}
                               getOptionValue={(e) => e.id_goals}
                             />
@@ -230,12 +230,13 @@ const View = ({
                                 <CsLineIcons icon="bookmark" />
                               </Button>
                               <Button
+                                disabled={!selectedSearch}
                                 onClick={() => {
                                   onClickClearCluster(
                                     item?.value?.parent_family,
                                     item.value.id_goals
                                   );
-                                  setSelectedSearch(null);
+                                  onSelectedSearch(null);
                                 }}
                                 variant="muted"
                                 className="btn-icon btn-icon-end"

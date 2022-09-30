@@ -4,7 +4,11 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import CsLineIcons from "cs-line-icons/CsLineIcons";
 
-import { InitialGoals, TreeGoals, TreeViewCluster } from "../../../services/treeservice";
+import {
+  InitialGoals,
+  TreeGoals,
+  TreeViewCluster,
+} from "../../../services/treeservice";
 import View from "./view";
 
 const TreeViewDabeng = () => {
@@ -13,6 +17,7 @@ const TreeViewDabeng = () => {
   //   : DEFAULT_PATHS.APP;
 
   const { currentUser } = useSelector((state) => state.auth);
+  const [selectedSearch, setSelectedSearch] = useState(null);
   const [trees, setTrees] = useState(null);
   const [selectedParents, setSelectedParents] = useState([]);
   const [initialGoals, setInitialGoals] = useState([]);
@@ -75,27 +80,29 @@ const TreeViewDabeng = () => {
       });
   };
 
-  const handleClickCluster = (id_goals,selectedSearch) => {
-    const result = '';
-    console.log('tes',selectedSearch);
-    TreeViewCluster(currentUser.token,id_goals,selectedSearch.id_cluster)
+  const handleClickCluster = (id_goals, selectedSearch) => {
+    const result = "";
+    console.log("tes", selectedSearch);
+    TreeViewCluster(currentUser.token, id_goals, selectedSearch.id_cluster)
       .then((response) => {
         if (response) {
           if (response.responseCode === 200) {
             // result = response.responseData;
 
             const data = response.responseData?.[0];
-            console.log('result',data);
+            console.log("result", data);
             setTrees((prevState) => ({
               ...prevState,
               [data?.id_goals]: data,
             }));
-            toast.success(response.responseDesc, {
-              position: "top-right",
-              autoClose: 1000,
-            });
-          }else{
-            toast.error(response.responseDesc, {
+            if (selectedSearch) {
+              toast.success(response.responseDesc, {
+                position: "top-right",
+                autoClose: 1000,
+              });
+            }
+          } else {
+            toast.error(response.responseDesc || "Failed to fetch cluster", {
               position: "top-right",
               autoClose: 1000,
             });
@@ -104,7 +111,7 @@ const TreeViewDabeng = () => {
         // callback([]);
       })
       .catch((error) => {
-        toast.error(error, {
+        toast.error(error || "Failed to fetch cluster", {
           position: "top-right",
           autoClose: 1000,
         });
@@ -186,6 +193,7 @@ const TreeViewDabeng = () => {
     <View
       title={title}
       description={description}
+      selectedSearch={selectedSearch}
       show={show}
       selectedParents={selectedParents}
       trees={trees}
@@ -202,6 +210,7 @@ const TreeViewDabeng = () => {
       onTreeLoaded={handleTreeGoals}
       onClickCluster={handleClickCluster}
       onClickClearCluster={handleTreeGoals}
+      onSelectedSearch={setSelectedSearch}
     />
   );
 };
