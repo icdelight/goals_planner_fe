@@ -35,14 +35,11 @@ const ChartNode = ({
   onLoadData,
 }) => {
   const node = useRef();
-  const [isChildrenCollapsed, setIsChildrenCollapsed] = useState(
-    !isInitialExpanded
-  );
+
+  const [isChildrenCollapsed, setIsChildrenCollapsed] = useState(false);
   const [topEdgeExpanded, setTopEdgeExpanded] = useState();
   const [rightEdgeExpanded, setRightEdgeExpanded] = useState();
-  const [bottomEdgeExpanded, setBottomEdgeExpanded] = useState(
-    datasource.defaultExpanded
-  );
+  const [bottomEdgeExpanded, setBottomEdgeExpanded] = useState();
   const [leftEdgeExpanded, setLeftEdgeExpanded] = useState();
   const [allowedDrop, setAllowedDrop] = useState(false);
   const [selected, setSelected] = useState(false);
@@ -255,11 +252,6 @@ const ChartNode = ({
     );
   };
 
-  const setCollapse = (collapse) => {
-    setIsChildrenCollapsed(collapse);
-    setBottomEdgeExpanded(!collapse);
-  };
-
   return (
     <li className="oc-hierarchy">
       <div
@@ -276,11 +268,7 @@ const ChartNode = ({
         onMouseLeave={removeArrows}
       >
         {NodeTemplate ? (
-          <NodeTemplate
-            nodeData={datasource}
-            setCollapse={setCollapse}
-            addChildren={addChildrenHandler}
-          />
+          <NodeTemplate nodeData={datasource} />
         ) : (
           <>
             <div className="oc-heading">
@@ -312,25 +300,23 @@ const ChartNode = ({
           datasource.relationship.charAt(1) === "1" && (
             <>
               <i
-                className={`oc-edge horizontalEdge rightEdge oci
-                 ${
-                   rightEdgeExpanded === undefined
-                     ? ""
-                     : rightEdgeExpanded
-                     ? "oci-chevron-left"
-                     : "oci-chevron-right"
-                 }`}
+                className={`oc-edge horizontalEdge rightEdge oci ${
+                  rightEdgeExpanded === undefined
+                    ? ""
+                    : rightEdgeExpanded
+                    ? "oci-chevron-left"
+                    : "oci-chevron-right"
+                }`}
                 onClick={hEdgeClickHandler}
               />
               <i
-                className={`oc-edge horizontalEdge leftEdge oci
-                 ${
-                   leftEdgeExpanded === undefined
-                     ? ""
-                     : leftEdgeExpanded
-                     ? "oci-chevron-right"
-                     : "oci-chevron-left"
-                 }`}
+                className={`oc-edge horizontalEdge leftEdge oci ${
+                  leftEdgeExpanded === undefined
+                    ? ""
+                    : leftEdgeExpanded
+                    ? "oci-chevron-right"
+                    : "oci-chevron-left"
+                }`}
                 onClick={hEdgeClickHandler}
               />
             </>

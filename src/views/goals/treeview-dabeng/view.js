@@ -8,7 +8,6 @@ import {
   Tab,
   Nav,
   Form,
-  InputGroup,
   DropdownButton,
   ButtonGroup,
   Dropdown,
@@ -20,17 +19,14 @@ import CsLineIcons from "cs-line-icons/CsLineIcons";
 import OrganizationChart from "../../../components/org-chart/ChartContainer";
 import MyNode from "../../../components/node/mynode";
 import SelectMultiple from "components/select/SelectMultiple";
-import SelectServerSide from "components/select/SelectServerSide";
 import SelectSearchCluster from "components/select/SelectSearchCluster";
 import {
-  SearchGoals,
   TreeExcelDownload,
   TreeViewCluster,
 } from "../../../services/treeservice";
 import { FindCluster } from "../../../services/clusterservice";
 import { useSelector } from "react-redux";
 import { debounce } from "lodash";
-import { el } from "date-fns/locale";
 import { toast } from "react-toastify";
 
 const View = ({

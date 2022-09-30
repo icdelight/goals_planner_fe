@@ -78,14 +78,8 @@ const ChartContainer = forwardRef(
     const [download, setDownload] = useState("");
 
     const attachRel = (data, flags) => {
-      if (data.isLeaf === undefined) {
-        data.isLeaf = true;
-      }
-
       data.relationship =
-        flags +
-        ((data.children && !!data.children.length) || !data.isLeaf ? 1 : 0);
-
+        flags + (data.children && data.children.length > 0 ? 1 : 0);
       if (data.children) {
         data.children.forEach(function (item) {
           attachRel(item, "1" + (data.children.length > 1 ? 1 : 0));
@@ -275,8 +269,8 @@ const ChartContainer = forwardRef(
           width: chart.current.clientWidth,
           height: chart.current.clientHeight,
           onclone: function (clonedDoc) {
-            clonedDoc.querySelector(".orgchart").style.background = "none";
-            // clonedDoc.querySelector(".orgchart").style.transform = "";
+            clonedDoc.querySelector(".orgchart").style.background = "white";
+            clonedDoc.querySelector(".orgchart").style.transform = "";
           },
         }).then(
           (canvas) => {
