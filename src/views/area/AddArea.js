@@ -35,6 +35,20 @@ const RegionArea = function(propss){
     );
 }
 
+const ButtonRegion =  function(propss){
+    const {role, onclick} = propss;
+    if(role !== 'superadmin') {
+        return (<div></div>);
+    }
+    return (
+        <Col xs="12" sm="6" md="auto" className="d-flex align-items-start justify-content-end order-3 order-sm-2">
+            <button id="button-addon" type="submit" className="btn btn-outline-warning" onClick={onclick} >
+                <CsLineIcons icon="plus" className="me-2" size="17" /> New Region
+            </button>
+        </Col>
+    );
+}
+
 const AddArea = (props) => {
     const appRoot = DEFAULT_PATHS.APP.endsWith('/') ? DEFAULT_PATHS.APP.slice(1, DEFAULT_PATHS.APP.length) : DEFAULT_PATHS.APP;
     const history = useHistory();
@@ -68,10 +82,10 @@ const AddArea = (props) => {
             if(response) {
             //   console.log(response);
               if(response.responseCode === 200) {
-                toast.success(response.responseDesc, {
-                  position: "top-right",
-                  autoClose: 1000,
-                });
+                // toast.success(response.responseDesc, {
+                //   position: "top-right",
+                //   autoClose: 1000,
+                // });
                 // const objSelected = {
                 //     value: area.idparentarea,
                 //     label: area.descparentarea,
@@ -80,10 +94,10 @@ const AddArea = (props) => {
                 setOptParent(response.responseData);
                 // setLoading(false);
               }else{  
-                toast.error(response.responseDesc, {
-                  position: "top-right",
-                  autoClose: 5000,
-                });
+                // toast.error(response.responseDesc, {
+                //   position: "top-right",
+                //   autoClose: 5000,
+                // });
                 setLoading(false);
               }
             }
@@ -93,10 +107,10 @@ const AddArea = (props) => {
             if(response) {
             //   console.log(response);
               if(response.responseCode === 200) {
-                toast.success(response.responseDesc, {
-                  position: "top-right",
-                  autoClose: 1000,
-                });
+                // toast.success(response.responseDesc, {
+                //   position: "top-right",
+                //   autoClose: 1000,
+                // });
                 // const objSelected = {
                 //     value: area.idparentarea,
                 //     label: area.descparentarea,
@@ -105,10 +119,10 @@ const AddArea = (props) => {
                 setOptRegion(response.responseData);
                 setLoading(false);
               }else{  
-                toast.error(response.responseDesc, {
-                  position: "top-right",
-                  autoClose: 5000,
-                });
+                // toast.error(response.responseDesc, {
+                //   position: "top-right",
+                //   autoClose: 5000,
+                // });
                 setLoading(false);
               }
             }
@@ -192,11 +206,10 @@ const AddArea = (props) => {
                     </section>
                 </Col>
                 <div className="w-100 d-md-none" />
-                <Col xs="12" sm="6" md="auto" className="d-flex align-items-start justify-content-end order-3 order-sm-2">
-                    <button id="button-addon" type="submit" className="btn btn-outline-warning" onClick={() => handleaddregion()} >
-                        <CsLineIcons icon="plus" className="me-2" size="17" /> New Region
-                    </button>
-                </Col>
+                <ButtonRegion 
+                    role = {currentUser.role}
+                    onClick = {() => handleaddregion()}
+                />
             </Row>
             <Row>
                 <Col>

@@ -21,6 +21,19 @@ export const InitialGoals = async (token) => {
   return result;
 };
 
+export const InitialGoalsAdmin = async (token) => {
+  const options = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const result = await axios
+    .get(`${URL_SERVICE}goals/initialgoalsadmin`, options)
+    .then(defaultSuccessRes)
+    .catch(defaultFailedRes);
+  return result;
+};
+
 export const TreeGoals = async (token, body) => {
   const options = {
     headers: {
@@ -29,6 +42,19 @@ export const TreeGoals = async (token, body) => {
   };
   const result = await axios
     .post(`${URL_SERVICE}goals/treeGoals`, body, options)
+    .then(defaultSuccessRes)
+    .catch(defaultFailedRes);
+  return result;
+};
+
+export const TreeGoalsAdmin = async (token, body) => {
+  const options = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const result = await axios
+    .post(`${URL_SERVICE}goals/treeGoalsadmin`, body, options)
     .then(defaultSuccessRes)
     .catch(defaultFailedRes);
   return result;

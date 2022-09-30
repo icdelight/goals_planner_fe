@@ -22,6 +22,7 @@ import {
   RemapNode,
   SearchGoals,
   TreeGoals,
+  TreeGoalsAdmin,
 } from "../../../services/treeservice";
 import { DEFAULT_PATHS } from "../../../config";
 import SelectServerSide from "components/select/SelectServerSide";
@@ -70,7 +71,7 @@ const TreeAdminDetail = ({ location }) => {
   const getTreeGoals = (idGoals) => {
     let result = [];
     setLoading(true);
-    TreeGoals(currentUser.token, {
+    TreeGoalsAdmin(currentUser.token, {
       parent_family: Number(id),
       id_goals: idGoals,
     })
