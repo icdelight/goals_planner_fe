@@ -230,11 +230,11 @@ const TreeAdminUpdate = (props) => {
       type_goals: JSON.stringify(type),
       indikator: indRes ? JSON.stringify(indRes) : null,
       ...(values.idArea && { id_area: values.idArea }),
-      ...(values.idCluster && { id_cluster: values.idCluster }),
+      id_cluster: values.idCluster,
       issue_goals: values.issueGoals,
     };
     EditNode(currentUser.token, payload).then(function (response) {
-      //   console.log(response);
+        // console.log(response);
       if (response) {
         if (response.responseCode === 200) {
           toast.success(response.responseDesc, {

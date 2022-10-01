@@ -28,6 +28,8 @@ import { FindCluster } from "../../../services/clusterservice";
 import { useSelector } from "react-redux";
 import { debounce } from "lodash";
 import { toast } from "react-toastify";
+import useCustomLayout from 'hooks/useCustomLayout';
+import { MENU_PLACEMENT, LAYOUT, MENU_BEHAVIOUR } from 'constants.js';
 
 const View = ({
   title,
@@ -50,6 +52,7 @@ const View = ({
   onClickClearCluster,
   onSelectedSearch,
 }) => {
+  useCustomLayout({ placement: MENU_PLACEMENT.Vertical, layout: LAYOUT.Boxed, behaviour: MENU_BEHAVIOUR.Unpinned });
   const orgchart = useRef([]);
   const [isLoading, setLoading] = useState(true);
   const [navActiveKey, setNavActiveKey] = useState("");

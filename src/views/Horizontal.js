@@ -11,7 +11,7 @@ const HorizontalPage = () => {
 
   const breadcrumbs = [{ to: '', text: 'Home' }];
 
-  useCustomLayout({ placement: MENU_PLACEMENT.Horizontal, layout: LAYOUT.Boxed });
+  useCustomLayout({ placement: MENU_PLACEMENT.Horizontal, layout: LAYOUT.Boxed, behaviour: MENU_BEHAVIOUR.Unpinned });
 
   return (
     <>

@@ -100,12 +100,17 @@ export const FindCluster = async (token,paging,filter) => {
         if(res) {
             if(res.data) {
                 if(res.data.statusCode != undefined && res.data.statusCode != null) {
-                    // console.log(res.data.data);
                     response = {
                         responseCode : res.data.statusCode,
                         responseDesc : res.data.message,
                         responseData : res.data.data,
                     };
+                    const nullObj = {
+                        id_cluster: null,
+                        nama_cluster: null,
+                    };
+                    res.data.data.push(nullObj);
+                    console.log(res.data.data);
                 }else{
                     response = {
                         responseCode : 999,

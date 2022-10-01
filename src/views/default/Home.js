@@ -3,7 +3,7 @@ import { Row, Col, Card } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import BreadcrumbList from 'components/breadcrumb-list/BreadcrumbList';
 import useCustomLayout from 'hooks/useCustomLayout';
-import { MENU_PLACEMENT, LAYOUT } from 'constants.js';
+import { MENU_PLACEMENT, LAYOUT, MENU_BEHAVIOUR } from 'constants.js';
 import { useSelector } from 'react-redux';
 
 
@@ -13,7 +13,7 @@ const Home = () => {
     const description = 'An empty home page with a boxed layout.';
     const breadcrumbs = [{ to: '', text: 'Home' }];
     // console.log(currentUser);
-    useCustomLayout({ placement: MENU_PLACEMENT.Vertical, layout: LAYOUT.Boxed });
+    useCustomLayout({ placement: MENU_PLACEMENT.Vertical, layout: LAYOUT.Boxed, behaviour: MENU_BEHAVIOUR.Unpinned });
     return (
         <>
           <HtmlHead title={title} description={description} />
