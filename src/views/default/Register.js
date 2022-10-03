@@ -60,9 +60,9 @@ const Register = () => {
             Permudah penata-kerjaan target anda dengan preview as Tree Planner
           </p>
           <div className="mb-5">
-            <Button size="lg" variant="outline-white" href="/">
+            {/* <Button size="lg" variant="outline-white" href="/">
               Learn More
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>
