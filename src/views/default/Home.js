@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 
 const Home = () => { 
     const { currentUser, isLogin } = useSelector((state) => state.auth);
-    const title = 'Home Page';
+    const title = 'Tree Performance Modeler';
     const description = 'An empty home page with a boxed layout.';
     const breadcrumbs = [{ to: '', text: 'Home' }];
     // console.log(currentUser);

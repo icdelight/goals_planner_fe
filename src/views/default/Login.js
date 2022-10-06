@@ -54,7 +54,7 @@ const Login = () => {
       <div className="w-100 w-lg-75 w-xxl-50">
         <div>
           <div className="mb-5">
-            <h1 className="display-3 text-white">Goals Tree Planner</h1>
+            <h1 className="display-3 text-white">Tree Performance Modeler</h1>
             <h1 className="display-3 text-white">Aplikasi Penyusunan Target Rencana Kinerja</h1>
           </div>
           <p className="h6 text-white lh-1-5 mb-5">
