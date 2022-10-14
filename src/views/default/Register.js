@@ -84,7 +84,7 @@ const Register = () => {
         <div className="mb-5">
           <p className="h6" style={{color:"#000"}}>Silahkan lengkapi form untuk register.</p>
           <p className="h6" style={{color:"#000"}}>
-            Jika anda bukan member, silahkan  <NavLink to="/login">login</NavLink>.
+            Jika anda sudah member, silahkan  <NavLink to="/login">login</NavLink>.
           </p>
         </div>
         <div>
