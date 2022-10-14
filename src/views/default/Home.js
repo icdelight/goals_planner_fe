@@ -144,11 +144,11 @@ const Home = () => {
                               <div className="sw-13 position-relative mb-3">
                                 <img src="/img/profile/profile-12.gif" className="img-fluid rounded-xl" alt="thumb" />
                               </div>
-                              <div className="h5 mb-0">{currentUser.name}</div>
-                              <div className="text-muted">{currentUser.role}</div>
+                              <div className="h5 mb-0" style={{ textTransform: 'capitalize'}}>{currentUser.name}</div>
+                              <div className="text-muted" style={{ textTransform: 'capitalize'}}>{currentUser.role}</div>
                               <div className="text-muted">
                                 <CsLineIcons icon="pin" className="me-1" />
-                                <span className="align-middle">{currentUser.desc_area}, {currentUser.desc_sub_area}</span>
+                                <span className="align-middle" style={{ textTransform: 'capitalize'}}>{currentUser.desc_area}, {currentUser.desc_sub_area}</span>
                               </div>
                             </div>
                           </div>
