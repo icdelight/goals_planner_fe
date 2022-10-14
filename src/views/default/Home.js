@@ -194,7 +194,7 @@ const Home = () => {
                                     <span>Goals</span>
                                     <CsLineIcons icon="suitcase" className="text-primary" />
                                   </div>
-                                  <div className="text-small text-muted mb-1">PEMDA MALANG</div>
+                                  <div className="text-small text-muted mb-1" style={{ textTransform: 'uppercase'}}>{currentUser.desc_area}</div>
                                   <div className="cta-1 text-primary">{initialGoals.goals}</div>
                                 </Card.Body>
                               </Card>
@@ -206,7 +206,7 @@ const Home = () => {
                                     <span>Sub Goals</span>
                                     <CsLineIcons icon="check-square" className="text-primary" />
                                   </div>
-                                  <div className="text-small text-muted mb-1">SUB DINAS PERAIRAN</div>
+                                  <div className="text-small text-muted mb-1" style={{ textTransform: 'uppercase'}}>{currentUser.desc_sub_area}</div>
                                   <div className="cta-1 text-primary">{initialGoals.sub_goals}</div>
                                 </Card.Body>
                               </Card>
