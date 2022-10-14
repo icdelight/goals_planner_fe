@@ -21,6 +21,32 @@ export const InitialGoals = async (token) => {
   return result;
 };
 
+export const GetStats = async (token) => {
+  const options = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const result = await axios
+    .get(`${URL_SERVICE}goals/getstats`, options)
+    .then(defaultSuccessRes)
+    .catch(defaultFailedRes);
+  return result;
+};
+
+export const GetLastModifiedDate = async (token) => {
+  const options = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const result = await axios
+    .get(`${URL_SERVICE}goals/getlastmodifgoals`, options)
+    .then(defaultSuccessRes)
+    .catch(defaultFailedRes);
+  return result;
+};
+
 export const InitialGoalsAdmin = async (token) => {
   const options = {
     headers: {

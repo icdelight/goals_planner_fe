@@ -81,7 +81,6 @@ const routesAndMenuItems = {
             USER_ROLE.SuperAdmin,
             USER_ROLE.Admin,
             USER_ROLE.Editor,
-            USER_ROLE.Viewer,
           ],
           subs: [
             {
