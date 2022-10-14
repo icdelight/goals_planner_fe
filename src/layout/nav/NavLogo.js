@@ -4,14 +4,15 @@ import { DEFAULT_PATHS } from 'config.js';
 
 const NavLogo = () => {
   return (
-    <div className="logo position-relative">
+    <div className="logo position-relative mb-0">
       <Link to={DEFAULT_PATHS.APP}>
         {/*
           Logo can be added directly
           <img src="/img/logo/logo-white.svg" alt="logo" />
           Or added via css to provide different ones for different color themes
          */}
-        <div className="img" />
+        {/* <div className="img" /> */}
+        <img src="/img/logo/logo-tpm-landscape-1.png" alt="logo" width={250} height={45} />
       </Link>
     </div>
   );

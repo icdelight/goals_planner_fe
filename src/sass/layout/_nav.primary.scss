@@ -1336,8 +1336,11 @@ html[data-navcolor="dark"] {
 }
 
 .logo-default {
-  width: 100px;
-  min-height: 35px;
+  // width: 100px;
+  // min-height: 35px;
+  width: 300px;
+  min-height: 100px;
+  margin-bottom: 10px;
   object-position: left;
   object-fit: cover;
   background-repeat: no-repeat;
@@ -1355,13 +1358,15 @@ html[data-color="dark-red"],
 html[data-color="dark-pink"],
 html[data-color="dark-purple"] {
   .logo .img {
-    background-image: url(../img/logo/logo-light.svg);
+    // background-image: url(../img/logo/logo-light.svg);
+    background-image: url(../img/logo/logo-tpm-landscape.svg);
   }
 }
 
 html[data-color="light-blue"] {
   .logo-default {
-    background-image: url(../img/logo/logo-blue-light.svg);
+    // background-image: url(../img/logo/logo-blue-light.svg);
+    background-image: url(../img/logo/logo-tpm-landscape.png);
   }
 }
 
@@ -1391,7 +1396,8 @@ html[data-color="light-purple"] {
 
 html[data-color="dark-blue"] {
   .logo-default {
-    background-image: url(../img/logo/logo-blue-dark.svg);
+    // background-image: url(../img/logo/logo-blue-dark.svg);
+    background-image: url(../img/logo/logo-tpm-landscape.svg);
   }
 }
 
@@ -1457,7 +1463,8 @@ html[data-color="dark-purple"][data-navcolor="light"] {
 html[data-color="light-blue"][data-navcolor="dark"],
 html[data-color="dark-blue"][data-navcolor="dark"] {
   .logo .img {
-    background-image: url(../img/logo/logo-blue-dark.svg);
+    // background-image: url(../img/logo/logo-blue-dark.svg);
+    background-image: url(../img/logo/logo-tpm-landscape-1.png);
   }
 }
 
