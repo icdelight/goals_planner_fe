@@ -71,6 +71,9 @@ const TreeAdminDetail = ({ location }) => {
   const getTreeGoals = (idGoals) => {
     let result = [];
     setLoading(true);
+    if(idGoals == undefined || idGoals == null || idGoals == "") {
+      idGoals = Number(id);
+    }
     TreeGoalsAdmin(currentUser.token, {
       parent_family: Number(id),
       id_goals: idGoals,
@@ -289,6 +292,7 @@ const TreeAdminDetail = ({ location }) => {
       idCluster: parentCanvas.id_cluster,
       namaCluster: parentCanvas.nama_cluster,
       issueGoals: parentCanvas.issue_goals,
+      parentFamily: parentCanvas.parent_family,
     });
   };
 

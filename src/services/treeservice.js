@@ -114,6 +114,21 @@ export const TreeExcelDownload = (token, parentId) => {
     .catch(defaultFailedRes);
 };
 
+export const TreeCsvDownload = (token, parentId) => {
+  return axios({
+    method: "GET",
+    url: `${URL_SERVICE}goals/downloadCsvGoal/${parentId}`,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    responseType: "blob",
+  })
+    .then((response) => {
+      return response;
+    })
+    .catch(defaultFailedRes);
+};
+
 export const SearchGoals = async (token, body) => {
   const options = {
     headers: {

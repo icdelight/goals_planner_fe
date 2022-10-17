@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useHistory } from "react-router-dom";
 import _ from "lodash";
 import {
   Row,
@@ -22,6 +23,7 @@ import SelectMultiple from "components/select/SelectMultiple";
 import SelectSearchCluster from "components/select/SelectSearchCluster";
 import {
   TreeExcelDownload,
+  TreeCsvDownload,
   TreeViewCluster,
 } from "../../../services/treeservice";
 import { FindCluster } from "../../../services/clusterservice";
@@ -29,7 +31,27 @@ import { useSelector } from "react-redux";
 import { debounce } from "lodash";
 import { toast } from "react-toastify";
 import useCustomLayout from 'hooks/useCustomLayout';
+import { DEFAULT_PATHS } from "../../../config";
 import { MENU_PLACEMENT, LAYOUT, MENU_BEHAVIOUR } from 'constants.js';
+
+const BtnGroupEdit = function (propss) {
+  const { role, onclick} = propss;
+  if(role !== 'viewer') {
+    return (
+      <div className="btn-group" >
+        <button
+          type="button"
+          onClick={onclick}
+          className="btn-icon btn-icon-start ms-1 btn btn-outline-warning"
+        >
+          Edit
+        </button>
+      </div>
+    );
+  }else{
+    return ('');
+  }
+}
 
 const View = ({
   title,
@@ -60,7 +82,10 @@ const View = ({
   const [navActiveKey, setNavActiveKey] = useState("");
   const [selectedTree, setSelectedTree] = useState(trees);
   const { currentUser, isLogin } = useSelector((state) => state.auth);
-
+  const appRoot = DEFAULT_PATHS.APP.endsWith("/")
+    ? DEFAULT_PATHS.APP.slice(1, DEFAULT_PATHS.APP.length)
+    : DEFAULT_PATHS.APP;
+  const history = useHistory();
   const exportToPDF = (index) => {
     orgchart.current[index].exportTo("pohon_kinerja", "pdf");
   };
@@ -78,6 +103,16 @@ const View = ({
       link.click();
     });
   };
+  const exportToCSV = (parentId) => {
+    TreeCsvDownload(currentUser.token, parentId).then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "pohon_kinerja.csv"); //or any other extension
+      document.body.appendChild(link);
+      link.click();
+    });
+  };
   const showIndikator = (index) => {
     // console.log(index);
     // console.log(trees);
@@ -89,6 +124,26 @@ const View = ({
       setChartClass("myChart l2rind");
     }
   }
+  const handleClicUpdkButton = (parentCanvas) => {
+    console.log("parentCanvas", parentCanvas);
+    const path = `${appRoot}/tree/treeadmin/${parentCanvas.id_goals}/update`;
+    // console.log(path);
+    history.push(path, {
+      id: parentCanvas.id_goals,
+      title: parentCanvas.title,
+      desc: parentCanvas.desc_goals,
+      startDate: parentCanvas.start_date,
+      dueDate: parentCanvas.due_date,
+      typeGoals: parentCanvas.type_goals,
+      indikator: parentCanvas.indikator,
+      status: parentCanvas.status_goals,
+      idArea: parentCanvas.id_area,
+      idCluster: parentCanvas.id_cluster,
+      namaCluster: parentCanvas.nama_cluster,
+      issueGoals: parentCanvas.issue_goals,
+      parentFamily: parentCanvas.parent_family,
+    });
+  };
   const searchGoals = (inputValue, callback) => {
     FindCluster(currentUser.token, 1, inputValue)
       .then((response) => {
@@ -154,7 +209,7 @@ const View = ({
       setNavActiveKey(`tab-${selectedParents?.[0]?.value?.id_goals}`);
     }
   }, [selectedParents]);
-
+  console.log(currentUser.role != 'viewer' ? 1 : 0);
   // if (isLoading) {
   //   return <div className="App">Loading...</div>;
   // }
@@ -310,6 +365,15 @@ const View = ({
                           >
                             Export As Excel
                           </Dropdown.Item>
+                          <Dropdown.Item
+                            onClick={() =>
+                              exportToCSV(
+                                trees?.[item?.value?.id_goals]?.parent_family
+                              )
+                            }
+                          >
+                            Export As CSV
+                          </Dropdown.Item>
                         </DropdownButton>
                       </div>
                     </Tab.Pane>
@@ -430,6 +494,10 @@ const View = ({
             </Card.Header>
             <Card.Body className="mb-n2 py-1">{indData}</Card.Body>
           </Card>
+          <BtnGroupEdit 
+            role = {currentUser.role}
+            onclick = {() => {handleClicUpdkButton(nodeData);}}
+          />
         </Offcanvas.Body>
       </Offcanvas>
     </div>

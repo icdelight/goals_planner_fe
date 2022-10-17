@@ -105,7 +105,7 @@ const TreeAdminUpdate = (props) => {
   const breadcrumbs = [
     { to: ``, text: "Home" },
     { to: `tree/treeadmin`, text: "Tree Admin" },
-    { to: `tree/treeadmin/${id}/detail`, text: "Tree Admin Detail" },
+    { to: `tree/treeadmin/${parent.parentFamily}/detail`, text: "Tree Admin Detail" },
   ];
 
   const fetchParentArea = () => {
@@ -255,7 +255,7 @@ const TreeAdminUpdate = (props) => {
   const validationSchema = Yup.object().shape({
     id: Yup.string().required("Id Title is required"),
     title: Yup.string().required("Title is required"),
-    desc: Yup.string().required("Description is required"),
+    // desc: Yup.string().required("Description is required"),
     issueGoals: Yup.string().required("Issue is required"),
     // startDate: Yup.string().required('Start date is required'),
     // dueDate: Yup.string().required('Due date is required'),
@@ -336,6 +336,25 @@ const TreeAdminUpdate = (props) => {
                   </Row>
                   <Row className="mb-2 filled tooltip-end-top">
                     <Col lg="2" md="3" sm="4">
+                      <Form.Label className="col-form-label">Issue</Form.Label>
+                    </Col>
+                    <Col sm="8" md="9" lg="10">
+                      <Form.Control
+                        type="text"
+                        name="issueGoals"
+                        id="issueGoals"
+                        value={values.issueGoals}
+                        onChange={handleChange}
+                      />
+                      {errors.issueGoals && touched.issueGoals && (
+                        <div className="d-block invalid-tooltip">
+                          {errors.issueGoals}
+                        </div>
+                      )}
+                    </Col>
+                  </Row>
+                  <Row className="mb-2 filled tooltip-end-top">
+                    <Col lg="2" md="3" sm="4">
                       <Form.Label className="col-form-label">Title</Form.Label>
                     </Col>
                     <Col sm="8" md="9" lg="10">
@@ -370,25 +389,6 @@ const TreeAdminUpdate = (props) => {
                       {errors.desc && touched.desc && (
                         <div className="d-block invalid-tooltip">
                           {errors.desc}
-                        </div>
-                      )}
-                    </Col>
-                  </Row>
-                  <Row className="mb-2 filled tooltip-end-top">
-                    <Col lg="2" md="3" sm="4">
-                      <Form.Label className="col-form-label">Issue</Form.Label>
-                    </Col>
-                    <Col sm="8" md="9" lg="10">
-                      <Form.Control
-                        type="text"
-                        name="issueGoals"
-                        id="issueGoals"
-                        value={values.issueGoals}
-                        onChange={handleChange}
-                      />
-                      {errors.issueGoals && touched.issueGoals && (
-                        <div className="d-block invalid-tooltip">
-                          {errors.issueGoals}
                         </div>
                       )}
                     </Col>

@@ -167,7 +167,7 @@ const TreeAdminAddChild = (props) => {
 
   const validationSchema = Yup.object().shape({
     childTitle: Yup.string().required("Title is required"),
-    childDesc: Yup.string().required("Description is required"),
+    // childDesc: Yup.string().required("Description is required"),
     issueGoals: Yup.string().required("Issue is required"),
     // startDate: Yup.string().required('Start date is required'),
     // dueDate: Yup.string().required('Due date is required'),
@@ -325,6 +325,25 @@ const TreeAdminAddChild = (props) => {
               <Card.Body className="p-3">
                 <Row className="mb-2 filled tooltip-end-top">
                   <Col lg="2" md="3" sm="4">
+                    <Form.Label className="col-form-label">Issue</Form.Label>
+                  </Col>
+                  <Col sm="8" md="9" lg="10">
+                    <Form.Control
+                      type="text"
+                      name="issueGoals"
+                      id="issueGoals"
+                      value={values.issueGoals}
+                      onChange={handleChange}
+                    />
+                    {errors.issueGoals && touched.issueGoals && (
+                      <div className="d-block invalid-tooltip">
+                        {errors.issueGoals}
+                      </div>
+                    )}
+                  </Col>
+                </Row>
+                <Row className="mb-2 filled tooltip-end-top">
+                  <Col lg="2" md="3" sm="4">
                     <Form.Label className="col-form-label">
                       Title {!isParentMode && "Child"}
                     </Form.Label>
@@ -362,25 +381,6 @@ const TreeAdminAddChild = (props) => {
                     {errors.childDesc && touched.childDesc && (
                       <div className="d-block invalid-tooltip">
                         {errors.childDesc}
-                      </div>
-                    )}
-                  </Col>
-                </Row>
-                <Row className="mb-2 filled tooltip-end-top">
-                  <Col lg="2" md="3" sm="4">
-                    <Form.Label className="col-form-label">Issue</Form.Label>
-                  </Col>
-                  <Col sm="8" md="9" lg="10">
-                    <Form.Control
-                      type="text"
-                      name="issueGoals"
-                      id="issueGoals"
-                      value={values.issueGoals}
-                      onChange={handleChange}
-                    />
-                    {errors.issueGoals && touched.issueGoals && (
-                      <div className="d-block invalid-tooltip">
-                        {errors.issueGoals}
                       </div>
                     )}
                   </Col>
