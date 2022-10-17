@@ -55,12 +55,18 @@ const View = ({
   useCustomLayout({ placement: MENU_PLACEMENT.Vertical, layout: LAYOUT.Boxed, behaviour: MENU_BEHAVIOUR.Unpinned });
   const orgchart = useRef([]);
   const [isLoading, setLoading] = useState(true);
+  const [isShowInd, setShowInd] = useState(false);
+  const [isChartClass, setChartClass] = useState("");
   const [navActiveKey, setNavActiveKey] = useState("");
   const [selectedTree, setSelectedTree] = useState(trees);
   const { currentUser, isLogin } = useSelector((state) => state.auth);
 
   const exportToPDF = (index) => {
     orgchart.current[index].exportTo("pohon_kinerja", "pdf");
+  };
+
+  const exportToPNG = (index) => {
+    orgchart.current[index].exportTo("pohon_kinerja", "png");
   };
   const exportToExcel = (parentId) => {
     TreeExcelDownload(currentUser.token, parentId).then((response) => {
@@ -72,6 +78,17 @@ const View = ({
       link.click();
     });
   };
+  const showIndikator = (index) => {
+    // console.log(index);
+    // console.log(trees);
+    if(isShowInd) {
+      setShowInd(false);
+      setChartClass("myChart l2r");
+    }else{
+      setShowInd(true);
+      setChartClass("myChart l2rind");
+    }
+  }
   const searchGoals = (inputValue, callback) => {
     FindCluster(currentUser.token, 1, inputValue)
       .then((response) => {
@@ -109,7 +126,7 @@ const View = ({
       TreeViewCluster(currentUser.token, id_goals, selectedSearch.id_cluster)
         .then((response) => {
           if (response) {
-            console.log(response);
+            // console.log(response);
             // if (response.responseCode === 200) {
             //   callback(response.responseData);
             //   return;
@@ -117,7 +134,7 @@ const View = ({
             trees_[id_goals] = response.responseData;
             setSelectedTree(trees_);
             setLoading(false);
-            console.log("trees", trees_);
+            // console.log("trees", trees_);
           }
           // callback([]);
         })
@@ -179,7 +196,8 @@ const View = ({
                   value={selectedParents}
                 />
               </Col>
-              <Col></Col>
+              <Col>
+              </Col>
             </Row>
             <Tab.Container activeKey={navActiveKey}>
               <Nav
@@ -256,10 +274,13 @@ const View = ({
                             key={`react-org-${item?.value?.id_goals}`}
                             id="chartTree"
                             datasource={trees?.[item?.value?.id_goals]}
-                            chartClass="myChart"
+                            chartClass={isChartClass}
                             NodeTemplate={MyNode}
                             pan
                             zoom
+                            direction="l2r"
+                            directionLevel={3}
+                            indShow={isShowInd}
                             onClickNode={(clickedNode) =>
                               onNodeClicked(clickedNode)
                             }
@@ -267,12 +288,18 @@ const View = ({
                         )}
                         <DropdownButton
                           as={ButtonGroup}
-                          title="Export As"
+                          title="More ..."
                           variant="primary"
                           style={{ position: "absolute", right: 20, top: 55 }}
                         >
+                          <Dropdown.Item onClick={() => showIndikator(index)}>
+                            Show/Hide Indikator
+                          </Dropdown.Item>
                           <Dropdown.Item onClick={() => exportToPDF(index)}>
                             Export As PDF
+                          </Dropdown.Item>
+                          <Dropdown.Item onClick={() => exportToPNG(index)}>
+                            Export As PNG
                           </Dropdown.Item>
                           <Dropdown.Item
                             onClick={() =>

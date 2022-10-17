@@ -8,6 +8,7 @@ import { Row, Col, Card } from "react-bootstrap";
 // import { Link } from 'react-router-dom';
 // import CardHeader from 'react-bootstrap/esm/CardHeader';
 import CsLineIcons from "cs-line-icons/CsLineIcons";
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 
 // const DropDownContainerNew = styled("div")`
 //   width: 200px;
@@ -94,15 +95,52 @@ import CsLineIcons from "cs-line-icons/CsLineIcons";
 const propTypes = {
   // nodeData: PropTypes.object.isRequired
   nodeData: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  nodeIndShow: PropTypes.bool,
 };
 
-const MyNode = ({ nodeData }) => {
+const IndDiv = function(propss){
+  const {ind, showInd} = propss;
+  // console.log(showInd);
+  if(showInd) { 
+    return (
+      <div className="py-2 align-items-top card-footer" style={{height:"150px"}}>
+            <OverlayScrollbarsComponent style={{height:"130px"}} options={{ scrollbars: { autoHide: 'leave' }, overflowBehavior: { x: 'hidden', y: 'scroll' } }}>
+              <div className="g-0 align-items-top row">
+                <div className="col">
+                  <div className="gx-2 d-flex align-content-center row">
+                    <div className="col-14 d-flex col-14">
+                      <div
+                        className="d-flex align-items-center lh-2-25 "
+                        style={{ fontSize: "12px" }}
+                      >
+                        Indikator :{" "}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <section className="scroll-section" id="default">
+                <div className="row">
+                  <Card>
+                    <Card.Body className="mb-n2 py-1 p-1">{ind}</Card.Body>
+                  </Card>
+                </div>
+              </section>
+            </OverlayScrollbarsComponent>
+          </div>
+    );
+  }else{
+    return ('');
+  }
+}
+
+const MyNode = ({ nodeData, nodeIndShow }) => {
   // console.log(nodeData);
   const [show, setShow] = useState(false);
 
   //  const CompClose = () => setShow(false);
   const CompShow = () => setShow(true);
-
+  // console.log(nodeIndShow);
   const ind = [];
   if (nodeData !== undefined && nodeData) {
     if (
@@ -113,9 +151,9 @@ const MyNode = ({ nodeData }) => {
       nodeData.indikator.forEach((el) => {
         // console.log(el);
         ind.push(
-          <Row className="g-0 py-1" key={el.key}>
+          <Row className="g-0 py-0" key={el.key}>
             <Col xs="auto">
-              <div className="sw-3 d-inline-block d-flex justify-content-start align-items-center h-100">
+              <div className="sw-2 d-inline-block d-flex justify-content-start align-items-center h-100">
                 <div className="sh-3">
                   <CsLineIcons
                     icon="dashboard-1"
@@ -129,7 +167,7 @@ const MyNode = ({ nodeData }) => {
                 <div className="d-flex flex-column">
                   <div
                     className="text-alternate mt-n1 lh-1-25"
-                    style={{ fontSize: "12px" }}
+                    style={{ fontSize: "12px", textAlign: "start" }}
                   >
                     {el.indikator}
                   </div>
@@ -193,94 +231,77 @@ const MyNode = ({ nodeData }) => {
       className="org-node-container"
       key={nodeData.id_goals !== undefined ? nodeData.id_goals : ""}
       onClick={CompShow}
-      style={{
-        border: "1px solid #dedede",
-        borderRadius: "16px",
-      }}
+      // style={{
+      //   border: "1px solid #dedede",
+      //   borderRadius: "16px",
+      // }}
     >
-      <div className="sw-40 hover-scale-up cursor-pointer card">
+      <div className="sw-30 hover-scale-up cursor-pointer card" style={{border: `1px solid ${back}`}}>
         <div
-          className="h-200 py-3 align-items-top card-body"
+          className="h-150 py-2 align-items-top card-body"
           style={{ backgroundColor: back, color: col, borderRadius: 10 }}
         >
-          <div className="g-0 h-200 align-items-top row">
-            <div className="pe-3 col-auto">
-              <div className="bg-gradient-light sh-5 sw-5 rounded-xl d-flex justify-content-center align-items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="cs-icon sync-horizontal text-white"
-                >
-                  <path d="M3 5 16 5.00001C17.1046 5.00001 18 5.89544 18 7.00001V8M17 15 4.00001 15C2.89544 15 2.00001 14.1046 2.00001 13V12">
-                    {" "}
-                  </path>
-                  <path d="M5 8 2 5 5 2M15 12 18 15 15 18"> </path>
-                </svg>
-                {/* <canvas className="sw-8 sh-8" width="128" height="128" style={{ display: 'block', bordersizing:'border-box',height:'64px', width:'64px' }} > </canvas> */}
-              </div>
-            </div>
-            <div className="col">
-              <div className="gx-2 d-flex align-content-center row">
-                <div className="col-14 d-flex col-14">
-                  <div
-                    className="d-flex align-items-center lh-2-25 "
-                    style={{ fontSize: "9px" }}
+          <OverlayScrollbarsComponent style={{maxHeight:"60px"}} options={{ scrollbars: { autoHide: 'leave' }, overflowBehavior: { x: 'hidden', y: 'scroll' } }}>
+            <div className="g-0 h-150 align-items-top row">
+              <div className="pe-2 col-auto">
+                <div className="bg-gradient-light sh-3 sw-3 rounded-xl d-flex justify-content-center align-items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="10"
+                    height="10"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="cs-icon sync-horizontal text-white"
                   >
-                    PIC :{" "}
-                    {nodeData.pic_goals !== undefined ? nodeData.pic_goals : ""}
-                  </div>
-                </div>
-                <div className="col-14 d-flex col-14">
-                  <div
-                    className="cta-2"
-                    style={{ fontSize: "14px", color: col }}
-                  >
-                    {nodeData.title_goals !== undefined
-                      ? nodeData.title_goals
-                      : ""}
-                  </div>
-                </div>
-                <div className="col-14 d-flex col-14">
-                  <div className="d-flex align-items-center lh-1-25 clamp">
-                    {nodeData.desc_goals !== undefined
-                      ? nodeData.desc_goals
-                      : ""}
-                  </div>
+                    <path d="M3 5 16 5.00001C17.1046 5.00001 18 5.89544 18 7.00001V8M17 15 4.00001 15C2.89544 15 2.00001 14.1046 2.00001 13V12">
+                      {" "}
+                    </path>
+                    <path d="M5 8 2 5 5 2M15 12 18 15 15 18"> </path>
+                  </svg>
+                  {/* <canvas className="sw-8 sh-8" width="128" height="128" style={{ display: 'block', bordersizing:'border-box',height:'64px', width:'64px' }} > </canvas> */}
                 </div>
               </div>
+              <div className="col">
+                <div className="gx-2 d-flex align-content-center row">
+                  {/* <div className="col-14 d-flex col-14">
+                    <div
+                      className="d-flex align-items-center lh-2-25 "
+                      style={{ fontSize: "9px" }}
+                    >
+                      PIC :{" "}
+                      {nodeData.pic_goals !== undefined ? nodeData.pic_goals : ""}
+                    </div>
+                  </div> */}
+                  <div className="col-14 d-flex col-14">
+                    <div
+                      className="cta-2"
+                      style={{ fontSize: "14px", color: col , textAlign: "start"}}
+                    >
+                      {nodeData.title_goals !== undefined
+                        ? nodeData.title_goals
+                        : ""}
+                    </div>
+                  </div>
+                  {/* <div className="col-14 d-flex col-14">
+                    <div className="d-flex align-items-center lh-1-25 clamp">
+                      {nodeData.desc_goals !== undefined
+                        ? nodeData.desc_goals
+                        : ""}
+                    </div>
+                  </div> */}
+                </div>
+              </div>
             </div>
-          </div>
+          </OverlayScrollbarsComponent>
         </div>
-        <div className="h-100 py-2 align-items-top card-footer">
-          <div className="g-0 h-100 align-items-top row">
-            <div className="col">
-              <div className="gx-2 d-flex align-content-center row">
-                <div className="col-14 d-flex col-14">
-                  <div
-                    className="d-flex align-items-center lh-2-25 "
-                    style={{ fontSize: "12px" }}
-                  >
-                    Indikator :{" "}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <section className="scroll-section" id="default">
-            <div className="row">
-              <Card>
-                <Card.Body className="mb-n2 py-1">{ind}</Card.Body>
-              </Card>
-            </div>
-          </section>
-        </div>
+        <IndDiv 
+          ind = {ind}
+          showInd = {nodeIndShow}
+        />
       </div>
       {/* <Card bg="warning" text="white" style={{ width: '18rem' }} className="mb-2" onClick={ CompShow }>
         <Card.Img variant="top" src="holder.js/100px180" />

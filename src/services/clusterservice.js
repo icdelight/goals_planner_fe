@@ -110,7 +110,6 @@ export const FindCluster = async (token,paging,filter) => {
                         nama_cluster: null,
                     };
                     res.data.data.push(nullObj);
-                    console.log(res.data.data);
                 }else{
                     response = {
                         responseCode : 999,

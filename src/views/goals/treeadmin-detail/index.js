@@ -569,7 +569,7 @@ const TreeAdminDetail = ({ location }) => {
                 }}
                 className="btn-icon btn-icon-start ms-1 btn btn-outline-warning"
               >
-                Update
+                Edit
               </button>
             </div>
           </Offcanvas.Body>

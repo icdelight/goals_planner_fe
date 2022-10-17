@@ -29,6 +29,9 @@ const propTypes = {
   onClickNode: PropTypes.func,
   onClickChart: PropTypes.func,
   loadData: PropTypes.func,
+  direction: PropTypes.func,
+  directionLevel: PropTypes.func,
+  indShow: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -42,6 +45,8 @@ const defaultProps = {
   draggable: false,
   collapsible: true,
   multipleSelect: false,
+  direction: "t2b",
+  directionLevel: "0",
 };
 
 const ChartContainer = forwardRef(
@@ -62,6 +67,9 @@ const ChartContainer = forwardRef(
       onClickNode,
       onClickChart,
       loadData,
+      direction,
+      directionLevel,
+      indShow,
     },
     ref
   ) => {
@@ -264,7 +272,7 @@ const ChartContainer = forwardRef(
         container.current.scrollLeft = 0;
         const originalScrollTop = container.current.scrollTop;
         container.current.scrollTop = 0;
-        console.log(container);
+        // console.log(chart.current.className);
         html2canvas(chart.current, {
           width: chart.current.clientWidth,
           height: chart.current.clientHeight,
@@ -317,7 +325,7 @@ const ChartContainer = forwardRef(
         <div
           ref={chart}
           className={"orgchart " + chartClass}
-          style={{ transform: transform, cursor: cursor }}
+          // style={{ transform: transform, cursor: cursor }}
           onClick={clickChartHandler}
           onMouseDown={pan ? panStartHandler : undefined}
           onMouseMove={pan && panning ? panHandler : undefined}
@@ -335,6 +343,10 @@ const ChartContainer = forwardRef(
               onClickNode={onClickNode}
               loadData={loadData}
               onLoadData={onLoadData}
+              direction={direction}
+              directionLevel={directionLevel}
+              currLevel={0}
+              indShow={indShow}
             />
           </ul>
         </div>

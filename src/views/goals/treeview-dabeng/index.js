@@ -43,7 +43,7 @@ const TreeViewDabeng = () => {
         if (response.responseCode === 200) {
           result = response.responseData;
           const data = result?.[0];
-          console.log(data);
+          // console.log(data);
           setTrees((prevState) => ({
             ...prevState,
             [data?.id_goals]: data,
@@ -82,7 +82,7 @@ const TreeViewDabeng = () => {
 
   const handleClickCluster = (id_goals, selectedSearch) => {
     const result = "";
-    console.log("tes", selectedSearch);
+    // console.log("tes", selectedSearch);
     TreeViewCluster(currentUser.token, id_goals, selectedSearch.id_cluster)
       .then((response) => {
         if (response) {
@@ -90,7 +90,7 @@ const TreeViewDabeng = () => {
             // result = response.responseData;
 
             const data = response.responseData?.[0];
-            console.log("result", data);
+            // console.log("result", data);
             setTrees((prevState) => ({
               ...prevState,
               [data?.id_goals]: data,

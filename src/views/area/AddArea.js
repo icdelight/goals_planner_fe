@@ -39,14 +39,15 @@ const ButtonRegion =  function(propss){
     const {role, onclick} = propss;
     if(role !== 'superadmin') {
         return (<div></div>);
+    }else{
+        return (
+            <Col xs="12" sm="6" md="auto" className="d-flex align-items-start justify-content-end order-3 order-sm-2">
+                <button id="button-addon" type="submit" className="btn btn-outline-warning" onClick={onclick} >
+                    <CsLineIcons icon="plus" className="me-2" size="17" /> New Region
+                </button>
+            </Col>
+        );
     }
-    return (
-        <Col xs="12" sm="6" md="auto" className="d-flex align-items-start justify-content-end order-3 order-sm-2">
-            <button id="button-addon" type="submit" className="btn btn-outline-warning" onClick={onclick} >
-                <CsLineIcons icon="plus" className="me-2" size="17" /> New Region
-            </button>
-        </Col>
-    );
 }
 
 const AddArea = (props) => {
@@ -176,6 +177,7 @@ const AddArea = (props) => {
     };
     const handleaddregion = () => {
         const path = `${appRoot}/setting/areasetting/addarea/addregion`; 
+        // console.log(path);
         history.push(path);
     };
     const handleChecked = () => {
@@ -208,7 +210,7 @@ const AddArea = (props) => {
                 <div className="w-100 d-md-none" />
                 <ButtonRegion 
                     role = {currentUser.role}
-                    onClick = {() => handleaddregion()}
+                    onclick = {() => handleaddregion()}
                 />
             </Row>
             <Row>

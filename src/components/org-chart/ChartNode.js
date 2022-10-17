@@ -13,12 +13,17 @@ const propTypes = {
   onClickNode: PropTypes.func,
   loadData: PropTypes.func,
   onLoadData: PropTypes.func,
+  direction: PropTypes.string,
+  directionLevel: PropTypes.number,
+  currLevel: PropTypes.number,
+  indShow: PropTypes.bool,
 };
 
 const defaultProps = {
   draggable: false,
   collapsible: true,
   multipleSelect: false,
+  indShow: false,
 };
 
 const ChartNode = ({
@@ -33,9 +38,13 @@ const ChartNode = ({
   onClickNode,
   loadData,
   onLoadData,
+  direction,
+  directionLevel,
+  currLevel,
+  indShow,
 }) => {
   const node = useRef();
-
+  // console.log(datasource.children.length > 0);
   const [isChildrenCollapsed, setIsChildrenCollapsed] = useState(false);
   const [topEdgeExpanded, setTopEdgeExpanded] = useState();
   const [rightEdgeExpanded, setRightEdgeExpanded] = useState();
@@ -43,15 +52,64 @@ const ChartNode = ({
   const [leftEdgeExpanded, setLeftEdgeExpanded] = useState();
   const [allowedDrop, setAllowedDrop] = useState(false);
   const [selected, setSelected] = useState(false);
-
+  let new_direction = "t2b";
+  let ul_direction = "t2b";
+  if(datasource.children !== undefined) {
+    if(datasource.children.length > 0) {
+      if(indShow) {
+        new_direction = "t2b t2bind";
+      }else{
+        new_direction = "t2b";
+      }
+    }else{
+      new_direction = direction;
+      if(indShow) {
+        new_direction = `${direction}ind ${direction}`;
+      }else{
+        new_direction = direction;
+      }
+    }
+  }else{
+    if(indShow) {
+      new_direction = "t2b t2bind";
+    }else{
+      new_direction = "t2b";
+    }
+  }
   const nodeClass = [
     "oc-node",
     isChildrenCollapsed ? "isChildrenCollapsed" : "",
     allowedDrop ? "allowedDrop" : "",
     selected ? "selected" : "",
-  ]
-    .filter((item) => item)
-    .join(" ");
+    new_direction,
+  ].filter((item) => item).join(" ");
+  if(datasource.children !== undefined) {
+    if(datasource.children.length > 0) {
+      if(datasource.children[0] !== undefined) {
+        // console.log(datasource.children[0]["children"]);
+        if(datasource.children[0]["children"] !== undefined) {
+          if(datasource.children[0]["children"].length == 0) {
+            ul_direction = direction;
+            if(indShow) {
+              ul_direction = `${direction}ind ${direction}`;
+            }else{
+              ul_direction = direction;
+            }
+        }
+        }
+      }else{
+  
+      }
+    }else{
+  
+    }
+  }
+  
+  const ulClass = [
+    ul_direction,
+    isChildrenCollapsed ? "hidden" : "",
+
+  ].filter((item) => item).join(" ");
 
   useEffect(() => {
     const subs1 = dragNodeService.getDragInfo().subscribe((draggedInfo) => {
@@ -268,7 +326,7 @@ const ChartNode = ({
         onMouseLeave={removeArrows}
       >
         {NodeTemplate ? (
-          <NodeTemplate nodeData={datasource} />
+          <NodeTemplate nodeData={datasource} nodeIndShow={indShow}/>
         ) : (
           <>
             <div className="oc-heading">
@@ -334,7 +392,7 @@ const ChartNode = ({
         />
       </div>
       {datasource.children && datasource.children.length > 0 && (
-        <ul className={isChildrenCollapsed ? "hidden" : ""}>
+        <ul className={ulClass}>
           {datasource.children.map((node) => (
             <ChartNode
               tree={datasource}
@@ -349,6 +407,10 @@ const ChartNode = ({
               onClickNode={onClickNode}
               loadData={loadData}
               onLoadData={onLoadData}
+              direction={direction}
+              directionLevel={directionLevel}
+              currLevel={currLevel}
+              indShow={indShow}
             />
           ))}
         </ul>
