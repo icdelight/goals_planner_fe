@@ -33,6 +33,7 @@ import { toast } from "react-toastify";
 import useCustomLayout from 'hooks/useCustomLayout';
 import { DEFAULT_PATHS } from "../../../config";
 import { MENU_PLACEMENT, LAYOUT, MENU_BEHAVIOUR } from 'constants.js';
+import jsPDF from "jspdf";
 
 const BtnGroupEdit = function (propss) {
   const { role, onclick} = propss;
@@ -86,12 +87,55 @@ const View = ({
     ? DEFAULT_PATHS.APP.slice(1, DEFAULT_PATHS.APP.length)
     : DEFAULT_PATHS.APP;
   const history = useHistory();
+  const exportAllToPDF = async () => {
+    let buff = null;
+    let doc = null;
+    let i = 0;
+    const loop = new Promise((resolve,reject) => {
+      selectedParents.forEach((element,ind) => {
+        // console.log(selectedParents);
+        // orgchart.current[ind].exportTo("pohon_kinerja", "pdf");
+        // setNavActiveKey(`tab-${selectedParents?.[ind]?.value?.id_goals}`);
+        setTimeout(async function () {
+            // alert('VIDEO HAS STOPPED');
+            setNavActiveKey(`tab-${selectedParents?.[ind]?.value?.id_goals}`);
+            buff = await orgchart.current[ind].exportAllTo();
+            if(i == 0) {
+              const canvasWidth = Math.floor(buff.width);
+              const canvasHeight = Math.floor(buff.height);
+              doc =
+                canvasWidth > canvasHeight
+                  ? new jsPDF({
+                      orientation: "landscape",
+                      unit: "px",
+                      format: [canvasWidth, canvasHeight],
+                    })
+                  : new jsPDF({
+                      orientation: "portrait",
+                      unit: "px",
+                      format: [canvasHeight, canvasWidth],
+                    });
+            }
+            doc.addImage(buff.toDataURL("image/jpeg", 1.0), "JPEG", 0, 0);
+            doc.addPage();
+            i++;
+            // console.log(ind, selectedParents.length - 1);
+            if (ind === selectedParents.length -1) resolve();
+            // console.log(doc);
+        }, 2000);
+      });
+    });
+    loop.then(() => {doc.save("pohon_kinerja.pdf");});
+  };
+
   const exportToPDF = (index) => {
     orgchart.current[index].exportTo("pohon_kinerja", "pdf");
   };
 
   const exportToPNG = (index) => {
+    // console.log(selectedParents);
     orgchart.current[index].exportTo("pohon_kinerja", "png");
+    // orgchart.current[index].exportAllTo("pohon_kinerja", "pdf");
   };
   const exportToExcel = (parentId) => {
     TreeExcelDownload(currentUser.token, parentId).then((response) => {
@@ -252,6 +296,16 @@ const View = ({
                 />
               </Col>
               <Col>
+                <div className="btn-group">
+                  <Button
+                    onClick={() =>exportAllToPDF()}
+                    variant="gradient-primary"
+                    className="btn-icon btn-icon-end"
+                  >
+                    <span>Export All as PDF</span>{" "}
+                    <CsLineIcons icon="bookmark" />
+                  </Button>
+                </div>
               </Col>
             </Row>
             <Tab.Container activeKey={navActiveKey}>

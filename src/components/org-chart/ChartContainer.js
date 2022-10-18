@@ -236,7 +236,7 @@ const ChartContainer = forwardRef(
               unit: "px",
               format: [canvasHeight, canvasWidth],
             });
-      doc.addImage(canvas.toDataURL("image/jpeg", 1.0), "JPEG", 0, 0);
+      doc.addImage(canvas.toDataURL("image/jpeg", 1.0), "JPEG", 0, 0); 
       doc.save(exportFilename + ".pdf");
     };
 
@@ -297,6 +297,34 @@ const ChartContainer = forwardRef(
             container.current.scrollTop = originalScrollTop;
           }
         );
+      },
+      exportAllTo : async () => {
+        let buff = null;
+        const originalScrollLeft = container.current.scrollLeft;
+        container.current.scrollLeft = 0;
+        const originalScrollTop = container.current.scrollTop;
+        container.current.scrollTop = 0;
+        await html2canvas(chart.current, {
+          width: chart.current.clientWidth,
+          height: chart.current.clientHeight,
+          onclone: function (clonedDoc) {
+            clonedDoc.querySelector(".orgchart").style.background = "white";
+            clonedDoc.querySelector(".orgchart").style.transform = "";
+          },
+        }).then(
+          (canvas) => {
+            buff = canvas;
+            // console.log(buff);
+            // buff = exportPDFtoBuffer(canvas, exportFilename);
+            container.current.scrollLeft = originalScrollLeft;
+            container.current.scrollTop = originalScrollTop;
+          },
+          () => {
+            container.current.scrollLeft = originalScrollLeft;
+            container.current.scrollTop = originalScrollTop;
+          }
+        );
+        return buff;
       },
       expandAllNodes: () => {
         chart.current
