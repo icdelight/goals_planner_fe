@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Spinner } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
 import _ from "lodash";
 import {
@@ -83,11 +84,13 @@ const View = ({
   const [navActiveKey, setNavActiveKey] = useState("");
   const [selectedTree, setSelectedTree] = useState(trees);
   const { currentUser, isLogin } = useSelector((state) => state.auth);
+  const [cardLoading, setCardLoading] = useState(false);
   const appRoot = DEFAULT_PATHS.APP.endsWith("/")
     ? DEFAULT_PATHS.APP.slice(1, DEFAULT_PATHS.APP.length)
     : DEFAULT_PATHS.APP;
   const history = useHistory();
   const exportAllToPDF = async () => {
+    setCardLoading(true);
     let buff = null;
     let doc = null;
     let i = 0;
@@ -125,7 +128,10 @@ const View = ({
         }, 2000);
       });
     });
-    loop.then(() => {doc.save("pohon_kinerja.pdf");});
+    loop.then(() => {
+      doc.save("pohon_kinerja.pdf");
+      setCardLoading(false);
+    });
   };
 
   const exportToPDF = (index) => {
@@ -253,7 +259,7 @@ const View = ({
       setNavActiveKey(`tab-${selectedParents?.[0]?.value?.id_goals}`);
     }
   }, [selectedParents]);
-  console.log(currentUser.role != 'viewer' ? 1 : 0);
+  // console.log(currentUser.role != 'viewer' ? 1 : 0);
   // if (isLoading) {
   //   return <div className="App">Loading...</div>;
   // }
@@ -296,16 +302,18 @@ const View = ({
                 />
               </Col>
               <Col>
-                <div className="btn-group">
-                  <Button
-                    onClick={() =>exportAllToPDF()}
-                    variant="gradient-primary"
-                    className="btn-icon btn-icon-end"
-                  >
-                    <span>Export All as PDF</span>{" "}
-                    <CsLineIcons icon="bookmark" />
-                  </Button>
-                </div>
+                  <div className={`btn-group`}>
+                    <Button
+                      onClick={() =>exportAllToPDF()}
+                      variant="gradient-primary"
+                      className="btn-icon btn-icon-end"
+                      disabled={cardLoading}
+                    >
+                      <Spinner as="span" animation="border" size="sm" hidden={!cardLoading} show={cardLoading} />
+                      <span>Export All as PDF</span>{" "}
+                      <CsLineIcons icon="bookmark" />
+                    </Button>
+                  </div>
               </Col>
             </Row>
             <Tab.Container activeKey={navActiveKey}>
