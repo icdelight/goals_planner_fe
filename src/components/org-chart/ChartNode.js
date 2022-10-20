@@ -151,7 +151,7 @@ const ChartNode = ({
 
   const addArrows = (e) => {
     const node = e.target.closest("li");
-    console.log(node.parentNode.classList.contains("l2r"));
+    // console.log(node.parentNode.classList.contains("l2r"));
     if(!node.parentNode.classList.contains("l2r")) {
       const parent = node.parentNode.closest("li");
       const isAncestorsCollapsed =

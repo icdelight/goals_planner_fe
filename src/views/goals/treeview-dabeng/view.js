@@ -93,34 +93,65 @@ const View = ({
     setCardLoading(true);
     let buff = null;
     let doc = null;
+    doc = new jsPDF({
+      orientation: "landscape",
+      unit: "px",
+      format: "a4",
+    });
     let i = 0;
     const loop = new Promise((resolve,reject) => {
       selectedParents.forEach((element,ind) => {
-        // console.log(selectedParents);
         // orgchart.current[ind].exportTo("pohon_kinerja", "pdf");
         // setNavActiveKey(`tab-${selectedParents?.[ind]?.value?.id_goals}`);
         setTimeout(async function () {
             // alert('VIDEO HAS STOPPED');
             setNavActiveKey(`tab-${selectedParents?.[ind]?.value?.id_goals}`);
             buff = await orgchart.current[ind].exportAllTo();
-            if(i == 0) {
-              const canvasWidth = Math.floor(buff.width);
-              const canvasHeight = Math.floor(buff.height);
-              doc =
-                canvasWidth > canvasHeight
-                  ? new jsPDF({
-                      orientation: "landscape",
-                      unit: "px",
-                      format: [canvasWidth, canvasHeight],
-                    })
-                  : new jsPDF({
-                      orientation: "portrait",
-                      unit: "px",
-                      format: [canvasHeight, canvasWidth],
-                    });
+            const canvasWidth = Math.floor(buff.width);
+            const canvasHeight = Math.floor(buff.height);
+            // if(i == 0) {
+              // let width = 0;
+              // let height = 0;
+              // let ori = "";
+              // doc =
+              //   canvasWidth > canvasHeight
+              //     ? new jsPDF({
+              //         orientation: "landscape",
+              //         unit: "px",
+              //         format: [canvasWidth, canvasHeight],
+              //       })
+              //     : new jsPDF({
+              //         orientation: "portrait",
+              //         unit: "px",
+              //         format: [canvasHeight, canvasWidth],
+              //       });
+              // if(canvasWidth > canvasHeight) {
+              //   width = canvasWidth;
+              //   height = canvasHeight;
+              //   ori = "landscape";
+              // }else{
+              //   width = canvasHeight;
+              //   height = canvasWidth;
+              //   ori = "portrait";
+              // }
+              // doc = new jsPDF({
+              //   orientation: "landscape",
+              //   unit: "px",
+              //   format: "a4",
+              // });
+            // }
+            // doc.addImage(buff.toDataURL("image/jpeg", 1.0), "JPEG", 0, 0);
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+            const widthRatio = pageWidth / canvasWidth;
+            const heightRatio = pageHeight / canvasHeight;
+            const ratio = widthRatio > heightRatio ? heightRatio : widthRatio;
+            const marginX = (pageWidth - (canvasWidth*ratio)) / 2;
+            const marginY = (pageHeight - (canvasHeight*ratio)) / 2;
+            doc.addImage(buff.toDataURL("image/jpeg", 1.0), "JPEG", marginX, marginY, canvasWidth*ratio, canvasHeight*ratio);
+            if(ind < selectedParents.length -1) {
+              doc.addPage();
             }
-            doc.addImage(buff.toDataURL("image/jpeg", 1.0), "JPEG", 0, 0);
-            doc.addPage();
             i++;
             // console.log(ind, selectedParents.length - 1);
             if (ind === selectedParents.length -1) resolve();
