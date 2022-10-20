@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import PropTypes from "prop-types";
+import PropTypes, { element } from "prop-types";
 import { dragNodeService, selectNodeService } from "./service";
 import "./ChartNode.css";
 
@@ -87,21 +87,56 @@ const ChartNode = ({
     if(datasource.children.length > 0) {
       if(datasource.children[0] !== undefined) {
         // console.log(datasource.children[0]["children"]);
-        if(datasource.children[0]["children"] !== undefined) {
-          if(datasource.children[0]["children"].length == 0) {
+        let hasLeaf = false;
+        datasource.children.forEach(element => {
+          if(element.children != undefined && element.children.length > 0) {
+            // console.log(element.children);
+            hasLeaf = true;
+          }
+        });
+        if(!hasLeaf) {
+          // if(datasource.children[0]["children"].length == 0) {
             ul_direction = direction;
             if(indShow) {
               ul_direction = `${direction}ind ${direction}`;
             }else{
               ul_direction = direction;
             }
+          // }
         }
-        }
-      }else{
-  
+        // if(datasource.children[0]["children"] !== undefined) {
+        //   if(datasource.children[0]["children"].length == 0) {
+        //     ul_direction = direction;
+        //     if(indShow) {
+        //       ul_direction = `${direction}ind ${direction}`;
+        //       direction = "l2rc";
+        //     }else{
+        //       ul_direction = direction;
+        //       direction = "l2rc";
+        //     }
+        //   }else{
+        //     if(node.current != undefined) { 
+        //       if(node.current.parentNode != undefined) {
+        //         if(node.current.parentNode.parentNode != undefined) {
+        //           if(node.current.parentNode.parentNode.classList.contains('l2r')) {
+        //             direction = "l2rc";
+        //           }
+        //         }
+        //       }
+        //     }
+        //   }
+        // }else{
+        //   if(node.current != undefined) { 
+        //     if(node.current.parentNode != undefined) {
+        //       if(node.current.parentNode.parentNode != undefined) {
+        //         if(node.current.parentNode.parentNode.classList.contains('l2r')) {
+        //           direction = "l2rc";
+        //         }
+        //       }
+        //     }
+        //   }
+        // }
       }
-    }else{
-  
     }
   }
   
