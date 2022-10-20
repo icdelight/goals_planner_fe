@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useHistory } from 'react-router-dom';
 import { Row, Col, Card, Nav, Tab, Button } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import BreadcrumbList from 'components/breadcrumb-list/BreadcrumbList';
@@ -19,7 +20,6 @@ const Navlink = function(propss) {
   const {role, clicked} = propss;
   // console.log(role);
   if(role != "viewer") {
-    console.log('tes');
     return (
       <Nav.Link className="px-0 border-bottom border-separator-light cursor-pointer" eventKey="permissions" onClick={clicked}>
         <CsLineIcons icon="settings-1" className="me-2" size="17" />
@@ -75,16 +75,19 @@ const Home = () => {
     const breadcrumbs = [{ to: '', text: 'Home' }];
     // console.log(currentUser);
     useCustomLayout({ placement: MENU_PLACEMENT.Vertical, layout: LAYOUT.Boxed, behaviour: MENU_BEHAVIOUR.Unpinned });
+    const history = useHistory();
 
     const getInitialGoals = () => {
       let result = null;
-      setLoading(true);
-      GetStats(currentUser.token)
+      console.log(isLogin);
+      if(isLogin) {
+        setLoading(true);
+        GetStats(currentUser.token)
         .then(function (response) {
           if (response) {
             if (response.responseCode === 200) {
               result = response.responseData;
-              console.log(result);
+              // console.log(result);
               setInitialGoals(result);
             }
           }
@@ -92,6 +95,10 @@ const Home = () => {
         .finally(() => {
           setLoading(false);
         });
+      }else{
+        const path = `login`; 
+        history.push(path);
+      }
     };
 
     const getTimeLine = () => {
@@ -102,7 +109,7 @@ const Home = () => {
           if (response) {
             if (response.responseCode === 200) {
               result = response.responseData;
-              console.log(result);
+              // console.log(result);
               setSubs(result);
             }
           }

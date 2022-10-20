@@ -9,12 +9,14 @@ import HtmlHead from 'components/html-head/HtmlHead';
 import {useSelector , useDispatch} from 'react-redux';
 import { toast } from 'react-toastify';
 import { Signin } from '../../services/signin';
+import { setCurrentUser } from 'auth/authSlice';
 
 const Login = () => {
   const history = useHistory();
   const dispatch = useDispatch();
+  // dispatch(setCurrentUser(''));
   const { isLogin, currentUser } = useSelector((state) => state.auth);
-  // console.log(currentUser);
+  // console.log(isLogin);
   const title = 'Login';
   const description = 'Login Page';
 

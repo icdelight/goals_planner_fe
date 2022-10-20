@@ -2,6 +2,7 @@ import { DEFAULT_PATHS } from "config.js";
 import { store } from "store";
 
 import HomePage from "views/default/Home";
+import Logout from "views/default/Logout";
 // import HorizontalPage from 'views/Horizontal';
 // import VerticalPage from 'views/Vertical';
 // import TreePage from 'views/goals/TreeAdmin';
@@ -246,13 +247,20 @@ const routesAndMenuItems = {
       ],
     },
     {
-      path: `${appRoot}/login`,
+      path: `${appRoot}/logout`,
       label: "Log out",
       icon: "logout",
-      isButton: true,
-      onClick: () => {
-        store.dispatch(setCurrentUser(""));
-      },
+      component: Logout,
+      roles: [
+        USER_ROLE.SuperAdmin,
+        USER_ROLE.Admin,
+        USER_ROLE.Editor,
+        USER_ROLE.Viewer,
+      ],
+      // isButton: true,
+      // onClick: () => {
+      //   store.dispatch(setCurrentUser(""));
+      // },
     },
   ],
   sidebarItems: [],
