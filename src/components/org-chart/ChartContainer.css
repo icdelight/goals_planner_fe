@@ -45,8 +45,8 @@
   /* transform: rotate(-90deg) rotateY(180deg); */
   /* transform-origin: left top; */
   /* text-align: center; */
-  width: 200%;
-  height: calc(100vw * 2);
+  width: 100%;
+  height: calc(100vw * 1.5);
 }
 
 .orgchart.r2l {

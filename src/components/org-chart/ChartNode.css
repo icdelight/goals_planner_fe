@@ -38,7 +38,8 @@
   top: -11px;
   left: 0;
   width: 100%;
-  border-top: 2px solid rgba(217, 83, 79, 0.8);
+  /* border-top: 2px solid rgba(217, 83, 79, 0.8); */
+  border-top: 2px solid rgba(0, 0, 0, 0.8);
   box-sizing: border-box;
 }
 
@@ -92,7 +93,8 @@
   left: calc(50% - 1px);
   width: 2px;
   height: 9px;
-  background-color: rgba(217, 83, 79, 0.8);
+  /* background-color: rgba(217, 83, 79, 0.8); */
+  background-color: rgba(0, 0, 0, 0.8);
 }
 
 .orgchart > ul > li > ul li.isSiblingsCollapsed > .oc-node::before {
@@ -112,7 +114,8 @@
   left: calc(50% - 1px);
   width: 2px;
   height: 9px;
-  background-color: rgba(217, 83, 79, 0.8);
+  /* background-color: rgba(217, 83, 79, 0.8); */
+  background-color: rgba(0, 0, 0, 0.8);
 }
 
 .orgchart ul li .oc-node.isChildrenCollapsed:not(:only-child)::after {
@@ -131,7 +134,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  background-color: rgba(217, 83, 79, 0.8);
+  /* background-color: rgba(217, 83, 79, 0.8); */
+  background-color: rgba(0, 0, 0, 0.8);
   color: #fff;
   border-radius: 4px 4px 0 0;
 }
@@ -144,7 +148,8 @@
 
 .orgchart ul li .oc-node .oc-heading .oc-symbol::before {
   background-color: #fff;
-  border-color: rgba(217, 83, 79, 0.8);
+  /* border-color: rgba(217, 83, 79, 0.8); */
+  border-color: rgba(0, 0, 0, 0.8);
 }
 
 .orgchart ul li .oc-node .oc-heading .oc-symbol::after {
@@ -157,7 +162,8 @@
   width: 130px;
   height: 50px;
   font-size: 0.625rem;
-  border: 1px solid rgba(217, 83, 79, 0.8);
+  /* border: 1px solid rgba(217, 83, 79, 0.8); */
+  border: 1px solid rgba(0, 0, 0, 0.8);
   border-radius: 0 0 4px 4px;
   text-align: center;
   background-color: #fff;
@@ -194,7 +200,7 @@
   /* height: 400px; */
 }
 
-.orgchart ul.l2r > li.oc-hierarchy:first-child::before {
+.orgchart ul.l2r > li.oc-hierarchy:first-child:before {
   /* box-sizing: border-box;
   top: -4px;
   height: 30px;
@@ -202,10 +208,43 @@
   border-width: 2px 0 0 2px; */
   left: -11px;
   /* height: calc(50% + 1px); */
-  width: calc(110% + 5px);
+  width: calc(60% + 3px);
 }
 
-.orgchart ul.l2r > li.oc-hierarchy:first-child::after {
+.orgchart ul.l2rind > li.oc-hierarchy:first-child:before {
+  /* box-sizing: border-box;
+  top: -4px;
+  height: 30px;
+  width: calc(50% - 2px);
+  border-width: 2px 0 0 2px; */
+  left: -11px;
+  /* height: calc(50% + 1px); */
+  width: calc(53% + 3px) !important;
+}
+
+.orgchart ul.l2r > li.oc-hierarchy::before {
+  /* box-sizing: border-box;
+  top: -4px;
+  height: 30px;
+  width: calc(50% - 2px);
+  border-width: 2px 0 0 2px; */
+  left: -45px;
+  /* height: calc(50% + 1px); */
+  width: calc(100% + 1px);
+}
+
+.orgchart ul.l2rind > li.oc-hierarchy::before {
+  /* box-sizing: border-box;
+  top: -4px;
+  height: 30px;
+  width: calc(50% - 2px);
+  border-width: 2px 0 0 2px; */
+  left: -135px;
+  /* height: calc(50% + 1px); */
+  width: calc(100% + 1px);
+}
+
+.orgchart ul.l2r > li.oc-hierarchy::after {
   /* box-sizing: border-box;
   top: -4px;
   height: 30px;
@@ -219,6 +258,9 @@
   height: 128px;
   background-color: rgba(217, 83, 79, 0.8);
   content: ""; */
+  left: -11px;
+  /* height: calc(50% + 1px); */
+  width: calc(60% + 3px);
 }
 
 .orgchart ul.l2r .org-node-container, .orgchart ul.r2l .org-node-container {

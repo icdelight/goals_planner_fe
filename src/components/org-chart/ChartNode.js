@@ -151,19 +151,22 @@ const ChartNode = ({
 
   const addArrows = (e) => {
     const node = e.target.closest("li");
-    const parent = node.parentNode.closest("li");
-    const isAncestorsCollapsed =
-      node && parent
-        ? parent.firstChild.classList.contains("hidden")
-        : undefined;
-    const isSiblingsCollapsed = Array.from(node.parentNode.children).some(
-      (item) => item.classList.contains("hidden")
-    );
+    console.log(node.parentNode.classList.contains("l2r"));
+    if(!node.parentNode.classList.contains("l2r")) {
+      const parent = node.parentNode.closest("li");
+      const isAncestorsCollapsed =
+        node && parent
+          ? parent.firstChild.classList.contains("hidden")
+          : undefined;
+      const isSiblingsCollapsed = Array.from(node.parentNode.children).some(
+        (item) => item.classList.contains("hidden")
+      );
 
-    setTopEdgeExpanded(!isAncestorsCollapsed);
-    setRightEdgeExpanded(!isSiblingsCollapsed);
-    setLeftEdgeExpanded(!isSiblingsCollapsed);
-    setBottomEdgeExpanded(!isChildrenCollapsed);
+      setTopEdgeExpanded(!isAncestorsCollapsed);
+      setRightEdgeExpanded(!isSiblingsCollapsed);
+      setLeftEdgeExpanded(!isSiblingsCollapsed);
+      setBottomEdgeExpanded(!isChildrenCollapsed);
+    }
   };
 
   const removeArrows = () => {
