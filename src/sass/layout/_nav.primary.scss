@@ -204,7 +204,7 @@ html[data-placement="vertical"] {
     .logo {
       img,
       .img {
-        width: 100px;
+        width: 150px;
         min-height: 35px;
         object-position: left;
         object-fit: cover;
@@ -518,7 +518,7 @@ html[data-placement="vertical"] .nav-container.mobile-side-ready {
       a {
         overflow: hidden;
         display: inline-block;
-        width: 100px;
+        width: 200px;
       }
     }
 
@@ -764,7 +764,7 @@ html[data-placement="horizontal"][data-dimension="mobile"] {
     }
 
     .logo a {
-      width: 30px;
+      width: 33px;
     }
 
     .menu-icons,
@@ -1428,7 +1428,8 @@ html[data-color="dark-purple"] {
 html[data-color="light-blue"][data-navcolor="light"],
 html[data-color="dark-blue"][data-navcolor="light"] {
   .logo .img {
-    background-image: url(../img/logo/logo-blue-light.svg);
+    // background-image: url(../img/logo/logo-blue-light.svg);
+    background-image: url(../img/logo/logo-tpm-landscape.png);
   }
 }
 
