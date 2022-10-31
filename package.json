@@ -96,6 +96,7 @@
     "precommit": "lint-staged",
     "concurrently": "concurrently"
   },
+  "homepage": "http://185.210.144.32/tree-fe",
   "eslintConfig": {
     "extends": [
       "react-app"
