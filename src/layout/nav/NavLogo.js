@@ -12,7 +12,7 @@ const NavLogo = () => {
           Or added via css to provide different ones for different color themes
          */}
         {/* <div className="img" /> */}
-        <img src="/img/logo/logo-tpm-landscape-1.png" alt="logo" width={"300px"} height={"45px"} />
+        <img src="/tree-fe/img/logo/logo-tpm-landscape-1.png" alt="logo" width={"300px"} height={"45px"} />
       </Link>
     </div>
   );
