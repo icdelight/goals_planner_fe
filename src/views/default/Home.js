@@ -149,7 +149,7 @@ const Home = () => {
                           <div className="d-flex align-items-center flex-column mb-4">
                             <div className="d-flex align-items-center flex-column">
                               <div className="sw-13 position-relative mb-3">
-                                <img src="/img/profile/profile-12.gif" className="img-fluid rounded-xl" alt="thumb" />
+                                <img src="/tree-fe/img/profile/profile-12.gif" className="img-fluid rounded-xl" alt="thumb" />
                               </div>
                               <div className="h5 mb-0" style={{ textTransform: 'capitalize'}}>{currentUser.name}</div>
                               <div className="text-muted" style={{ textTransform: 'capitalize'}}>{currentUser.role}</div>

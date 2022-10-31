@@ -24,7 +24,7 @@ const RowInd = function(propss){
       <Card className="mb-2">
       <Row className="g-0 h-auto sh-sm-19 sh-lg-9">
         <Col xs="12" sm="auto">
-          <img src="/img/profile/profile-12.gif" className="card-img card-img-horizontal-sm rounded-xl sh-10 h-sm-100 sw-lg-9 sw-sm-12" alt="thumb" />
+          <img src="/tree-fe/img/profile/profile-12.gif" className="card-img card-img-horizontal-sm rounded-xl sh-10 h-sm-100 sw-lg-9 sw-sm-12" alt="thumb" />
         </Col>
         <Col xs="12" className="col-sm">
           <Card.Body className="pt-sm-0 pb-sm-0 h-100">

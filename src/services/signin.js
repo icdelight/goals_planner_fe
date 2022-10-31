@@ -24,7 +24,7 @@ export const Signin = async (email,password,dispatch) => {
                         const user = {
                             id: res.data.userData.id,
                             name: res.data.userData.fullname,
-                            thumb: '/img/profile/profile-12.gif',
+                            thumb: '/tree-fe/img/profile/profile-12.gif',
                             role: res.data.userData.role,
                             email: res.data.userData.name,
                             token: res.data.tokens.access_token,
