@@ -12,15 +12,15 @@ export const REACT_HELMET_PROPS = {
 };
 
 export const DEFAULT_PATHS = {
-  APP: '/',
-  LOGIN: '/login',
-  REGISTER: '/register',
-  FORGOT_PASSWORD: '/forgot-password',
-  RESET_PASSWORD: '/reset-password',
-  USER_WELCOME: '/dashboards/default',
-  NOTFOUND: '/page-not-found',
-  UNAUTHORIZED: '/unauthorized',
-  INVALID_ACCESS: '/invalid-access',
+  APP: '/tree-fe/',
+  LOGIN: '/tree-fe/login',
+  REGISTER: '/tree-fe/register',
+  FORGOT_PASSWORD: '/tree-fe/forgot-password',
+  RESET_PASSWORD: '/tree-fe/reset-password',
+  USER_WELCOME: '/tree-fe/dashboards/default',
+  NOTFOUND: '/tree-fe/page-not-found',
+  UNAUTHORIZED: '/tree-fe/unauthorized',
+  INVALID_ACCESS: '/tree-fe/invalid-access',
 };
 
 export const DEFAULT_SETTINGS = {
